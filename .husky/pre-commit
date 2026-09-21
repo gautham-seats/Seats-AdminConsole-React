@@ -1,3 +1,6 @@
 npx lint-staged --max-arg-length 4000
 npm run typecheck
-npx jest --passWithNoTests --findRelatedTests $(git diff --cached --name-only --diff-filter=ACMR -- "*.ts" "*.tsx")
+staged=$(git diff --cached --name-only --diff-filter=ACMR -- "*.ts" "*.tsx")
+if [ -n "$staged" ]; then
+  npx jest --passWithNoTests --findRelatedTests $staged
+fi
