@@ -3,6 +3,7 @@ import { ApiError, isAbortError } from './errors'
 import { isSessionRedirect } from './session-redirect'
 import { redirectToForceLogin, redirectToSignOut } from './navigation'
 import { getVerificationToken, resetVerificationToken } from './verification-token'
+import { trackRequest } from './inflight'
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
@@ -150,6 +151,7 @@ export async function apiRequest<T>(
   if (typeof payload === 'string') headers['Content-Type'] = 'application/json'
 
   let response: RawResponse
+  const untrack = trackRequest()
   try {
     if (options.onUploadProgress) {
       response = await sendWithProgress(
@@ -179,6 +181,8 @@ export async function apiRequest<T>(
     }
   } catch (error) {
     throw new ApiError(isAbortError(error) ? 'aborted' : 'network', urlPath)
+  } finally {
+    untrack()
   }
 
   if (response.redirected) {
