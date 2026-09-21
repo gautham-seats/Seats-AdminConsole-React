@@ -22,7 +22,8 @@
     "lint:deps": "depcruise src --config .dependency-cruiser.cjs",
     "lint:dead": "knip",
     "lint:types": "type-coverage --strict --at-least 95",
-    "lint:tokens": "node scripts/check-css-tokens.mjs"
+    "lint:tokens": "node scripts/check-css-tokens.mjs",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "1.1.23",
@@ -40,6 +41,7 @@
   "devDependencies": {
     "@commitlint/cli": "21.2.3",
     "@commitlint/config-conventional": "21.2.3",
+    "@playwright/test": "1.63.0",
     "@tailwindcss/postcss": "4.3.3",
     "@testing-library/dom": "10.4.2",
     "@testing-library/jest-dom": "7.0.1",
