@@ -5,7 +5,8 @@
     "src/shared/*/index.ts",
     "src/shared/*/*/index.ts",
     ".github/scripts/*.mjs",
-    "scripts/*.mjs"
+    "scripts/*.mjs",
+    "src/features/settings/shared/*.{ts,tsx}"
   ],
   "project": ["src/**/*.{ts,tsx,css}", ".github/scripts/**/*.mjs", "scripts/**/*.mjs", "eslint-rules/*.mjs"],
   "ignoreDependencies": [],
