@@ -16,7 +16,9 @@ describe('describeApiError', () => {
 
 describe('SF-06 / SF-21 session errors', () => {
   it('SF-06 names a missing anti-forgery token as a signed-out session', () => {
-    expect(describeApiError(new ApiError('token', 'JobScheduleApi/'))).toMatchObject({
+    const kind = 'token' as const
+    const path = 'JobScheduleApi/'
+    expect(describeApiError(new ApiError(kind, path))).toMatchObject({
       stateLabel: 'Signed out',
       art: 'noaccess',
     })
