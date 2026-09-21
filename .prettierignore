@@ -5,3 +5,4 @@ build
 coverage
 package-lock.json
 docs/specs
+.husky

@@ -1,4 +1,8 @@
 import '@testing-library/jest-dom'
+import failOnConsole from 'jest-fail-on-console'
+
+// A warning or error printed during a test is a test failure, so React act() warnings never become noise.
+failOnConsole({ shouldFailOnWarn: true, shouldFailOnError: true })
 
 if (typeof HTMLElement !== 'undefined') {
   Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
