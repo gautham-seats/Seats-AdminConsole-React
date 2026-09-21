@@ -47,14 +47,18 @@ without changing data. A production build fails unless the value is set explicit
 
 ## Pipeline
 
-| Check                                        | Where                           |
-| -------------------------------------------- | ------------------------------- |
-| Install, audit, Prettier, typecheck, ESLint  | `ci.yml` on every push and PR   |
-| Jest with a coverage floor, production build | `ci.yml`, sizes in the summary  |
-| Secret scan (gitleaks)                       | `ci.yml`, PRs and main          |
-| Static security analysis (Semgrep)           | `ci.yml`                        |
-| Advisory model review with inline comments   | `ai-review.yml` on every PR     |
-| Bundle attached to the GitHub Release        | `release.yml` on every `v*` tag |
-| Dependabot, grouped minor/patch, weekly      | `dependabot.yml`                |
+| Check                                                                                | Where                                 |
+| ------------------------------------------------------------------------------------ | ------------------------------------- |
+| Install, audit, Prettier, typecheck, ESLint (jsx-a11y, jest rules, parsed API reads) | `ci.yml` on every PR and push to main |
+| type-coverage floor, import boundaries (dependency-cruiser), dead code (knip)        | `ci.yml`                              |
+| Jest with a coverage floor; console output fails a test                              | `ci.yml`                              |
+| Production build, bundle budget per route, unreferenced CSS tokens                   | `ci.yml`, sizes in the summary        |
+| Secret scan (gitleaks), static security analysis (Semgrep)                           | `ci.yml`                              |
+| Advisory two-model review with inline comments                                       | `ai-review.yml` on every PR           |
+| Oversized pull requests labelled `needs-split`                                       | `pr-size.yml`                         |
+| Bundle attached to the GitHub Release                                                | `release.yml` on every `v*` tag       |
+| Dependabot, grouped minor/patch, weekly                                              | `dependabot.yml`                      |
+
+Locally: the commit hook formats, lints, typechecks and runs related tests; the commit message is checked against Conventional Commits; the push hook runs the full check and, once the end-to-end suite exists, the browser sweep.
 
 Pull requests are merged with rebase only, so every commit on `main` is the one that was reviewed.
