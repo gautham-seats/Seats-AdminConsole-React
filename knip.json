@@ -8,7 +8,14 @@
     "scripts/*.mjs",
     "src/features/settings/shared/*.{ts,tsx}"
   ],
-  "project": ["src/**/*.{ts,tsx,css}", ".github/scripts/**/*.mjs", "scripts/**/*.mjs", "eslint-rules/*.mjs"],
+  "project": [
+    "src/**/*.{ts,tsx,css}",
+    ".github/scripts/**/*.mjs",
+    "scripts/**/*.mjs",
+    "eslint-rules/*.mjs",
+    "e2e/**/*.ts",
+    "playwright.config.ts"
+  ],
   "ignoreDependencies": [],
   "rules": {
     "unlisted": "error",
