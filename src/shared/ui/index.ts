@@ -34,3 +34,12 @@ export { LookupSearch } from './LookupSearch'
 export type { LookupOption, LookupSearchProps } from './LookupSearch'
 export { TimePicker } from './TimePicker'
 export type { TimePickerLabels, TimePickerProps } from './TimePicker'
+export { FilterPanel } from './filter-panel/FilterPanel'
+export type {
+  FilterChip,
+  FilterPanelLabels,
+  FilterPanelProps,
+  FilterView,
+  FilterViewTone,
+} from './filter-panel/FilterPanel'
+export { sameDraft, sameFilters } from './filter-panel/use-filter-draft'
