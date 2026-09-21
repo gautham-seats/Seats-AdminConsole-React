@@ -1,0 +1,15 @@
+# Secret scanning: the default rules plus a narrow allowlist for password-form fixtures in tests.
+title = "seats-admin-console"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Dummy passwords typed into the change-password form under test are not credentials"
+regexTarget = "line"
+regexes = [
+  '''(?i)(new|confirm|old) ?password''',
+]
+paths = [
+  '''package-lock\.json''',
+]
