@@ -1,3 +1,5 @@
+export { api, apiRequest } from './client'
+export type { HttpMethod, QueryValue, RequestOptions } from './client'
 export { ApiError, isAbortError, toApiError } from './errors'
 export type { ApiErrorKind } from './errors'
 export { adminApiPath, writesAllowed } from './config'
