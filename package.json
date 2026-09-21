@@ -21,7 +21,8 @@
     "check": "npm run format:check && npm run typecheck && npm run lint && npm run lint:types && npm run lint:deps && npm run lint:dead && npm test && npm run build:check",
     "lint:deps": "depcruise src --config .dependency-cruiser.cjs",
     "lint:dead": "knip",
-    "lint:types": "type-coverage --strict --at-least 95"
+    "lint:types": "type-coverage --strict --at-least 95",
+    "lint:tokens": "node scripts/check-css-tokens.mjs"
   },
   "dependencies": {
     "next": "16.3.5",
