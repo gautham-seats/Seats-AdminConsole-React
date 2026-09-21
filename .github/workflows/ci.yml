@@ -30,6 +30,8 @@ jobs:
       - run: npm run format:check
       - run: npm run typecheck
       - run: npm run lint
+      - run: npm run lint:deps
+      - run: npm run lint:dead
       - run: npm test -- --coverage --coverageReporters=text-summary --coverageReporters=text | tee coverage.txt
       - name: Coverage summary
         if: always()

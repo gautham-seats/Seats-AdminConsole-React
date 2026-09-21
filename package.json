@@ -18,7 +18,9 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "build:check": "node -e \"process.env.ADMIN_ALLOW_WRITES=process.env.ADMIN_ALLOW_WRITES||'false';require('child_process').execSync('npx next build',{stdio:'inherit',env:process.env})\"",
-    "check": "npm run format:check && npm run typecheck && npm run lint && npm test && npm run build:check"
+    "check": "npm run format:check && npm run typecheck && npm run lint && npm run lint:deps && npm run lint:dead && npm test && npm run build:check",
+    "lint:deps": "depcruise src --config .dependency-cruiser.cjs",
+    "lint:dead": "knip"
   },
   "dependencies": {
     "next": "16.3.5",
@@ -34,12 +36,14 @@
     "@types/node": "20.19.43",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "dependency-cruiser": "18.4.0",
     "eslint": "9.39.5",
     "eslint-config-next": "16.3.5",
     "eslint-plugin-jsx-a11y": "6.10.2",
     "husky": "9.1.7",
     "jest": "30.5.1",
     "jest-environment-jsdom": "30.5.1",
+    "knip": "6.37.0",
     "lint-staged": "17.5.1",
     "prettier": "3.9.8",
     "tailwindcss": "4.3.3",
