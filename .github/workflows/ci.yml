@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Typecheck, lint, tests, build
+    runs-on: ubuntu-latest
+    env:
+      # Compiled into the bundle; next.config.ts refuses a production build without it.
+      ADMIN_ALLOW_WRITES: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm audit --audit-level=high
+      - run: npm run format:check
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test -- --coverage --coverageReporters=text-summary --coverageReporters=text | tee coverage.txt
+      - name: Coverage summary
+        if: always()
+        run: |
+          echo '## Coverage' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          grep -A4 'Coverage summary' coverage.txt >> "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - run: npm run build | tee build.txt
+      - name: Bundle summary
+        run: |
+          echo '## Routes and bundle sizes' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          sed -n '/Route (app)/,/^$/p' build.txt >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
