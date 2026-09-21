@@ -24,4 +24,5 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          MODELS: deepseek/deepseek-chat-v3-0324:free,deepseek/deepseek-chat-v3-0324
+          DEFECT_MODELS: deepseek/deepseek-chat-v3-0324:free,deepseek/deepseek-chat-v3-0324,qwen/qwen3-coder:free
+          TEST_MODELS: qwen/qwen3-coder:free,qwen/qwen3-coder,deepseek/deepseek-chat-v3-0324
