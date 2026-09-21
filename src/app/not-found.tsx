@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { buttonVariants, ErrorState } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
