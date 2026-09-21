@@ -1,0 +1,42 @@
+# dependencies and build output
+/node_modules
+/.next/
+/out/
+/build
+/coverage
+*.tsbuildinfo
+next-env.d.ts
+
+# environment and secrets
+.env*
+!.env.example
+*.pem
+
+# test artefacts and saved sessions
+auth-state.json
+e2e/.auth/
+test-results/
+playwright-report/
+docs/pw/
+
+# logs and OS files
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# local working notes and tooling (never part of the product)
+graphify-out/
+docs/ai-reports/
+docs/board.md
+_audit-inbox/
+AGENTS.md
+CLAUDE.md
+.claude/
+*.build-prompt.md
+scripts/owner-check.ts
+scripts/owner-rules.ts
+scripts/sweep-report.ts
+scripts/__tests__/
+.git-old-history/
+.github/copilot-instructions.md
