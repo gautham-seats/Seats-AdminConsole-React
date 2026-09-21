@@ -102,6 +102,8 @@ describe('useApiRead', () => {
     rerender({ key: 'b' })
     expect(result.current.status).toBe('loading')
     expect(result.current.data).toBeUndefined()
+    await waitFor(() => expect(result.current.status).toBe('success'))
+    expect(load).toHaveBeenCalledTimes(2)
   })
 
   it('SL-04 keeps a mapper throw as the cause of the parse error', async () => {

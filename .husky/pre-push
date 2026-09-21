@@ -1,1 +1,5 @@
 npm run check
+# Browser truth from the signed-in laptop, once the end-to-end suite exists.
+if [ -f e2e/sweep.spec.ts ]; then
+  npx playwright test e2e/sweep.spec.ts
+fi

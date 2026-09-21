@@ -2,6 +2,7 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
+import jest from 'eslint-plugin-jest'
 
 const browserObjects = ['window', 'globalThis', 'self']
 
@@ -85,10 +86,18 @@ const eslintConfig = defineConfig([
   },
   {
     files: ['**/__tests__/**/*.{ts,tsx}', 'jest.setup.ts'],
+    plugins: { jest },
     rules: {
+      ...jest.configs['flat/recommended'].rules,
       'react/jsx-no-literals': 'off',
       'no-restricted-globals': 'off',
       'no-restricted-properties': 'off',
+      // A test must assert something, must not be skipped, and must not hide its assertions behind a branch.
+      'jest/expect-expect': 'error',
+      'jest/no-disabled-tests': 'error',
+      'jest/no-conditional-expect': 'error',
+      'jest/no-focused-tests': 'error',
+      'jest/valid-expect': 'error',
     },
   },
   {
