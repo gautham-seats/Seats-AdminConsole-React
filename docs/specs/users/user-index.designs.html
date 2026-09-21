@@ -1,0 +1,1314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Users List Designs</title>
+<style>
+:root {
+  --brand: #1566a2; --accent: #56bdea; --page: #f5f6fa; --card: #ffffff;
+  --fg: hsl(222.2 84% 4.9%); --muted: hsl(210 40% 96.1%); --mfg: hsl(215.4 16.3% 46.9%);
+  --border: hsl(214.3 31.8% 91.4%); --ring: hsl(221.2 83.2% 53.3%); --primary: hsl(221.2 83.2% 53.3%);
+  --danger: hsl(0 84.2% 60.2%); --g600: #4b5563; --g700: #374151;
+  --r-lg: .5rem; --r-md: calc(.5rem - 2px); --r-sm: calc(.5rem - 4px);
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.05);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1);
+  --font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: #e8ecf2; color: var(--fg); font: 14px/1.43 var(--font); padding-inline: clamp(16px, 2.4vw, 32px); padding-block: 28px 64px; }
+button, input, select { font: inherit; color: inherit; }
+svg { flex: none; }
+.doc { max-width: 1440px; margin-inline: auto; display: grid; gap: 40px; }
+
+/* ---------- Document chrome ---------- */
+.doc-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px 32px; align-items: end; }
+.eyebrow { font: 600 11.5px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: #5b6778; margin: 0 0 10px; }
+.doc h1 { font-size: 30px; line-height: 1.1; letter-spacing: -.02em; margin: 0; font-weight: 700; text-wrap: balance; }
+.doc-lede { margin: 10px 0 0; color: #4b5767; max-width: 76ch; font-size: 15px; }
+.legend { display: grid; gap: 6px; background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #4b5767; }
+.legend b { color: var(--fg); font-weight: 600; }
+.jump { display: flex; flex-wrap: wrap; gap: 8px; }
+.jump a { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; border-radius: 999px; background: #fff; border: 1px solid var(--border); color: var(--fg); text-decoration: none; font-weight: 500; transition: border-color 150ms var(--ease), box-shadow 150ms var(--ease), transform 150ms var(--ease); }
+.jump a:hover { border-color: #b9cfe3; box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.jump a span { width: 22px; height: 22px; border-radius: 50%; background: var(--brand); color: #fff; display: grid; place-items: center; font: 600 12px/1 var(--mono); }
+
+.design { display: grid; gap: 12px; scroll-margin-top: 16px; }
+.design-title { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.design-title h2 { margin: 0; font-size: 22px; letter-spacing: -.01em; font-weight: 700; }
+.design-title .num { font: 600 12px/1 var(--mono); color: #fff; background: var(--brand); border-radius: 6px; padding: 5px 7px; align-self: center; }
+.design-title .idea { color: #4b5767; font-size: 14.5px; }
+
+.switcher { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
+.sw-group { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.sw-label { font: 600 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .06em; color: #6b7686; margin-right: 2px; }
+.seg { display: inline-flex; padding: 3px; gap: 2px; border-radius: 8px; background: var(--muted); }
+.seg button { border: 0; background: transparent; padding: 5px 11px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--mfg); transition: background-color 200ms var(--ease), color 200ms var(--ease), box-shadow 200ms var(--ease); }
+.seg button:hover { color: var(--fg); }
+.seg button[aria-pressed="true"] { background: #fff; color: var(--fg); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.sw-toggle { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border); background: #fff; border-radius: 999px; padding: 4px 10px 4px 5px; cursor: pointer; font-size: 13px; font-weight: 500; transition: border-color 200ms var(--ease), background-color 200ms var(--ease); }
+.sw-toggle:hover { border-color: #b9cfe3; }
+.sw-toggle .track { width: 28px; height: 16px; border-radius: 999px; background: #cbd5e1; position: relative; transition: background-color 200ms var(--ease); }
+.sw-toggle .track::after { content: ''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: transform 250ms var(--ease); }
+.sw-toggle[aria-pressed="true"] .track { background: var(--brand); }
+.sw-toggle[aria-pressed="true"] .track::after { transform: translateX(12px); }
+.sw-btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border); background: #fff; border-radius: 7px; padding: 5px 10px; cursor: pointer; font-size: 13px; font-weight: 500; transition: background-color 150ms var(--ease), border-color 150ms var(--ease); }
+.sw-btn:hover { background: var(--muted); }
+
+.frame { border-radius: 12px; overflow: hidden; border: 1px solid #cfd8e3; background: var(--page); box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 18px 40px -18px rgba(15,23,42,.25); }
+.frame-scroll { overflow-x: auto; }
+.pv { position: relative; min-width: 1024px; background: var(--page); display: flex; flex-direction: column; height: 760px; overflow: hidden; }
+.pv-content { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.sample { flex: none; height: 24px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #fff7e6; border-top: 1px dashed #e9b85c; color: #8a5a00; font: 600 10.5px/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; }
+
+.notes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.note { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: grid; gap: 4px; align-content: start; }
+.note h3 { margin: 0; font: 600 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .06em; color: #6b7686; }
+.note p { margin: 0; font-size: 13.5px; }
+.note .ok { color: #15803d; font-weight: 600; }
+.proposal { grid-column: 1 / -1; background: #fffbeb; border-color: #f5d68a; }
+.proposal h3 { color: #8a5a00; }
+.coverage { grid-column: 1 / -1; }
+.coverage ul { margin: 6px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 20px; }
+.coverage li { display: grid; grid-template-columns: 16px 1fr; gap: 6px; font-size: 13px; color: #374151; }
+.coverage li svg { color: #15803d; margin-top: 2px; }
+.coverage li code { font: 11.5px/1.3 var(--mono); color: #6b7686; }
+
+/* ---------- Nav bar (src/shared/shell/NavBar.tsx) ---------- */
+.nav { position: relative; z-index: 40; height: 50px; flex: none; display: flex; align-items: center; padding: 0 16px; background-color: var(--brand); background-image: linear-gradient(180deg, rgba(255,255,255,.13) 0%, rgba(255,255,255,.04) 46%, rgba(255,255,255,0) 54%, rgba(0,0,0,.05) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.22), inset 0 -1px 0 rgba(0,0,0,.12), 0 2px 12px rgba(21,102,162,.28); color: #fff; }
+.nav::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.16) 48%, transparent 58%) no-repeat; background-size: 220% 100%; animation: sheen 1800ms 300ms ease-out both; }
+@keyframes sheen { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+.nav-logo { height: 32px; width: auto; transition: transform 300ms, filter 300ms; }
+.nav-logo:hover { transform: scale(1.03); filter: drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
+.nav-sep { margin: 0 14px 0 16px; width: 1px; height: 30px; background: rgba(255,255,255,.3); }
+.nav-menu { position: relative; display: flex; align-items: center; gap: 2px; }
+.nav-btn { position: relative; z-index: 1; height: 40px; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: var(--r-md); border: 0; background: transparent; color: #fff; font-size: 14px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: background-color 300ms ease-out; }
+.nav-btn:hover { background: rgba(255,255,255,.1); }
+.nav-btn[aria-current="page"] { background: rgba(255,255,255,.15); }
+.nav-btn[aria-current="page"]::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: 3px; height: 2px; border-radius: 2px; background: rgba(255,255,255,.85); }
+.nav-btn svg:first-child { width: 16px; height: 16px; transition: transform 300ms cubic-bezier(.3,1.7,.5,1); }
+.nav-btn:hover svg:first-child { transform: translateY(-1px) scale(1.1); }
+.nav-btn .chev { width: 14px; height: 14px; opacity: .8; }
+.nav-btn:focus-visible, .nav-icon:focus-visible, .nav-avatar:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(255,255,255,.8); }
+.nav-fill { flex: 1; min-width: 28px; }
+.nav-search { display: flex; align-items: center; gap: 8px; height: 36px; width: 224px; margin-right: 8px; padding: 0 12px; border-radius: var(--r-md); background: rgba(255,255,255,.1); box-shadow: inset 0 0 0 1px rgba(255,255,255,.15); cursor: text; transition: width 300ms cubic-bezier(.4,0,.2,1), background-color 300ms, box-shadow 300ms; }
+.nav-search:hover { background: rgba(255,255,255,.15); }
+.nav-search:focus-within { width: 288px; background: rgba(255,255,255,.15); box-shadow: inset 0 0 0 1px rgba(255,255,255,.4); }
+.nav-search svg { width: 16px; height: 16px; opacity: .8; transition: transform 300ms; }
+.nav-search:focus-within svg { transform: rotate(-12deg) scale(1.1); opacity: 1; }
+.nav-search input { flex: 1; min-width: 0; height: 100%; border: 0; background: transparent; color: #fff; font-size: 14px; font-weight: 500; outline: none; }
+.nav-search input::placeholder { color: rgba(255,255,255,.7); }
+.nav-search kbd { border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.1); border-radius: 4px; padding: 0 6px; font: 600 11px/18px var(--font); color: rgba(255,255,255,.85); transition: opacity 200ms; }
+.nav-search:focus-within kbd { opacity: .4; }
+.nav-icon { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; border: 0; background: transparent; cursor: pointer; transition: background-color 150ms; }
+.nav-icon:hover { background: rgba(255,255,255,.1); }
+.nav-icon .bell-wrap { position: relative; width: 20px; height: 20px; display: block; }
+.nav-icon:hover .bell { animation: bell-ring 700ms ease; }
+.bell { width: 20px; height: 20px; display: block; transform-origin: 50% 2px; }
+@keyframes bell-ring { 15% { transform: rotate(16deg); } 30% { transform: rotate(-14deg); } 45% { transform: rotate(10deg); } 60% { transform: rotate(-6deg); } 75% { transform: rotate(3deg); } }
+.nav-badge { position: absolute; right: -9px; top: -4px; min-width: 22px; height: 22px; padding: 0 4px; border-radius: 999px; background: #ffc000; color: #fff; font-size: 12px; font-weight: 600; display: grid; place-items: center; text-shadow: 0 0 2px #000; animation: badge-in 500ms 800ms cubic-bezier(.3,1.8,.5,1) both; }
+@keyframes badge-in { from { transform: scale(0); } }
+.nav-vr { margin: 0 10px 0 12px; height: 30px; border-left: 1px solid rgba(255,255,255,.9); }
+.nav-avatar { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; border: 0; background: var(--accent); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; transition: transform 200ms, box-shadow 200ms; }
+.nav-avatar:hover { transform: scale(1.05); box-shadow: 0 0 0 3px rgba(255,255,255,.35); }
+
+/* ---------- Scheduler primitives ---------- */
+.btn { height: 40px; padding: 0 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap; border-radius: var(--r-md); border: 1px solid transparent; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 150ms var(--ease), color 150ms var(--ease), border-color 150ms var(--ease), box-shadow 150ms var(--ease), transform 150ms var(--ease), opacity 150ms; }
+.btn svg { width: 16px; height: 16px; }
+.btn:active { transform: scale(.98); }
+.btn:focus-visible, .input:focus-visible, .cb:focus-visible, .th-sort:focus-visible, .tab:focus-visible, .link-btn:focus-visible, .row-focus:focus-visible, .sw-btn:focus-visible, .seg button:focus-visible, .sw-toggle:focus-visible, .side-link:focus-visible, .ucard:focus-visible, .select:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--ring); }
+.btn-sm { height: 36px; padding: 0 12px; }
+.btn-xs { height: 32px; padding: 0 10px; font-size: 13px; }
+.btn-icon { width: 40px; padding: 0; }
+.btn-icon.btn-sm { width: 36px; }
+.btn-icon.btn-xs { width: 32px; }
+.btn-primary { background: var(--brand); color: #fff; }
+.btn-primary:hover { background: rgba(21,102,162,.9); box-shadow: 0 4px 12px -4px rgba(21,102,162,.55); }
+.btn-outline { background: #fff; border-color: var(--border); }
+.btn-outline:hover { background: var(--muted); }
+.btn-ghost { background: transparent; }
+.btn-ghost:hover { background: var(--muted); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: hsl(0 84.2% 60.2% / .9); box-shadow: 0 4px 12px -4px rgba(239,68,68,.55); }
+.btn-danger-outline { background: #fff; color: #dc2626; border-color: #fecaca; }
+.btn-danger-outline:hover { background: #fef2f2; border-color: #fca5a5; }
+.btn:disabled { opacity: .5; pointer-events: none; }
+.link-btn { border: 0; background: transparent; padding: 2px 4px; border-radius: var(--r-sm); color: var(--brand); font-weight: 500; cursor: pointer; }
+.link-btn:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.search { position: relative; display: flex; align-items: center; transition: width 300ms var(--ease); }
+.search > svg { position: absolute; left: 12px; width: 16px; height: 16px; color: #6b7280; pointer-events: none; transition: color 200ms var(--ease), transform 300ms var(--ease); }
+.search:focus-within > svg { color: var(--brand); transform: scale(1.08); }
+.input { height: 36px; width: 100%; border: 1px solid var(--border); border-radius: var(--r-md); background: #fff; padding: 4px 64px 4px 36px; font-size: 14px; box-shadow: var(--shadow-sm); transition: border-color 200ms var(--ease), box-shadow 200ms var(--ease); }
+.input::placeholder { color: var(--mfg); }
+.search .enter { position: absolute; right: 6px; height: 24px; display: inline-flex; align-items: center; gap: 4px; padding: 0 6px; border-radius: var(--r-sm); border: 1px solid var(--border); background: var(--muted); color: var(--mfg); font: 600 11px/1 var(--font); cursor: pointer; transition: background-color 150ms, color 150ms, border-color 150ms; }
+.search .enter svg { width: 12px; height: 12px; }
+.search .enter:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
+.search .clear { position: absolute; right: 64px; width: 22px; height: 22px; border: 0; border-radius: var(--r-sm); background: transparent; color: var(--mfg); display: grid; place-items: center; cursor: pointer; animation: fade 150ms var(--ease); }
+.search .clear:hover { background: var(--muted); color: var(--fg); }
+.search .clear svg { width: 14px; height: 14px; }
+.grow { width: 280px; }
+.grow:focus-within { width: 360px; }
+.select { height: 36px; border: 1px solid var(--border); border-radius: var(--r-md); background: #fff no-repeat right 8px center / 16px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='m7 15 5 5 5-5M7 9l5-5 5 5'/%3E%3C/svg%3E"); padding: 0 30px 0 10px; font-size: 14px; box-shadow: var(--shadow-sm); appearance: none; cursor: pointer; }
+.select.sm { height: 32px; }
+
+.cb { width: 16px; height: 16px; flex: none; padding: 0; border: 1px solid var(--primary); border-radius: var(--r-sm); background: #fff; color: #fff; display: grid; place-items: center; cursor: pointer; transition: background-color 180ms var(--ease), transform 180ms var(--ease); }
+.cb:hover { transform: scale(1.08); }
+.cb[aria-checked="true"], .cb[aria-checked="mixed"] { background: var(--primary); }
+.cb svg { width: 12px; height: 12px; }
+.cb svg path { stroke-dasharray: 22; stroke-dashoffset: 0; }
+.cb.just svg path { animation: tick 260ms var(--ease) both; }
+@keyframes tick { from { stroke-dashoffset: 22; } }
+.cb-light { border-color: rgba(255,255,255,.9); background: transparent; }
+.cb-light[aria-checked="true"], .cb-light[aria-checked="mixed"] { background: #fff; color: var(--brand); }
+
+.tabs { display: inline-flex; height: 36px; align-items: center; padding: 4px; gap: 2px; border-radius: var(--r-lg); background: var(--muted); color: var(--mfg); position: relative; }
+.tab { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border: 0; background: transparent; border-radius: var(--r-md); font-size: 14px; font-weight: 500; color: var(--mfg); white-space: nowrap; cursor: pointer; transition: color 200ms var(--ease); }
+.tab svg { width: 14px; height: 14px; }
+.tab:hover { color: var(--fg); }
+.tab[aria-selected="true"] { color: var(--fg); }
+.tab-ind { position: absolute; top: 4px; bottom: 4px; left: 0; border-radius: var(--r-md); background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px -1px rgba(0,0,0,.1); transition: transform 300ms var(--ease), width 300ms var(--ease); }
+
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-lg); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.muted { color: var(--mfg); }
+.row { display: flex; align-items: center; gap: 12px; }
+.between { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.h2 { margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -.01em; }
+.count { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--mfg); font-variant-numeric: tabular-nums; }
+.count b { color: var(--fg); font-weight: 600; }
+.badge { display: inline-flex; align-items: center; gap: 4px; border-radius: var(--r-md); border: 1px solid transparent; padding: 2px 10px; font-size: 12px; font-weight: 600; background: var(--muted); color: hsl(222.2 47.4% 11.2%); font-variant-numeric: tabular-nums; }
+.badge-brand { background: rgba(21,102,162,.1); color: var(--brand); }
+
+/* table */
+.tbox { position: relative; background: #fff; border-radius: var(--r-lg); overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
+.tscroll { overflow: auto; min-height: 0; flex: 1; position: relative; }
+.tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; }
+.tbl th { position: sticky; top: 0; z-index: 2; height: 40px; padding: 0 8px; text-align: left; background: var(--brand); color: #fff; font-weight: 600; white-space: nowrap; transition: box-shadow 250ms var(--ease); }
+.tbl.dense th { height: 36px; }
+.tscroll.scrolled .tbl th { box-shadow: 0 8px 14px -8px rgba(15,23,42,.45); }
+.tbl th:first-child, .tbl td:first-child { padding-left: 16px; }
+.tbl td { padding: 10px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.tbl.dense td { padding: 7px 8px; }
+.tbl tbody tr { transition: background-color 150ms var(--ease), box-shadow 150ms var(--ease); cursor: pointer; }
+.tbl tbody tr:hover { background: rgba(21,102,162,.045); box-shadow: inset 3px 0 0 var(--brand); }
+.tbl tbody tr[aria-selected="true"] { background: rgba(59,130,246,.08); }
+.tbl tbody tr[aria-selected="true"]:hover { background: rgba(59,130,246,.12); }
+.tbl tbody tr:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--ring); }
+.tbl .c-cb { width: 44px; }
+.tbl .c-user { font-weight: 500; }
+.tbl .c-email { color: var(--g600); }
+.tbl .c-ap { color: var(--g700); max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.th-sort { display: inline-flex; align-items: center; gap: 6px; margin-left: -6px; padding: 4px 6px; border: 0; border-radius: var(--r-sm); background: transparent; color: #fff; font-weight: 600; cursor: pointer; transition: background-color 150ms var(--ease); }
+.th-sort:hover { background: rgba(255,255,255,.14); }
+.th-sort svg { width: 14px; height: 14px; opacity: .5; transition: transform 300ms var(--ease), opacity 200ms var(--ease); }
+.th-sort.on svg { opacity: 1; }
+.th-sort.desc svg { transform: rotate(180deg); }
+.rows-in tr { animation: row-in 300ms var(--ease) both; }
+@keyframes row-in { from { opacity: 0; transform: translateY(4px); } }
+@keyframes fade { from { opacity: 0; } }
+.empty-ap { color: #94a3b8; }
+
+.pager { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 16px; border-top: 1px solid #e5e7eb; background: #fff; flex: none; }
+.pager-l, .pager-r { display: flex; align-items: center; gap: 12px; color: var(--g700); }
+.pager .range { color: var(--g600); font-size: 13px; font-variant-numeric: tabular-nums; }
+.pager .btn { height: 32px; width: 32px; padding: 0; }
+
+/* states */
+.state { display: grid; place-items: center; align-content: center; gap: 10px; text-align: center; padding: 56px 24px; min-height: 280px; color: var(--mfg); animation: fade 250ms var(--ease); }
+.state h4 { margin: 0; font-size: 15px; font-weight: 600; color: var(--fg); }
+.state p { margin: 0; max-width: 46ch; }
+.state-ic { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--muted); color: var(--mfg); }
+.state-ic svg { width: 22px; height: 22px; }
+.state.err .state-ic { background: #fef2f2; color: #dc2626; }
+.state.lock .state-ic { background: #fff7e6; color: #b45309; }
+.skel { border-radius: var(--r-md); background: linear-gradient(90deg, rgba(21,102,162,.06) 0%, rgba(21,102,162,.06) 35%, rgba(86,189,234,.2) 50%, rgba(21,102,162,.06) 65%, rgba(21,102,162,.06) 100%); background-size: 300% 100%; animation: shimmer 2.2s cubic-bezier(.45,.05,.55,.95) infinite; }
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
+.veil { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; background: rgba(255,255,255,.72); backdrop-filter: blur(1.5px); animation: fade 200ms var(--ease); }
+.load-note { display: flex; flex-direction: column; align-items: center; gap: 12px; font-size: 13px; font-weight: 500; color: var(--mfg); }
+.load-skel { position: relative; }
+
+/* ---------- Loaders (Gearwork = inline, Tide = page) ---------- */
+.loader { --disc: #1566a2; --disc2: #3f93cf; --leaf: #ffffff; }
+.gears svg { width: 58px; height: 53px; display: block; }
+.gears .cog-a { fill: var(--disc); }
+.gears .cog-b { fill: var(--disc2); }
+.gears .cog-leaf { fill: var(--leaf); }
+.gears .spin-a { transform-box: view-box; transform-origin: 44px 64px; animation: cog-a 9s linear infinite; }
+.gears .keep-a { transform-box: view-box; transform-origin: 44px 64px; animation: cog-a-keep 9s linear infinite; }
+.gears .spin-b { transform-box: view-box; transform-origin: 79px 29px; animation: cog-b 7.2s linear infinite; }
+.gears .keep-b { transform-box: view-box; transform-origin: 79px 29px; animation: cog-b-keep 7.2s linear infinite; }
+@keyframes cog-a { from { transform: rotate(-27deg); } to { transform: rotate(333deg); } }
+@keyframes cog-a-keep { from { transform: rotate(27deg); } to { transform: rotate(-333deg); } }
+@keyframes cog-b { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+@keyframes cog-b-keep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.tide svg { width: 104px; height: 104px; display: block; }
+.tide .rim { fill: none; stroke: var(--disc); stroke-width: 2.4; }
+.tide .water { fill: var(--disc); }
+.tide .water.back { opacity: .35; }
+.tide .under { fill: var(--disc); opacity: .9; }
+.tide .over { fill: var(--leaf); }
+.tide .rise { animation: tide 3.8s ease-in-out infinite alternate; }
+.tide .unrise { animation: untide 3.8s ease-in-out infinite alternate; }
+.tide .drift { animation: drift 2.6s linear infinite; }
+.tide .undrift { animation: undrift 2.6s linear infinite; }
+.tide .drift.slow { animation-duration: 4.2s; animation-direction: reverse; }
+@keyframes tide { from { transform: translateY(76px); } to { transform: translateY(20px); } }
+@keyframes untide { from { transform: translateY(-76px); } to { transform: translateY(-20px); } }
+@keyframes drift { from { transform: translateX(0); } to { transform: translateX(-50px); } }
+@keyframes undrift { from { transform: translateX(0); } to { transform: translateX(50px); } }
+.appstart { position: absolute; inset: 0; z-index: 80; background: var(--page); display: grid; place-items: center; transition: opacity 320ms var(--ease); }
+.appstart.out { opacity: 0; pointer-events: none; }
+.appstart-inner { display: flex; flex-direction: column; align-items: center; gap: 40px; animation: fade 360ms var(--ease) both; }
+.wordmark { font-size: 27px; line-height: 1; color: var(--fg); }
+.wordmark b { font-weight: 700; letter-spacing: .01em; }
+.wordmark span { font-weight: 300; }
+.softly { font-size: 14px; font-weight: 500; color: var(--mfg); animation: soft 2.8s ease-in-out infinite; }
+@keyframes soft { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+
+/* overlays */
+.overlay { position: absolute; inset: 0; z-index: 60; background: rgba(0,0,0,.8); animation: fade 200ms var(--ease); }
+.dialog { position: absolute; left: 50%; top: 50%; z-index: 61; width: min(512px, calc(100% - 32px)); transform: translate(-50%, -50%); display: grid; gap: 16px; padding: 24px; background: #fff; border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--shadow-lg); animation: scale-in 240ms var(--ease) both; }
+@keyframes scale-in { from { opacity: 0; transform: translate(-50%, -48%) scale(.95); } }
+.dialog h3 { margin: 0; font-size: 18px; font-weight: 600; }
+.dialog p { margin: 0; color: var(--mfg); }
+.dialog-list { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+.dialog-foot { display: flex; justify-content: flex-end; gap: 8px; }
+.toast { position: absolute; right: 16px; bottom: 40px; z-index: 70; width: 380px; display: grid; grid-template-columns: 20px 1fr; gap: 2px 10px; padding: 14px 16px; background: #fff; border: 1px solid var(--border); border-radius: var(--r-md); box-shadow: var(--shadow-lg); animation: toast-in 320ms var(--ease) both; }
+.toast svg { width: 18px; height: 18px; margin-top: 1px; color: var(--brand); grid-row: span 2; }
+.toast.ok svg { color: #16a34a; }
+.toast b { font-size: 14px; font-weight: 600; }
+.toast span { font-size: 13px; color: var(--mfg); }
+@keyframes toast-in { from { opacity: 0; transform: translateY(12px) scale(.98); } }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- Design 1 · Scheduler-native ---------- */
+.d1 { padding: 24px; display: flex; flex-direction: column; gap: 16px; min-height: 0; flex: 1; }
+.d1 .tbox { flex: 1; box-shadow: var(--shadow-md); }
+.d1-bulk { display: inline-flex; align-items: center; gap: 8px; animation: slide-x 260ms var(--ease) both; }
+@keyframes slide-x { from { opacity: 0; transform: translateX(10px); } }
+
+/* ---------- Design 2 · Split view ---------- */
+.d2 { padding: 20px 24px 24px; display: flex; flex-direction: column; gap: 14px; min-height: 0; flex: 1; }
+.underline-tabs { position: relative; display: flex; gap: 4px; border-bottom: 1px solid var(--border); }
+.underline-tabs .tab { border-radius: var(--r-md) var(--r-md) 0 0; padding: 8px 12px 10px; }
+.underline-tabs .tab:hover { background: rgba(21,102,162,.05); }
+.underline-tabs .tab[aria-selected="true"] { color: var(--brand); }
+.u-ind { position: absolute; bottom: -1px; left: 0; height: 2px; border-radius: 2px; background: var(--brand); transition: transform 300ms var(--ease), width 300ms var(--ease); }
+.d2-split { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(360px, 1fr); grid-template-rows: minmax(0, 1fr); gap: 16px; min-height: 0; flex: 1; }
+.d2-list { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.d2-listbody { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.d2-head { padding: 12px; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--border); }
+.sortbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12.5px; color: var(--mfg); }
+.chip-sort { display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 9px; border: 1px solid var(--border); border-radius: 999px; background: #fff; color: var(--g700); font-size: 12.5px; font-weight: 500; cursor: pointer; transition: background-color 150ms var(--ease), border-color 150ms var(--ease), color 150ms var(--ease); }
+.chip-sort:hover { border-color: #b9cfe3; background: var(--page); }
+.chip-sort.on { background: var(--brand); border-color: var(--brand); color: #fff; }
+.chip-sort svg { width: 12px; height: 12px; transition: transform 300ms var(--ease); }
+.chip-sort.desc svg { transform: rotate(180deg); }
+.chip-sort:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--ring); }
+.d2-rows { list-style: none; margin: 0; padding: 6px; display: grid; gap: 2px; align-content: start; }
+.d2-row { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 9px 10px; border-radius: var(--r-md); border: 1px solid transparent; cursor: pointer; transition: background-color 150ms var(--ease), border-color 150ms var(--ease), transform 150ms var(--ease); }
+.d2-row:hover { background: var(--page); transform: translateX(2px); }
+.d2-row[data-focus="true"] { background: rgba(21,102,162,.07); border-color: rgba(21,102,162,.22); }
+.d2-row[aria-selected="true"] { background: rgba(59,130,246,.08); }
+.d2-row:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--ring); }
+.d2-name { font-weight: 500; }
+.d2-sub { font-size: 12.5px; color: var(--mfg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.d2-real { font-size: 13px; color: var(--g700); white-space: nowrap; }
+.d2-preview { display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+.d2-ph { padding: 22px 24px 18px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, rgba(21,102,162,.06), rgba(21,102,162,0)); display: grid; gap: 4px; }
+.d2-ph .kicker { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--brand); }
+.d2-ph h3 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
+.d2-dl { margin: 0; padding: 6px 24px; display: grid; grid-template-columns: 160px minmax(0, 1fr); animation: fade 220ms var(--ease); }
+.d2-dl dt, .d2-dl dd { margin: 0; padding: 13px 0; border-bottom: 1px solid var(--border); }
+.d2-dl dt { color: var(--mfg); }
+.d2-dl dt:last-of-type, .d2-dl dd:last-of-type { border-bottom: 0; }
+.d2-foot { margin-top: auto; padding: 14px 24px; border-top: 1px solid var(--border); background: var(--page); display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--mfg); }
+.kbd { display: inline-block; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; font: 600 11px/17px var(--font); color: var(--g700); background: #fff; }
+
+/* ---------- Design 3 · Command bar ---------- */
+.d3 { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+.cmd { position: relative; z-index: 10; height: 64px; flex: none; background: #fff; border-bottom: 1px solid var(--border); overflow: hidden; }
+.cmd-layer { position: absolute; inset: 0; display: flex; align-items: center; gap: 16px; padding: 0 24px; transition: transform 320ms var(--ease), opacity 240ms var(--ease); }
+.cmd-bulk { background: linear-gradient(90deg, #0f4f80, var(--brand)); color: #fff; transform: translateY(100%); opacity: 0; }
+.cmd.selecting .cmd-main { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+.cmd.selecting .cmd-bulk { transform: none; opacity: 1; }
+.cmd-bulk .btn-ghost { color: #fff; }
+.cmd-bulk .btn-ghost:hover { background: rgba(255,255,255,.14); }
+.cmd-bulk .btn-white { background: #fff; color: #b91c1c; }
+.cmd-bulk .btn-white:hover { background: #fef2f2; box-shadow: 0 4px 14px -4px rgba(0,0,0,.35); }
+.cmd-title { display: flex; align-items: baseline; gap: 10px; }
+.cmd-title .h2 { font-size: 18px; }
+.seg-nav { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--page); position: relative; }
+.seg-nav .tab { font-size: 13px; padding: 5px 10px; }
+.seg-nav .tab[aria-selected="true"] { color: #fff; }
+.seg-ind { position: absolute; top: 3px; bottom: 3px; left: 0; border-radius: var(--r-md); background: var(--brand); box-shadow: 0 2px 6px -2px rgba(21,102,162,.6); transition: transform 300ms var(--ease), width 300ms var(--ease); }
+.d3-body { padding: 16px 24px 24px; display: flex; flex-direction: column; min-height: 0; flex: 1; gap: 10px; }
+.d3-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--mfg); }
+.d3 .tbox { flex: 1; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+
+/* ---------- Design 4 · Cards + table ---------- */
+.d4 { padding: 24px; display: flex; flex-direction: column; gap: 16px; min-height: 0; flex: 1; position: relative; }
+.pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.pill { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border-radius: var(--r-md); border: 1px solid transparent; background: transparent; color: var(--brand); font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 150ms var(--ease), color 150ms var(--ease), border-color 150ms var(--ease); }
+.pill svg { width: 15px; height: 15px; }
+.pill:hover { background: rgba(21,102,162,.07); }
+.pill[aria-selected="true"] { background: var(--brand); color: #fff; box-shadow: 0 2px 8px -3px rgba(21,102,162,.6); }
+.pill:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--ring); }
+.viewtoggle { display: inline-flex; padding: 3px; border-radius: var(--r-md); border: 1px solid var(--border); background: #fff; position: relative; }
+.viewtoggle button { position: relative; z-index: 1; width: 34px; height: 30px; display: grid; place-items: center; border: 0; border-radius: var(--r-sm); background: transparent; color: var(--mfg); cursor: pointer; transition: color 200ms var(--ease); }
+.viewtoggle button svg { width: 16px; height: 16px; }
+.viewtoggle button[aria-pressed="true"] { color: #fff; }
+.viewtoggle button:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring); }
+.vt-ind { position: absolute; top: 3px; bottom: 3px; width: 34px; left: 3px; border-radius: var(--r-sm); background: var(--brand); transition: transform 300ms var(--ease); }
+.dirbtn svg { transition: transform 300ms var(--ease); }
+.dirbtn.desc svg { transform: rotate(180deg); }
+.d4-scroll { flex: 1; min-height: 0; overflow: auto; padding: 2px 2px 70px; }
+.cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.ucard { position: relative; display: grid; gap: 10px; align-content: start; padding: 16px; background: #fff; border: 1px solid var(--border); border-radius: var(--r-lg); cursor: pointer; transition: transform 250ms var(--ease), box-shadow 250ms var(--ease), border-color 250ms var(--ease); animation: row-in 320ms var(--ease) both; }
+.ucard:hover { transform: translateY(-3px); box-shadow: 0 12px 24px -12px rgba(15,23,42,.28); border-color: #c9d8e6; }
+.ucard[aria-selected="true"] { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand), 0 10px 22px -14px rgba(21,102,162,.6); }
+.ucard .cb { position: absolute; top: 14px; right: 14px; }
+.ucard .uname { font-weight: 600; font-size: 15px; padding-right: 24px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ucard .line { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--mfg); min-width: 0; }
+.ucard .line svg { width: 14px; height: 14px; }
+.ucard .line span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ucard .ap { border-top: 1px dashed var(--border); padding-top: 9px; font-size: 12.5px; color: var(--g700); display: flex; gap: 7px; }
+.ucard .ap svg { width: 13px; height: 13px; margin-top: 2px; color: var(--brand); }
+.float-bar { position: absolute; left: 50%; bottom: 20px; z-index: 20; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; color: #fff; background: #0f2a40; border-radius: 12px; box-shadow: 0 16px 32px -12px rgba(15,42,64,.55); animation: rise 320ms var(--ease) both; }
+@keyframes rise { from { opacity: 0; transform: translate(-50%, 16px); } }
+.float-bar .btn-ghost { color: #fff; }
+.float-bar .btn-ghost:hover { background: rgba(255,255,255,.12); }
+.float-bar .sep { width: 1px; height: 20px; background: rgba(255,255,255,.2); }
+.d4 .tbox { box-shadow: var(--shadow-md); }
+.d4-pager { flex: none; border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
+
+/* ---------- Design 5 · Workspace ---------- */
+.d5 { display: grid; grid-template-columns: 236px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); min-height: 0; flex: 1; transition: grid-template-columns 300ms var(--ease); }
+.d5.collapsed { grid-template-columns: 64px minmax(0, 1fr); }
+.side { background: #fff; border-right: 1px solid var(--border); padding: 14px 10px; display: flex; flex-direction: column; gap: 2px; overflow: hidden; position: relative; }
+.side-title { padding: 6px 10px 10px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--mfg); white-space: nowrap; transition: opacity 200ms; }
+.side-link { position: relative; display: flex; align-items: center; gap: 11px; height: 38px; padding: 0 11px; border: 0; border-radius: var(--r-md); background: transparent; color: #475569; font-size: 14px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: background-color 150ms var(--ease), color 150ms var(--ease); }
+.side-link svg { width: 18px; height: 18px; transition: transform 250ms var(--ease); }
+.side-link:hover { background: var(--page); color: var(--fg); }
+.side-link:hover svg { transform: translateX(1px) scale(1.06); }
+.side-link[aria-current="page"] { color: var(--brand); background: rgba(21,102,162,.08); }
+.side-link[aria-current="page"]::before { content: ''; position: absolute; left: -10px; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0; background: var(--brand); animation: grow-y 300ms var(--ease) both; }
+@keyframes grow-y { from { transform: scaleY(0); } }
+.side-label { transition: opacity 200ms var(--ease); }
+.collapsed .side-label, .collapsed .side-title { opacity: 0; pointer-events: none; }
+.side-foot { margin-top: auto; }
+.d5-main { padding: 20px 24px 24px; display: flex; flex-direction: column; gap: 14px; min-width: 0; min-height: 0; }
+.crumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--mfg); }
+.crumb svg { width: 14px; height: 14px; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.stat { background: #fff; border: 1px solid var(--border); border-radius: var(--r-lg); padding: 12px 16px; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.stat span { font-size: 13px; color: var(--mfg); }
+.stat b { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.stat.hot { border-color: rgba(59,130,246,.45); background: rgba(59,130,246,.05); }
+.stat.hot b { color: var(--primary); }
+.d5-tool { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; min-height: 58px; }
+.d5 .tbox { flex: 1; box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
+
+@media (max-width: 1100px) { .notes { grid-template-columns: 1fr 1fr; } .doc-head { grid-template-columns: 1fr; } }
+@media (max-width: 1380px) { .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 1180px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .notes, .coverage ul { grid-template-columns: 1fr; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; scroll-behavior: auto !important; }
+  .tide .rise { transform: translateY(44px); }
+  .tide .unrise { transform: translateY(-44px); }
+}
+</style>
+</head>
+<body>
+<main class="doc">
+  <header class="doc-head">
+    <div>
+      <p class="eyebrow">SEAtS Admin React · Users · legacy #/User · design only</p>
+      <h1>Users list: five structures</h1>
+      <p class="doc-lede">Every preview runs the same behaviour from <code>docs/specs/users/user-index.md</code> and the legacy grid (<code>swgrid.js</code>, <code>UserApiController.cs</code>) inside the real Admin shell. Click anything: sub-navigation, sort, search with Enter, paging, selection, delete confirm. Use each switcher to force loading, empty, error, missing rights and the personas column.</p>
+    </div>
+    <div class="legend">
+      <div><b>Gearwork</b> · table-area loading, appears after 400 ms</div>
+      <div><b>Tide</b> · full-page app start only (“App start” button)</div>
+      <div><b>Page size</b> defaults to 100. Pick 10 to try paging.</div>
+      <div><b>Sample data</b> · 40 fake users, nothing is called or saved</div>
+    </div>
+  </header>
+  <nav class="jump" aria-label="Designs" id="jump"></nav>
+  <div id="designs" class="doc" style="gap:56px"></div>
+</main>
+
+<script>
+(() => {
+  'use strict';
+
+  const LOGO = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAAAvCAYAAAABxDNfAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmExY2QxMmY0MSwgMjAyNC8xMS8wOC0xNjowOToyMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI2LjIgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjI1MTU5NzQyRDk5ODExRUY4NzlERTM4MEU2OTZGMjRCIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjI1MTU5NzQzRDk5ODExRUY4NzlERTM4MEU2OTZGMjRCIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MjUxNTk3NDBEOTk4MTFFRjg3OURFMzgwRTY5NkYyNEIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MjUxNTk3NDFEOTk4MTFFRjg3OURFMzgwRTY5NkYyNEIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7nrERaAAAI0ElEQVR42uxcC5BPVRi/65E3u6tYE1seTa2aQd5FisqjyISS5JFBKLPNxKgZUmZKNc0oyiZTCFEpDLFCW2qIGBRKWazyfseyWNv3zf93dZzOuffcvbeV/55v5jf/e8/rnnvOd77zPc79JxQUFDiWLEVNJewQWLKMZemqoVIRtlWGcDfQhFCPcD2hNPJPEfYSthLWEzLxe9FOQ/xRQgQ61q2EZwiPESoHrPsH4UPCZMI+Ox2WsZjqEF4hPBpBP86CucYSTtppKZ6MlUAYRnidUC7i/vxJGEhYYqemeCnv5QmfEiZ6MNVfIfrDOtmXkFwJdnqKB2NVIawkdPMpt5TQk3A+RL9eJLxHKGmnKL4ZiyXVMkJzg7LJhLmEHiEtvoFgLktxzFjTCM0MyybhdwFhfMj+DSA8Z6cpPpX3p6FTmdJuwo24LkvYTqgVoo/5hJaEdXa64kdipRZC6iRLboQ3QvaR9awZzj+OVktxwFivESoEbLOSc7lHfx4hrBf2FsJgO13xsRXWJ/zsYfYfIFyrsdyqEw4K92sJTUP2dT/hBsI5O21Xt8Qa4nj7kn4ktHXUnvIk6X5TBH1NcaLx8lsqAtIFoa8hPG5g/X1LaE/IcmJBaJWexRRVHLAP4SPDsjUJrSE9LxB2EFYTjgtl2Dd3j0877I9brMlrBant0iI8qzBUB/1NglT+Ff3NDdgOv1MbGFA8jzmEVR5z0ArqTqZPu/fjdxl+azh691Ouw1uhAvcU+NM2ofwwKa+T1F56QTR0npCo6bOLawgZhHxF/QuERYSyKNvQ4JnHNc/hfpyWynb36ZsKlQifaJ59ljDdsB1+pzcJZxTtXCR8TKiuqJeFMiN82t8FuPddPcZsl05itQto/XEAmeOHaRqJlRShhL3TQ4I4sGIHS5ZpPlYl64MPwA1yNmRfnnBijmORniV8FrCdDwjdL1vtMRWkHHaBhwza4HdbTmhBOEGYQvgB0pbnpL8Ti4bcBWn2u8ZQ21mI/n9FmC2lndJx52KDlXxOqtNHyBsu5c0uiI7G+qyso0LZlwglkV6XMIrwiyD1ZImVqEAVzXN+kiSCS809+tZZuq8s1R1CSADqE8YRNhtIqxmov0YjlcoQpqHMVkJphcRi6ZhLaBFQYk1Qldcp72kGnMp+pYrC/QLBYpMlVhPp/hhhOqRcR6wk1nX6whm7y+O5N/n0S+xTLegZDnSs8XBdnNDUPa6AquwdhNtwfZgwSchL17Q9ijBOSisvGUipkKpsqvOByNGEBj7vmwbpeYTQGda6THlOLIrxvVBepr6QkgsJtUPvLRruPG0oPVKleiuRPlFIayyU59XysLRiVChBeIiwQ/HMFT5110nlDxPGK/qqklj9FGirqDdNqMMrtp4geViPqyWVH6V4j3Tk7ZPS9xBGE6oZ6lYjUW+8QdlOKLtAIbH4+nlcs1RPCiOxdB0wpYZSvQlInymkzYEi/bKwLQVRbJdIz9zgU6cVRLpKcZcVWBPlfb5Cac9VjMFSIe01oXwqxuUk4RCuGW2Q301jaOTBCKnk874ZKN/DYDyroewWDWMx3sd9FgwhP8Y6KeS5mBL2Ywp5y/tTSmfR3ANugjFQooMQn+3qBkftJaeuT53vsFVlSh7/klBg2TVSOaTSXk7wz23E9btCmUHClpyD7fEoxicd+EaITLRDv2WXDxshSx3vbxPcOQzi5vAaw6FwKbCSP9VgvPMU6sPpUh6FyxSCsc4LViB3bJYTO7Q3C+mJhKrITxbg3leV0l2IccIjBv3iye4AfWwIrKJEITzUj/B2wAF36SnhejfachnXHbdEpE8ynOgs+LAaQO/sJYTSeJF0IXyuqZuD30aEL3ye00TQN738do+A0XkRZWMOdTRLqVdqROZvhlvhIKneC0g/ja2HKRtbQH5EVuEcH3HfDFaVmFZVeqcMzVbot5W0DtDP7dAVxa1ko6JNlRWWijFz6QWPPjVAmX0+Pj4ek68V85alefdUQf/rE5VVuMNwpSUp4ouutePGEGvDOx3VN4xbffJfxzbTXpB0553LT7QeLOSzBwnXJyCxZOQL1uuD0i6gOqExB5ZYa2HM2LoWD0ke8ujTJmynKfhNVJQpCel5Nzz60wzeNQc+v1xsidWiCOmsw8QE3QrlQHM2RPhqON+OQXfgYHJjiPiWASd3g0GZ1tBN8mB+pwhuB560mToj2WMBlYC+KIaXFmq2hl6Cw3ShsIXfjjE6Ab1qsqCLMs7AfVFDmBses/k+7zsAjMyx221O7OTtWiymW7Eg0hDI7xIgkL8Beul8R39sqS6hq+lW2NZQ3E8R6jQV0lcJVo8fGsOxZxrSqezTXi/CTk39A4SOAa1C13GaLrWjc5ncqbGc+0rpO4Vw117Nc7MxribjWJHwDhzXupBOikdIx6vtZ9xQjWFIp0B3bKY0VrpfKGaeEI74AqJzBBTjIGewSmOV9fcpt4Jwr6HV0whSMQUrdAvCD3mSxO1i0N5sOHFrCkr71x7lHxdW+EbBcmyKoO8pSNQ9gmXXAsp7NeRvxjOCBrWvheFUB3OwB6rBfk35Dhgjv+2xK6ToZwZBaMeLSycarOSVKNsT0qRLIYKwLq4jrPd5Xu8Q7VsUIbwO+t0CRTnBR3EcAwWUww9vKVwIyRpXgpzvR/thCIQNHlsqAvL7mILPPvX2yM8XLJlTUpwuamJFeIKdsvhgrFRIrQpXuJ/ch4ZOuI9gLRUh+fmWcqCMX0nKhzltmSqOGIspw4n9X8OVopGENXaq4msrdARP+krH7BP7KImZeqgT/vMxS/9TxmLiQ/oc9W5WRH3jj1SfdIKfiLB0lWyFLrlhiHlF0K+xTux0gGWqYiCxLtVxYn8N+arz748JwtJeSKlMOzXFR2K5xJzIIRsObs6NSP/hMAv/x0N9y1TFV2LJxMww3Cncn9uyhJoKJd3+ua1lLCXxt3p8XOU+JxZMvdmJfYVcFvl8rocDonweiI90LMevtfgsY1my9N/pWJYsWcayZBnLUhzR3wIMAPThZK2300nDAAAAAElFTkSuQmCC';
+  const EASE_MS = 300;
+
+  const I = {
+    users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    user: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+    lock: '<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+    history: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/>',
+    key: '<path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>',
+    cpu: '<rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/>',
+    settings: '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+    calclock: '<path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M16 2v4M8 2v4M3 10h5"/><path d="M17.5 17.5 16 16.3V14"/><circle cx="16" cy="16" r="6"/>',
+    branch: '<line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>',
+    book: '<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
+    grid: '<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',
+    list: '<path d="M3 12h.01M3 18h.01M3 6h.01M8 12h13M8 18h13M8 6h13"/>',
+    chevDown: '<path d="m6 9 6 6 6-6"/>',
+    chevRight: '<path d="m9 18 6-6-6-6"/>',
+    chevLeft: '<path d="m15 18-6-6 6-6"/>',
+    chevsLeft: '<path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/>',
+    chevsRight: '<path d="m6 17 5-5-5-5"/><path d="m13 17 5-5-5-5"/>',
+    search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+    plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+    trash: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    minus: '<path d="M5 12h14"/>',
+    x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+    arrowUp: '<path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>',
+    arrowUpDown: '<path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/>',
+    alert: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+    inbox: '<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
+    refresh: '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+    mail: '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
+    external: '<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+    panel: '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/>',
+    enter: '<polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/>',
+    shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
+    play: '<polygon points="6 3 20 12 6 21 6 3"/>',
+    circleCheck: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+    info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+    rotate: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>'
+  };
+  const ic = (name, extra = '') => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}>${I[name]}</svg>`;
+  const tick = () => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>`;
+  const dash = () => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>`;
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  /* ---------- Resource text (legacy keys) ---------- */
+  const R = {
+    Users: 'Users', User: 'User', AccessProfile: 'Access Profile', ContactGroup: 'Contact Group', Activity: 'Activity', DeveloperKey: 'Developer Key',
+    Add: 'Add', Delete: 'Delete', Search: 'Search', UserName: 'User Name', AccessProfiles: 'Access Profile(s)', Email: 'Email', RealName: 'Real Name',
+    NoItems: 'There are no items to show.', Loading: 'Loading', GeneralError: 'There was an error while processing your request.', Refresh: 'Refresh',
+    Cancel: 'Cancel', DeleteConfirm: 'Are you sure you want to delete selected items?', ItemsPerPage: 'Items per page'
+  };
+
+  /* ---------- SEAtS mark and loaders ---------- */
+  const LEAVES = [
+    { id: 1, a: [26.3, 30.65], b: [28.9, 70.85], s: 10 },
+    { id: 2, a: [40.25, 15], b: [42.85, 55], s: 9.8 },
+    { id: 3, a: [47.85, 55], b: [88.25, 52.35], s: 10.4 },
+    { id: 4, a: [34.15, 70.85], b: [74.55, 68.05], s: 10 }
+  ];
+  const leafPath = ({ a, b, s }) => {
+    const dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L, k = 1.333 * s;
+    const p = (t, n) => `${(a[0] + ux * L * t + uy * n).toFixed(2)} ${(a[1] + uy * L * t - ux * n).toFixed(2)}`;
+    return `M${p(0, 0)} C${p(.2, k)} ${p(.8, k)} ${p(1, 0)} Z`;
+  };
+  const leaves = cls => LEAVES.map(l => `<path class="${cls}" d="${leafPath(l)}"/>`).join('');
+  const gearPath = (cx, cy, teeth, ro, ri) => {
+    const step = Math.PI * 2 / teeth, tw = .3, bw = .52;
+    const pt = (r, a) => `${(cx + r * Math.cos(a)).toFixed(2)} ${(cy + r * Math.sin(a)).toFixed(2)}`;
+    let d = '';
+    for (let i = 0; i < teeth; i++) {
+      const c = i * step + step / 2;
+      d += `${i ? 'L' : 'M'}${pt(ri, c - step * bw / 2)} L${pt(ro, c - step * tw / 2)} A${ro} ${ro} 0 0 1 ${pt(ro, c + step * tw / 2)} L${pt(ri, c + step * bw / 2)} A${ri} ${ri} 0 0 1 ${pt(ri, (i + 1) * step + step / 2 - step * bw / 2)} `;
+    }
+    return d + 'Z';
+  };
+  const cog = (cx, cy, teeth, ro, ri, cls, spin, keep) =>
+    `<g class="${spin}"><path class="${cls}" d="${gearPath(cx, cy, teeth, ro, ri)}"/><g class="${keep}"><g transform="translate(${cx} ${cy}) scale(${(ri * 1.02 / 46).toFixed(4)}) translate(-50 -50)">${leaves('cog-leaf')}</g></g></g>`;
+  const GEARWORK = `<span class="loader gears" aria-hidden="true"><svg viewBox="0 0 120 110">${cog(79, 29, 8, 24.5, 19.5, 'cog-b', 'spin-b', 'keep-b')}${cog(44, 64, 10, 30, 25, 'cog-a', 'spin-a', 'keep-a')}</svg></span>`;
+  const WAVE = 'M-50 0 Q-37.5 -4 -25 0 T0 0 T25 0 T50 0 T75 0 T100 0 T125 0 T150 0 T175 0 T200 0 V140 H-50 Z';
+  let uid = 0;
+  const tide = () => {
+    const id = ++uid;
+    return `<span class="loader tide" aria-hidden="true"><svg viewBox="0 0 100 100"><defs><clipPath id="td-${id}"><circle cx="50" cy="50" r="44.8"/></clipPath><clipPath id="tw-${id}"><path d="${WAVE}"/></clipPath></defs>
+      <circle class="rim" cx="50" cy="50" r="46"/><g>${leaves('under')}</g>
+      <g clip-path="url(#td-${id})"><g class="rise"><g class="drift slow"><path class="water back" d="${WAVE}" transform="translate(0 -2)"/></g>
+      <g class="drift"><path class="water" d="${WAVE}"/><g clip-path="url(#tw-${id})"><g class="undrift"><g class="unrise">${leaves('over')}</g></g></g></g></g></g></svg></span>`;
+  };
+
+  /* ---------- Sample data (fake) ---------- */
+  const NAMES = ['Amelia Hart', 'Ben Carter', 'Chloe Nguyen', 'Daniel Okoro', 'Ella Fitzgerald', 'Farid Haddad', 'Grace Liu', 'Harry Doyle', 'Isla Moreno', 'Jack Brennan',
+    'Kavya Rao', 'Liam Walsh', 'Maya Cohen', 'Noah Fischer', 'Olivia Byrne', 'Priya Nair', 'Quinn Murphy', 'Rosa Alvarez', 'Samuel Adeyemi', 'Tara Kelly',
+    'Umar Siddiqui', 'Vera Lindqvist', 'William Grant', 'Xin Zhao', 'Yasmin Patel', 'Zoe Martin', 'Aaron Blake', 'Bianca Rossi', 'Connor Quinn', 'Dana Novak',
+    'Elif Demir', 'Finn Larsen', 'Gemma Hughes', 'Hugo Laurent', 'Ines Costa', 'Jonah Reid', 'Keira Dunne', 'Leo Schmidt', 'Mila Horvat', 'Nate Osei'];
+  const PERSONAS = ['Administrator', 'Attendance Officer', 'Programme Leader', 'Read Only', 'Student Support', 'Timetabling'];
+  const joinProfiles = list => list.filter(p => p && p.trim()).sort((a, b) => a.localeCompare(b)).join(', ');
+  const SEED = NAMES.map((name, i) => {
+    const [first, last] = name.toLowerCase().normalize('NFD').replace(/[^\w ]/g, '').split(' ');
+    const picks = [];
+    if (i % 7 !== 3) picks.push(PERSONAS[(i * 5) % PERSONAS.length]);
+    if (i % 3 === 0) picks.push(PERSONAS[(i + 2) % PERSONAS.length]);
+    if (i % 11 === 5) picks.push(' ');
+    return { id: 1000 + i * 7, userName: `${first}.${last}`, emailAddress: `${first}.${last}@example.com`, fullName: name, personas: [...new Set(picks)] };
+  });
+  SEED.unshift({ id: 1, userName: 'seats.admin', emailAddress: 'seats.admin@example.com', fullName: 'SEAtS Admin', personas: ['Administrator'] });
+  SEED.pop();
+
+  const COLS = [
+    { key: 'userName', label: R.UserName, cls: 'c-user' },
+    { key: 'accessProfiles', label: R.AccessProfiles, cls: 'c-ap', personas: true },
+    { key: 'emailAddress', label: R.Email, cls: 'c-email' },
+    { key: 'fullName', label: R.RealName, cls: 'c-real' }
+  ];
+  const SUBNAV = [
+    { id: 'user', label: R.User, icon: 'user', route: '#/User', perm: 'Users + Access' },
+    { id: 'access', label: R.AccessProfile, icon: 'lock', route: '#/AccessProfile', perm: 'AccessProfiles + Access' },
+    { id: 'contact', label: R.ContactGroup, icon: 'users', route: '#/ContactGroup', perm: 'ContactGroup + Access' },
+    { id: 'activity', label: R.Activity, icon: 'history', route: '#/Audit', perm: 'Users + Activity' },
+    { id: 'devkey', label: R.DeveloperKey, icon: 'key', route: '#/DeveloperKey', perm: 'Users + DeveloperKeyDashboard' }
+  ];
+  const PAGE_SIZES = [10, 15, 20, 50, 100, 200];
+
+  const cleanSearch = raw => {
+    let s = raw.trim();
+    while (s.indexOf('  ') > -1) s = s.replace('  ', ' ');
+    return s;
+  };
+
+  /* ---------- Simulated UserApi.GetUsers ---------- */
+  function serverGetUsers(db, params, mode, personasFlag) {
+    return new Promise((resolve, reject) => {
+      if (mode === 'loading') return;
+      setTimeout(() => {
+        if (mode === 'error') return reject(new Error('500'));
+        const q = params.searchFilter.toLowerCase();
+        let rows = mode === 'empty' ? [] : db.map(u => ({
+          id: u.id, userName: u.userName, emailAddress: u.emailAddress, fullName: u.fullName, realName: u.fullName, associatedStudentId: null,
+          accessProfiles: personasFlag ? joinProfiles(u.personas) : null
+        }));
+        if (q) rows = rows.filter(u => [u.userName, u.emailAddress, u.fullName].some(v => v.toLowerCase().includes(q)));
+        const dir = params.sortDir === 'desc' ? -1 : 1;
+        rows.sort((a, b) => String(a[params.sortCol] || '').localeCompare(String(b[params.sortCol] || ''), undefined, { sensitivity: 'base' }) * dir);
+        const start = params.currentPageIndex * params.pageSize;
+        resolve({ items: rows.slice(start, start + params.pageSize), totalRowCount: rows.length, seatsAuthorisationByPersonas: personasFlag });
+      }, 620);
+    });
+  }
+
+  /* ---------- Preview controller (shared by all five designs) ---------- */
+  class Preview {
+    constructor(def, mount) {
+      this.def = def;
+      this.p = `d${def.n}`;
+      this.mount = mount;
+      this.db = SEED.map(u => ({ ...u, personas: [...u.personas] }));
+      this.mode = 'populated';
+      this.canAdd = true;
+      this.canDelete = true;
+      this.personas = true;
+      this.search = '';
+      this.appliedSearch = '';
+      this.sortCol = 'userName';
+      this.sortDir = 'asc';
+      this.pageIndex = 0;
+      this.pageSize = 100;
+      this.result = null;
+      this.error = false;
+      this.pending = false;
+      this.loaderOn = false;
+      this.selected = new Map();
+      this.dialog = null;
+      this.deleting = false;
+      this.toast = null;
+      this.just = null;
+      this.focusId = null;
+      this.view = def.n === 4 ? 'cards' : 'table';
+      this.collapsed = false;
+      this.shownTotal = 0;
+      this.seq = 0;
+      this.timers = {};
+      this.build();
+      this.load('initial');
+    }
+
+    t(name, fn, ms) { clearTimeout(this.timers[name]); this.timers[name] = setTimeout(fn, ms); }
+
+    build() {
+      const d = this.def;
+      this.mount.innerHTML = `
+        <div class="design-title"><span class="num">${d.n}</span><h2 id="${this.p}-title">${esc(d.name)}</h2><span class="idea">${esc(d.idea)}</span></div>
+        <div class="switcher" role="group" aria-label="Preview state for design ${d.n}">
+          <div class="sw-group"><span class="sw-label">State</span>
+            <div class="seg" data-sw="mode">${[['populated', 'Populated'], ['loading', 'Loading'], ['empty', 'Empty'], ['error', 'Error']].map(([v, l]) => `<button type="button" data-mode="${v}" aria-pressed="${v === this.mode}">${l}</button>`).join('')}</div>
+          </div>
+          <div class="sw-group">
+            <button type="button" class="sw-toggle" data-sw="perm" aria-pressed="false"><span class="track"></span>No Add/Delete permission</button>
+            <button type="button" class="sw-toggle" data-sw="personas" aria-pressed="true"><span class="track"></span>Personas column</button>
+            <button type="button" class="sw-btn" data-sw="appstart">${ic('play', 'width="13" height="13"')}App start (Tide)</button>
+            <button type="button" class="sw-btn" data-sw="reset">${ic('rotate', 'width="13" height="13"')}Reset sample</button>
+          </div>
+        </div>
+        <div class="frame"><div class="frame-scroll"><div class="pv" id="${this.p}-pv">
+          ${navBar()}
+          <div class="pv-content" id="${this.p}-content"></div>
+          <div id="${this.p}-layer"></div>
+          <div class="sample">Sample data · 40 fake users · nothing is called or saved</div>
+        </div></div></div>
+        <div class="notes">
+          <div class="note"><h3>Idea</h3><p>${esc(d.idea)}</p></div>
+          <div class="note"><h3>Best for</h3><p>${esc(d.best)}</p></div>
+          <div class="note"><h3>Trade-off</h3><p>${esc(d.trade)}</p></div>
+          <div class="note"><h3>Coverage</h3><p><span class="ok">Spec items: ${CHECKLIST.length}/${CHECKLIST.length}</span> · plus search clean-up, reload clears selection, footer only above 9 rows</p></div>
+          ${d.proposal ? `<div class="note proposal"><h3>Proposal (needs approval, not in preview)</h3><p>${esc(d.proposal)}</p></div>` : ''}
+          <div class="note coverage"><h3>Spec checklist in this design</h3><ul>${CHECKLIST.map(c => `<li>${ic('check')}<span>${esc(c[0])} <code>${esc(c[1])}</code></span></li>`).join('')}</ul></div>
+        </div>`;
+      this.content = this.mount.querySelector(`#${this.p}-content`);
+      this.layer = this.mount.querySelector(`#${this.p}-layer`);
+      this.pv = this.mount.querySelector(`#${this.p}-pv`);
+      this.bindSwitcher();
+      this.bindContent();
+    }
+
+    bindSwitcher() {
+      const sw = this.mount.querySelector('.switcher');
+      sw.addEventListener('click', e => {
+        const b = e.target.closest('button');
+        if (!b) return;
+        if (b.dataset.mode) {
+          this.mode = b.dataset.mode;
+          sw.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.mode === this.mode)));
+          this.load('mode');
+          return;
+        }
+        const kind = b.closest('[data-sw]').dataset.sw;
+        if (kind === 'perm') {
+          const on = b.getAttribute('aria-pressed') !== 'true';
+          b.setAttribute('aria-pressed', String(on));
+          this.canAdd = !on;
+          this.canDelete = !on;
+          if (on) this.selected.clear();
+          this.render();
+        } else if (kind === 'personas') {
+          this.personas = b.getAttribute('aria-pressed') !== 'true';
+          b.setAttribute('aria-pressed', String(this.personas));
+          if (!this.personas && this.sortCol === 'accessProfiles') { this.sortCol = 'userName'; this.sortDir = 'asc'; }
+          this.load('reload');
+        } else if (kind === 'appstart') {
+          this.appStart();
+        } else if (kind === 'reset') {
+          this.db = SEED.map(u => ({ ...u, personas: [...u.personas] }));
+          this.search = ''; this.appliedSearch = ''; this.sortCol = 'userName'; this.sortDir = 'asc'; this.pageIndex = 0; this.pageSize = 100; this.selected.clear();
+          this.load('reload');
+        }
+      });
+    }
+
+    appStart() {
+      const layer = document.createElement('div');
+      layer.className = 'appstart';
+      layer.setAttribute('role', 'status');
+      layer.setAttribute('aria-label', 'Loading SEAtS Admin');
+      this.pv.appendChild(layer);
+      setTimeout(() => { layer.innerHTML = `<div class="appstart-inner">${tide()}<div style="display:grid;justify-items:center;gap:10px"><div class="wordmark"><b>SEAtS</b> <span>Admin</span></div><div class="softly">${R.Loading}</div></div></div>`; }, 400);
+      setTimeout(() => { layer.classList.add('out'); this.load('initial'); }, 3600);
+      setTimeout(() => layer.remove(), 4000);
+    }
+
+    params() {
+      return { currentPageIndex: this.pageIndex, pageSize: this.pageSize, sortCol: this.sortCol, sortDir: this.sortDir, searchFilter: this.appliedSearch };
+    }
+
+    load(reason) {
+      const seq = ++this.seq;
+      this.pending = true;
+      this.error = false;
+      this.selected.clear();
+      this.loadStart = performance.now();
+      this.t('loader', () => { if (this.seq === seq && this.pending) { this.loaderOn = true; this.loaderShownAt = performance.now(); this.render(); } }, 400);
+      if (reason === 'initial' || reason === 'mode') this.result = null;
+      this.render();
+      serverGetUsers(this.db, this.params(), this.mode, this.personas).then(
+        data => this.settle(seq, () => { this.result = data; this.rowsIn = true; }),
+        () => this.settle(seq, () => { this.error = true; this.result = null; })
+      );
+    }
+
+    settle(seq, apply) {
+      if (seq !== this.seq) return;
+      const finish = () => {
+        if (seq !== this.seq) return;
+        this.pending = false;
+        this.loaderOn = false;
+        apply();
+        this.render();
+        this.rowsIn = false;
+      };
+      if (this.loaderOn) {
+        const left = 500 - (performance.now() - this.loaderShownAt);
+        return left > 0 ? this.t('settle', finish, left) : finish();
+      }
+      clearTimeout(this.timers.loader);
+      finish();
+    }
+
+    showToast(title, body, ok = false) {
+      this.toast = { title, body, ok };
+      this.renderLayer();
+      this.t('toast', () => { this.toast = null; this.renderLayer(); }, 3400);
+    }
+
+    /* ---- actions ---- */
+    submitSearch() {
+      this.search = cleanSearch(this.search);
+      this.appliedSearch = this.search;
+      this.pageIndex = 0;
+      this.load('reload');
+    }
+    sortBy(col) {
+      this.sortDir = this.sortCol === col ? (this.sortDir === 'asc' ? 'desc' : 'asc') : 'asc';
+      this.sortCol = col;
+      this.load('reload');
+    }
+    goPage(i) {
+      const pages = this.pages();
+      this.pageIndex = Math.max(0, Math.min(pages - 1, i));
+      this.load('reload');
+    }
+    pages() { return this.result ? Math.max(1, Math.ceil(this.result.totalRowCount / this.pageSize)) : 1; }
+    toggle(id) {
+      const item = this.result.items.find(u => u.id === id);
+      if (this.selected.has(id)) this.selected.delete(id); else this.selected.set(id, item);
+      this.just = id;
+      this.render();
+    }
+    togglePage() {
+      const ids = this.result.items.map(u => u.id);
+      const all = ids.every(id => this.selected.has(id));
+      this.result.items.forEach(u => (all ? this.selected.delete(u.id) : this.selected.set(u.id, u)));
+      this.just = 'page';
+      this.render();
+    }
+    openDetails(id) {
+      const u = this.result.items.find(x => x.id === id);
+      this.showToast(`Open ${u.userName}`, `Goes to user details: /users/${id} (legacy #/User/Details/${id}).`);
+    }
+    add() { this.showToast(R.Add, 'Goes to a new user: /users/new (legacy #/User/Details, no id).'); }
+    subnav(id) {
+      const s = SUBNAV.find(x => x.id === id);
+      if (id === 'user') return;
+      this.showToast(s.label, `Links to ${s.route}. Shown only with ${s.perm}.`);
+    }
+    askDelete(returnId) {
+      this.returnFocus = returnId;
+      this.dialog = { items: [...this.selected.values()] };
+      this.renderLayer();
+      this.layer.querySelector('[data-act="dlg-cancel"]').focus();
+    }
+    closeDialog() {
+      if (this.deleting) return;
+      this.dialog = null;
+      this.renderLayer();
+      const back = this.returnFocus && document.getElementById(this.returnFocus);
+      if (back) back.focus();
+    }
+    confirmDelete() {
+      this.deleting = true;
+      this.renderLayer();
+      setTimeout(() => {
+        const ids = this.dialog.items.map(u => u.id);
+        this.db = this.db.filter(u => !ids.includes(u.id));
+        this.deleting = false;
+        this.dialog = null;
+        this.pageIndex = 0;
+        this.search = '';
+        this.appliedSearch = '';
+        this.selected.clear();
+        this.showToast('Deleted', `DELETE api/UserApi?ids=${ids.join('&ids=')} · page reset, search cleared, list reloaded. Sample only.`, true);
+        this.load('reload');
+        const add = document.getElementById(`${this.p}-add`);
+        if (add) add.focus();
+      }, 900);
+    }
+
+    /* ---- render ---- */
+    render() {
+      const active = document.activeElement;
+      const keepId = active && this.content.contains(active) ? active.id : null;
+      const caret = active && active.tagName === 'INPUT' ? active.selectionStart : null;
+      const scroller = this.content.querySelector('[data-scroll]');
+      const scrollTop = scroller ? scroller.scrollTop : 0;
+      this.content.innerHTML = this.def.render(this);
+      const next = this.content.querySelector('[data-scroll]');
+      if (next && !this.rowsIn) next.scrollTop = scrollTop;
+      if (next) next.classList.toggle('scrolled', next.scrollTop > 0);
+      if (keepId) {
+        const el = document.getElementById(keepId);
+        if (el) { el.focus({ preventScroll: true }); if (caret != null && el.setSelectionRange) el.setSelectionRange(caret, caret); }
+      }
+      this.placeIndicators();
+      this.countUp();
+      this.just = null;
+    }
+
+    renderLayer() {
+      let html = '';
+      if (this.dialog) {
+        const items = this.dialog.items;
+        html += `<div class="overlay" data-act="dlg-cancel"></div>
+          <div class="dialog" role="alertdialog" aria-modal="true" aria-labelledby="${this.p}-dlg-t" aria-describedby="${this.p}-dlg-d">
+            <h3 id="${this.p}-dlg-t">${R.Delete}</h3>
+            <p id="${this.p}-dlg-d">${R.DeleteConfirm}</p>
+            <ul class="dialog-list">${items.slice(0, 6).map(u => `<li class="badge">${esc(u.userName)}</li>`).join('')}${items.length > 6 ? `<li class="badge badge-brand">+${items.length - 6}</li>` : ''}</ul>
+            <div class="dialog-foot">
+              <button type="button" class="btn btn-outline" data-act="dlg-cancel" ${this.deleting ? 'disabled' : ''}>${R.Cancel}</button>
+              <button type="button" class="btn btn-danger" data-act="dlg-confirm" aria-busy="${this.deleting}" ${this.deleting ? 'disabled' : ''}>${this.deleting ? `${GEARWORK.replace('class="loader gears"', 'class="loader gears" style="--disc:#fff;--disc2:rgba(255,255,255,.7);--leaf:#ef4444;transform:scale(.42);margin:-16px -18px"')}` : ''}${R.Delete}</button>
+            </div>
+          </div>`;
+      }
+      if (this.toast) html += `<div class="toast ${this.toast.ok ? 'ok' : ''}" role="status">${ic(this.toast.ok ? 'circleCheck' : 'info')}<b>${esc(this.toast.title)}</b><span>${esc(this.toast.body)}</span></div>`;
+      this.layer.innerHTML = html;
+    }
+
+    placeIndicators() {
+      this.content.querySelectorAll('[data-ind]').forEach(ind => {
+        const host = ind.parentElement;
+        const on = host.querySelector(ind.dataset.ind);
+        if (!on) return;
+        ind.style.width = `${on.offsetWidth}px`;
+        ind.style.transform = `translateX(${on.offsetLeft}px)`;
+      });
+    }
+
+    countUp() {
+      const target = this.result ? this.result.totalRowCount : 0;
+      const els = this.content.querySelectorAll('[data-countup]');
+      if (!els.length) return;
+      const from = this.shownTotal, start = performance.now();
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const step = now => {
+        const k = reduce ? 1 : Math.min(1, (now - start) / 450);
+        const v = Math.round(from + (target - from) * (1 - Math.pow(1 - k, 3)));
+        els.forEach(el => { el.textContent = v; });
+        if (k < 1) requestAnimationFrame(step); else this.shownTotal = target;
+      };
+      if (from === target) els.forEach(el => { el.textContent = target; });
+      else requestAnimationFrame(step);
+    }
+
+    bindContent() {
+      const root = this.pv;
+      root.addEventListener('click', e => {
+        const t = e.target.closest('[data-act]');
+        if (!t || !root.contains(t)) return;
+        const id = Number(t.dataset.id);
+        switch (t.dataset.act) {
+          case 'sort': return this.sortBy(t.dataset.col);
+          case 'search-go': return this.submitSearch();
+          case 'search-clear': this.search = ''; this.appliedSearch = ''; this.pageIndex = 0; this.load('reload'); setTimeout(() => document.getElementById(`${this.p}-search`)?.focus(), 0); return;
+          case 'page': return this.goPage(Number(t.dataset.page));
+          case 'select': e.stopPropagation(); return this.toggle(id);
+          case 'select-page': return this.togglePage();
+          case 'clear-selection': this.selected.clear(); this.render(); document.getElementById(`${this.p}-add`)?.focus(); return;
+          case 'open': return this.openDetails(id);
+          case 'focus-row': this.focusId = id; this.render(); return;
+          case 'add': return this.add();
+          case 'subnav': return this.subnav(t.dataset.sub);
+          case 'delete': return this.askDelete(t.id);
+          case 'dlg-cancel': return this.closeDialog();
+          case 'dlg-confirm': return this.confirmDelete();
+          case 'retry': return this.load('reload');
+          case 'view': this.view = t.dataset.view; this.render(); return;
+          case 'collapse': this.collapsed = !this.collapsed; this.render(); return;
+          case 'dir': this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc'; this.load('reload'); return;
+          case 'nav': this.showToast(t.dataset.label, 'Top menu item. Users is the current area.'); return;
+          default: return;
+        }
+      });
+      root.addEventListener('input', e => {
+        if (e.target.dataset.act === 'search') { this.search = e.target.value; this.renderSearchClear(); }
+      });
+      root.addEventListener('change', e => {
+        if (e.target.dataset.act === 'page-size') { this.pageSize = Number(e.target.value); this.pageIndex = 0; this.load('reload'); }
+        if (e.target.dataset.act === 'sort-col') { this.sortCol = e.target.value; this.sortDir = 'asc'; this.load('reload'); }
+      });
+      root.addEventListener('keydown', e => {
+        const t = e.target;
+        if (this.dialog) {
+          if (e.key === 'Escape') { e.preventDefault(); this.closeDialog(); return; }
+          if (e.key === 'Tab') {
+            const f = [...this.layer.querySelectorAll('button:not([disabled])')];
+            if (!f.length) { e.preventDefault(); return; }
+            const i = f.indexOf(document.activeElement);
+            e.preventDefault();
+            f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+          }
+          return;
+        }
+        if (t.dataset.act === 'search' && e.key === 'Enter') { e.preventDefault(); this.submitSearch(); return; }
+        if (t.matches('[data-row]')) {
+          if (e.key === 'Enter') { e.preventDefault(); this.openDetails(Number(t.dataset.id)); return; }
+          if (e.key === ' ' && this.canDelete) { e.preventDefault(); this.toggle(Number(t.dataset.id)); return; }
+          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            const rows = [...this.content.querySelectorAll('[data-row]')];
+            const next = rows[rows.indexOf(t) + (e.key === 'ArrowDown' ? 1 : -1)];
+            if (next) { if (this.def.n === 2) { this.focusId = Number(next.dataset.id); this.render(); document.getElementById(next.id)?.focus(); } else next.focus(); }
+          }
+        }
+      });
+      root.addEventListener('scroll', e => {
+        if (e.target.matches && e.target.matches('[data-scroll]')) e.target.classList.toggle('scrolled', e.target.scrollTop > 0);
+      }, true);
+    }
+
+    renderSearchClear() {
+      const box = document.getElementById(`${this.p}-search`)?.parentElement;
+      if (!box) return;
+      const existing = box.querySelector('.clear');
+      if (this.search && !existing) box.insertAdjacentHTML('beforeend', `<button type="button" class="clear" data-act="search-clear" aria-label="Clear search">${ic('x')}</button>`);
+      if (!this.search && existing && !this.appliedSearch) existing.remove();
+    }
+
+    /* ---- shared fragments ---- */
+    get total() { return this.result ? this.result.totalRowCount : 0; }
+    get cols() { return COLS.filter(c => !c.personas || (this.result ? this.result.seatsAuthorisationByPersonas : this.personas)); }
+    get selectionOn() { return this.canDelete && this.selected.size > 0; }
+
+    cb(checked, act, id, label) {
+      const just = (this.just === id || (this.just === 'page' && act !== 'select-page')) && checked ? 'just' : '';
+      const idAttr = id != null ? `data-id="${id}" id="${this.p}-cb-${id}"` : `id="${this.p}-cb-page"`;
+      return `<button type="button" class="cb ${just}" role="checkbox" aria-checked="${checked}" aria-label="${esc(label)}" data-act="${act}" ${idAttr}>${checked === true ? tick() : checked === 'mixed' ? dash() : ''}</button>`;
+    }
+
+    searchBox(opts = {}) {
+      return `<div class="search ${opts.grow === false ? '' : 'grow'}" role="search" style="${opts.width ? `width:${opts.width}` : ''}">${ic('search')}
+        <input class="input" id="${this.p}-search" type="search" data-act="search" value="${esc(this.search)}" placeholder="${R.Search}..." aria-label="${R.Search} users, press Enter" autocomplete="off">
+        ${this.search || this.appliedSearch ? `<button type="button" class="clear" data-act="search-clear" aria-label="Clear search">${ic('x')}</button>` : ''}
+        <button type="button" class="enter" data-act="search-go" aria-label="${R.Search}">${ic('enter')}Enter</button></div>`;
+    }
+
+    addBtn(cls = 'btn-primary', label = R.Add) {
+      return this.canAdd ? `<button type="button" class="btn ${cls}" data-act="add" id="${this.p}-add">${ic('plus')}${label}</button>` : '';
+    }
+
+    deleteBtn(cls = 'btn-danger-outline btn-sm', withCount = true) {
+      return this.selectionOn ? `<button type="button" class="btn ${cls}" data-act="delete" id="${this.p}-del">${ic('trash')}${R.Delete}${withCount ? ` (${this.selected.size})` : ''}</button>` : '';
+    }
+
+    veil() {
+      return this.result && this.loaderOn ? `<div class="veil" style="top:40px"><div class="load-note" role="status">${GEARWORK}<span class="softly">${R.Loading}</span></div></div>` : '';
+    }
+
+    countText() {
+      if (!this.result || this.error) return '';
+      const s = this.selected.size;
+      return `<span class="count" aria-live="polite"><b data-countup>${this.shownTotal}</b> ${this.total === 1 ? 'user' : 'users'}${this.appliedSearch ? ` matching “${esc(this.appliedSearch)}”` : ''}${s ? ` · <b>${s}</b> selected <button type="button" class="link-btn" data-act="clear-selection">Clear selection</button>` : ''}</span>`;
+    }
+
+    subnavTabs(style = 'tabs') {
+      const cls = { tabs: 'tabs', underline: 'underline-tabs', seg: 'seg-nav' }[style];
+      const ind = { tabs: '<span class="tab-ind" data-ind=".tab[aria-selected=true]"></span>', underline: '<span class="u-ind" data-ind=".tab[aria-selected=true]"></span>', seg: '<span class="seg-ind" data-ind=".tab[aria-selected=true]"></span>' }[style];
+      return `<nav class="${cls}" aria-label="Users area">${ind}${SUBNAV.map(s => `<button type="button" class="tab" data-act="subnav" data-sub="${s.id}" aria-selected="${s.id === 'user'}" ${s.id === 'user' ? 'aria-current="page"' : ''} title="Needs ${esc(s.perm)}">${ic(s.icon)}${s.label}</button>`).join('')}</nav>`;
+    }
+
+    stateBody(compact = false) {
+      if (this.error) return `<div class="state err" role="alert">${iconWrap('alert')}<h4>${R.GeneralError}</h4><p>The user list could not be loaded. This is not an empty list.</p><button type="button" class="btn btn-outline btn-sm" data-act="retry" id="${this.p}-retry">${ic('refresh')}${R.Refresh}</button></div>`;
+      if (this.result && this.result.totalRowCount === 0) {
+        return `<div class="state">${iconWrap('inbox')}<h4>${R.NoItems}</h4>${this.appliedSearch ? `<p>Nothing matches “${esc(this.appliedSearch)}”.</p><button type="button" class="btn btn-outline btn-sm" data-act="search-clear">${ic('x')}Clear search</button>` : `<p>${compact ? '' : 'No users exist yet.'}</p>`}</div>`;
+      }
+      return '';
+    }
+
+    loaderBody(rows = 8) {
+      const skel = Array.from({ length: rows }, (_, r) => `<div style="display:grid;grid-template-columns:16px 1.1fr 1.4fr 1.5fr 1fr;gap:18px;padding:12px 16px;border-bottom:1px solid var(--border)">${[16, 60, 72, 80, 55].map((w, i) => `<div class="skel" style="height:${i ? 12 : 16}px;width:${i ? (w - (r * 7) % 20) : 16}${i ? '%' : 'px'};animation-delay:${r * 90}ms"></div>`).join('')}</div>`).join('');
+      const note = `<div class="load-note" role="status">${GEARWORK}<span class="softly">${R.Loading}</span></div>`;
+      if (!this.loaderOn) return `<div style="min-height:320px" aria-busy="true"></div>`;
+      return `<div class="load-skel" aria-busy="true">${skel}<div class="veil">${note}</div></div>`;
+    }
+
+    table(opts = {}) {
+      const cols = this.cols;
+      const res = this.result;
+      const selectable = this.canDelete;
+      const items = res ? res.items : [];
+      const onPage = items.filter(u => this.selected.has(u.id)).length;
+      const pageState = !items.length || !onPage ? false : onPage === items.length ? true : 'mixed';
+      const head = `<tr>${selectable ? `<th class="c-cb" scope="col">${items.length ? this.cb(pageState, 'select-page', null, 'Select all users on this page') : ''}</th>` : ''}${cols.map(c => {
+        const on = this.sortCol === c.key;
+        return `<th scope="col" aria-sort="${on ? (this.sortDir === 'asc' ? 'ascending' : 'descending') : 'none'}"><button type="button" class="th-sort ${on ? 'on' : ''} ${on && this.sortDir === 'desc' ? 'desc' : ''}" data-act="sort" data-col="${c.key}" id="${this.p}-sort-${c.key}">${c.label}${ic(on ? 'arrowUp' : 'arrowUpDown')}</button></th>`;
+      }).join('')}</tr>`;
+      const span = cols.length + (selectable ? 1 : 0);
+      let body;
+      const state = this.stateBody();
+      if (!res && !this.error) body = `<tr><td colspan="${span}" style="padding:0;border:0">${this.loaderBody()}</td></tr>`;
+      else if (state) body = `<tr><td colspan="${span}" style="padding:0;border:0">${state}</td></tr>`;
+      else body = items.map((u, i) => {
+        const sel = this.selected.has(u.id);
+        return `<tr data-row data-act="open" data-id="${u.id}" id="${this.p}-row-${u.id}" tabindex="0" aria-selected="${sel}" style="${this.rowsIn ? `animation-delay:${Math.min(i, 20) * 22}ms` : ''}">${selectable ? `<td class="c-cb">${this.cb(sel, 'select', u.id, `Select ${u.userName}`)}</td>` : ''}${cols.map(c => {
+          if (c.key === 'accessProfiles') return `<td class="c-ap" title="${esc(u.accessProfiles)}">${u.accessProfiles ? esc(u.accessProfiles) : '<span class="empty-ap" aria-label="None">—</span>'}</td>`;
+          return `<td class="${c.cls}">${esc(u[c.key])}</td>`;
+        }).join('')}</tr>`;
+      }).join('');
+      return `<div class="tscroll" data-scroll style="${opts.maxH ? `max-height:${opts.maxH}` : ''}">
+          <table class="tbl ${opts.dense ? 'dense' : ''}" aria-labelledby="${this.p}-title" aria-rowcount="${this.total}" aria-busy="${this.pending}">
+            <thead>${head}</thead><tbody class="${this.rowsIn ? 'rows-in' : ''}">${body}</tbody></table>
+        </div>${this.veil()}`;
+    }
+
+    pager(opts = {}) {
+      const res = this.result;
+      if (!res || this.error || res.totalRowCount <= 9) return '';
+      const pages = this.pages();
+      const from = this.pageIndex * this.pageSize + 1;
+      const to = Math.min((this.pageIndex + 1) * this.pageSize, res.totalRowCount);
+      const dis = c => (c ? 'disabled' : '');
+      return `<div class="pager ${opts.cls || ''}">
+        <div class="pager-l"><label for="${this.p}-ps">${R.ItemsPerPage}</label>
+          <select class="select sm" id="${this.p}-ps" data-act="page-size">${PAGE_SIZES.map(n => `<option ${n === this.pageSize ? 'selected' : ''}>${n}</option>`).join('')}</select>
+          <span class="range">${from}–${to} of ${res.totalRowCount}</span></div>
+        <div class="pager-r"><span style="font-variant-numeric:tabular-nums">${this.pageIndex + 1} of ${pages} pages</span>
+          <button type="button" class="btn btn-ghost" id="${this.p}-pg-first" data-act="page" data-page="0" aria-label="First page" ${dis(this.pageIndex === 0)}>${ic('chevsLeft')}</button>
+          <button type="button" class="btn btn-ghost" id="${this.p}-pg-prev" data-act="page" data-page="${this.pageIndex - 1}" aria-label="Previous page" ${dis(this.pageIndex === 0)}>${ic('chevLeft')}</button>
+          <button type="button" class="btn btn-ghost" id="${this.p}-pg-next" data-act="page" data-page="${this.pageIndex + 1}" aria-label="Next page" ${dis(this.pageIndex >= pages - 1)}>${ic('chevRight')}</button>
+          <button type="button" class="btn btn-ghost" id="${this.p}-pg-last" data-act="page" data-page="${pages - 1}" aria-label="Last page" ${dis(this.pageIndex >= pages - 1)}>${ic('chevsRight')}</button></div>
+      </div>`;
+    }
+
+    permNote() {
+      return !this.canAdd ? `<span class="badge" style="background:#fff7e6;color:#92400e">${ic('shield', 'width="12" height="12"')}View only: Add and Delete hidden</span>` : '';
+    }
+  }
+
+  const iconWrap = name => `<span class="state-ic">${ic(name)}</span>`;
+
+  function navBar() {
+    const items = [['Users', 'users'], ['Devices', 'cpu'], ['Settings', 'settings'], ['Job Schedule', 'calclock'], ['Cases', 'branch'], ['Lesson Type', 'book']];
+    return `<header class="nav">
+      <img class="nav-logo" src="${LOGO}" alt="SEAtS ONE" width="102" height="32">
+      <span class="nav-sep"></span>
+      <nav aria-label="Admin menu" class="nav-menu">
+        ${items.map(([l, i]) => `<button type="button" class="nav-btn" data-act="nav" data-label="${l}" ${l === 'Users' ? 'aria-current="page"' : ''}>${ic(i)}${l}${l === 'Users' ? `<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>` : ''}</button>`).join('')}
+        <button type="button" class="nav-btn" data-act="nav" data-label="More">${ic('grid')}More<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      </nav>
+      <div class="nav-fill"></div>
+      <label class="nav-search">${ic('search')}<input type="search" placeholder="Search…" aria-label="Search menu" autocomplete="off"><kbd>Ctrl K</kbd></label>
+      <button type="button" class="nav-icon" data-act="nav" data-label="User Notifications" aria-label="User Notifications, 3 unread"><span class="bell-wrap"><svg class="bell" viewBox="0 0 16 16" aria-hidden="true"><path fill="#fff" d="M6,14h4a2,2,0,1,1-4,0ZM1,13a1,1,0,0,1,0-2h.5A4.353,4.353,0,0,0,3,8V5A4.952,4.952,0,0,1,8,0a4.951,4.951,0,0,1,5,5V8a4.351,4.351,0,0,0,1.5,3H15a1,1,0,0,1,0,2Z"/></svg><span class="nav-badge">3</span></span></button>
+      <span class="nav-vr"></span>
+      <button type="button" class="nav-avatar" data-act="nav" data-label="Profile Menu" aria-label="Profile Menu">SA</button>
+    </header>`;
+  }
+
+  const CHECKLIST = [
+    ['Route /users gated by Users + Access', 'Index.cshtml:10, UserController.cs:17'],
+    ['Sub-nav with per-pill permission gates', 'Index.cshtml:8-38'],
+    ['Columns User Name, Email, Real Name; Access Profile(s) when personas flag on', 'UserApiController.cs:89-121'],
+    ['Server paging, sort and search against UserApi', 'swgrid.js:655-668'],
+    ['Initial sort userName ascending', 'Index.cshtml:139-140'],
+    ['Add goes to details with no id', 'Index.cshtml:49-52'],
+    ['Multi-select delete with confirmation', 'swgrid.js:420-458'],
+    ['DELETE api/UserApi?ids=… on confirm', 'UserApiController.cs:440-441'],
+    ['Loading, empty and error states distinct', 'swgrid.js:688-720, 808-822'],
+    ['Add and Delete hidden without rights', 'Index.cshtml:49-56']
+  ];
+
+  /* ---------- The five layouts ---------- */
+  const DESIGNS = [
+    {
+      n: 1, name: 'Scheduler-native grid',
+      idea: 'Exactly the Scheduler UserManagement and DataGrid pattern: title row with Add, tabs for the Users area, a search card and the blue-header grid with page controls.',
+      best: 'Teams moving between Scheduler and Admin every day. Zero learning curve, easiest to build from existing shared components.',
+      trade: 'Bulk actions live in the title row, a little away from the rows being selected.',
+      proposal: null,
+      render: m => `<div class="d1">
+        <div class="between">
+          <div class="row" style="gap:14px"><h2 class="h2">${R.Users}</h2>${m.permNote()}</div>
+          <div class="row" style="gap:8px">${m.selectionOn ? `<span class="d1-bulk">${m.countText().replace('class="count"', 'class="count" style="margin-right:4px"')}${m.deleteBtn()}</span>` : ''}${m.addBtn()}</div>
+        </div>
+        ${m.subnavTabs('tabs')}
+        <div class="card shadow-md" style="padding:16px 20px"><div class="between">
+          <div class="row" style="gap:12px"><h3 style="margin:0;font-size:18px;font-weight:400;color:var(--g700)">${R.User}</h3>${m.selectionOn ? '' : m.countText()}</div>
+          ${m.searchBox()}
+        </div></div>
+        <div class="tbox">${m.table()}${m.pager()}</div>
+      </div>`
+    },
+    {
+      n: 2, name: 'Split view with live preview',
+      idea: 'A compact user list on the left and the focused user on the right, so an admin can check who someone is before opening or deleting.',
+      best: 'Checking or confirming individual users, for example before a bulk delete. Arrow keys move the preview.',
+      trade: 'Fewer columns visible at once; the preview only shows the four list fields until User details is specced.',
+      proposal: 'Load the full user record into the preview (extra GET api/UserApi/{id} on focus). Not in legacy; needs approval and a request budget.',
+      render: m => {
+        const res = m.result;
+        const items = res ? res.items : [];
+        if (!m.focusId || !items.some(u => u.id === m.focusId)) m.focusId = items[0] ? items[0].id : null;
+        const focus = items.find(u => u.id === m.focusId);
+        const cols = m.cols;
+        const state = m.stateBody(true);
+        const onPage = items.filter(u => m.selected.has(u.id)).length;
+        const pageState = !items.length || !onPage ? false : onPage === items.length ? true : 'mixed';
+        const list = !res && !m.error ? m.loaderBody(7)
+          : state ? state
+          : `<ul class="d2-rows ${m.rowsIn ? 'rows-in' : ''}" role="listbox" aria-label="${R.Users}" aria-multiselectable="true">${items.map((u, i) => `
+              <li data-row data-act="focus-row" data-id="${u.id}" id="${m.p}-row-${u.id}" class="d2-row" tabindex="0" role="option" aria-selected="${m.selected.has(u.id)}" data-focus="${u.id === m.focusId}" style="${m.rowsIn ? `animation:row-in 300ms var(--ease) ${Math.min(i, 20) * 22}ms both` : ''}">
+                ${m.canDelete ? m.cb(m.selected.has(u.id), 'select', u.id, `Select ${u.userName}`) : '<span></span>'}
+                <span style="min-width:0"><span class="d2-name">${esc(u.userName)}</span><div class="d2-sub">${esc(u.emailAddress)}</div></span>
+                <span class="d2-real">${esc(u.fullName)}</span>
+              </li>`).join('')}</ul>`;
+        return `<div class="d2">
+          <div class="between"><div class="row" style="gap:12px"><h2 class="h2">${R.Users}</h2>${m.countText()}${m.permNote()}</div><div class="row" style="gap:8px">${m.deleteBtn()}${m.addBtn()}</div></div>
+          ${m.subnavTabs('underline')}
+          <div class="d2-split">
+            <section class="card shadow-sm d2-list" aria-label="User list">
+              <div class="d2-head">
+                <div class="between">${m.searchBox({ grow: false, width: '100%' })}</div>
+                <div class="sortbar"><span>Sort</span>${cols.map(c => {
+                  const on = m.sortCol === c.key;
+                  return `<button type="button" class="chip-sort ${on ? 'on' : ''} ${on && m.sortDir === 'desc' ? 'desc' : ''}" data-act="sort" data-col="${c.key}" id="${m.p}-sort-${c.key}" aria-pressed="${on}" aria-label="Sort by ${c.label}${on ? `, ${m.sortDir === 'asc' ? 'ascending' : 'descending'}` : ''}">${c.label}${on ? ic('arrowUp') : ''}</button>`;
+                }).join('')}
+                  ${m.canDelete && items.length && !state ? `<span style="margin-left:auto;display:inline-flex;align-items:center;gap:8px">${m.cb(pageState, 'select-page', null, 'Select all users on this page')}<span>This page</span></span>` : ''}</div>
+              </div>
+              <div class="d2-listbody"><div class="tscroll" data-scroll>${list}</div>${m.veil().replace('style="top:40px"', '')}</div>
+              ${m.pager()}
+            </section>
+            <aside class="card shadow-sm d2-preview" aria-label="Selected user preview" aria-live="polite">
+              ${focus && !m.error ? `<div class="d2-ph"><span class="kicker">${R.User}</span><h3>${esc(focus.userName)}</h3><span class="muted">${esc(focus.fullName)}</span></div>
+                <dl class="d2-dl" id="${m.p}-dl-${focus.id}"><dt>${R.UserName}</dt><dd>${esc(focus.userName)}</dd>${cols.some(c => c.key === 'accessProfiles') ? `<dt>${R.AccessProfiles}</dt><dd>${focus.accessProfiles ? esc(focus.accessProfiles) : '<span class="empty-ap">—</span>'}</dd>` : ''}<dt>${R.Email}</dt><dd>${esc(focus.emailAddress)}</dd><dt>${R.RealName}</dt><dd>${esc(focus.fullName)}</dd></dl>
+                <div class="d2-foot"><span><span class="kbd">↑</span> <span class="kbd">↓</span> move · <span class="kbd">Space</span> select · <span class="kbd">Enter</span> open</span><button type="button" class="btn btn-primary btn-sm" data-act="open" data-id="${focus.id}" id="${m.p}-open">${ic('external')}Open details</button></div>`
+                : `<div class="state">${iconWrap('user')}<h4>${m.error ? R.GeneralError : res ? R.NoItems : R.Loading}</h4><p>${m.error ? 'Use Refresh in the list.' : res ? 'Nothing to preview.' : 'The preview fills once users arrive.'}</p></div>`}
+            </aside>
+          </div>
+        </div>`;
+      }
+    },
+    {
+      n: 3, name: 'Command bar first',
+      idea: 'A sticky command bar under the menu holds the Users area switch, search, total and Add. Selecting rows flips the bar into a blue bulk bar with Delete.',
+      best: 'Power admins who search, select and act quickly. The table gets the full height and width.',
+      trade: 'Title and sub-navigation are compact; less obvious for occasional users where they are in the Users area.',
+      proposal: null,
+      render: m => `<div class="d3">
+        <div class="cmd ${m.selectionOn ? 'selecting' : ''}">
+          <div class="cmd-layer cmd-main" ${m.selectionOn ? 'aria-hidden="true"' : ''}>
+            <div class="cmd-title"><h2 class="h2">${R.Users}</h2></div>
+            ${m.subnavTabs('seg')}
+            <div style="flex:1"></div>
+            ${m.searchBox()}
+            ${m.addBtn('btn-primary btn-sm')}
+          </div>
+          <div class="cmd-layer cmd-bulk" ${m.selectionOn ? '' : 'aria-hidden="true"'}>
+            <span class="row" style="gap:10px;font-weight:600">${m.selectionOn ? `<span style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center">${ic('check', 'width="13" height="13"')}</span>${m.selected.size} selected` : ''}</span>
+            <div style="flex:1"></div>
+            ${m.selectionOn ? `<button type="button" class="btn btn-ghost btn-sm" data-act="clear-selection">${ic('x')}Clear selection</button><button type="button" class="btn btn-white btn-sm" data-act="delete" id="${m.p}-del">${ic('trash')}${R.Delete} ${m.selected.size}</button>` : ''}
+          </div>
+        </div>
+        <div class="d3-body">
+          <div class="d3-meta"><span>${m.countText()}</span><span class="row" style="gap:10px">${m.permNote()}<span>Sorted by <b style="color:var(--fg)">${COLS.find(c => c.key === m.sortCol).label}</b> ${m.sortDir === 'asc' ? 'A–Z' : 'Z–A'}</span></span></div>
+          <div class="tbox">${m.table({ dense: true })}${m.pager()}</div>
+        </div>
+      </div>`
+    },
+    {
+      n: 4, name: 'Cards for scanning, table for work',
+      idea: 'Users as cards for fast visual scanning, with a one-click switch to the dense table. Selection raises a floating action bar.',
+      best: 'Occasional admins finding a person by eye; tenants with few users. The table view stays available for bulk work.',
+      trade: 'Cards show fewer users per screen and sort through a menu instead of clickable headers.',
+      proposal: null,
+      render: m => {
+        const res = m.result;
+        const items = res ? res.items : [];
+        const state = m.stateBody();
+        const sortCols = m.cols;
+        const onPage = items.filter(u => m.selected.has(u.id)).length;
+        const pageState = !items.length || !onPage ? false : onPage === items.length ? true : 'mixed';
+        let body;
+        if (m.view === 'table') body = `<div class="tbox" style="flex:1">${m.table()}${m.pager()}</div>`;
+        else {
+          const cards = !res && !m.error
+            ? `<div class="card" style="overflow:hidden">${m.loaderBody(6)}</div>`
+            : state ? `<div class="card">${state}</div>`
+            : `<div class="cards">${items.map((u, i) => `
+                <article class="ucard" data-row data-act="open" data-id="${u.id}" id="${m.p}-row-${u.id}" tabindex="0" aria-selected="${m.selected.has(u.id)}" aria-label="${esc(u.userName)}, ${esc(u.fullName)}" style="animation-delay:${m.rowsIn ? Math.min(i, 20) * 22 : 0}ms">
+                  ${m.canDelete ? m.cb(m.selected.has(u.id), 'select', u.id, `Select ${u.userName}`) : ''}
+                  <div class="uname">${esc(u.userName)}</div>
+                  <div class="line">${ic('user')}<span>${esc(u.fullName)}</span></div>
+                  <div class="line">${ic('mail')}<span>${esc(u.emailAddress)}</span></div>
+                  ${sortCols.some(c => c.key === 'accessProfiles') ? `<div class="ap">${ic('lock')}<span>${u.accessProfiles ? esc(u.accessProfiles) : '<span class="empty-ap">—</span>'}</span></div>` : ''}
+                </article>`).join('')}</div>`;
+          body = `<div style="position:relative;flex:1;min-height:0;display:flex;flex-direction:column"><div class="d4-scroll" data-scroll>${cards}</div>${m.veil().replace('style="top:40px"', 'style="border-radius:var(--r-lg)"')}</div>${m.pager() ? `<div class="d4-pager">${m.pager()}</div>` : ''}`;
+        }
+        return `<div class="d4">
+          <div class="between"><div class="row" style="gap:12px"><h2 class="h2">${R.Users}</h2>${m.selectionOn ? '' : m.countText()}${m.permNote()}</div>
+            <div class="row" style="gap:10px">
+              <div class="viewtoggle" role="group" aria-label="View"><span class="vt-ind" style="transform:translateX(${m.view === 'cards' ? 0 : 36}px)"></span>
+                <button type="button" data-act="view" data-view="cards" aria-pressed="${m.view === 'cards'}" aria-label="Card view" id="${m.p}-vcards">${ic('grid')}</button>
+                <button type="button" data-act="view" data-view="table" aria-pressed="${m.view === 'table'}" aria-label="Table view" id="${m.p}-vtable">${ic('list')}</button></div>
+              ${m.addBtn()}</div></div>
+          <nav class="pills" aria-label="Users area">${SUBNAV.map(s => `<button type="button" class="pill" data-act="subnav" data-sub="${s.id}" aria-selected="${s.id === 'user'}" ${s.id === 'user' ? 'aria-current="page"' : ''} title="Needs ${esc(s.perm)}">${ic(s.icon)}${s.label}</button>`).join('')}</nav>
+          <div class="between">
+            ${m.searchBox()}
+            ${m.view === 'cards' ? `<div class="row" style="gap:8px">
+              ${m.canDelete && items.length && !state ? `<span class="row" style="gap:8px;margin-right:6px;font-size:13px;color:var(--mfg)">${m.cb(pageState, 'select-page', null, 'Select all users on this page')}Select page</span>` : ''}
+              <label class="sr" for="${m.p}-sortcol">Sort by</label>
+              <select class="select" id="${m.p}-sortcol" data-act="sort-col">${sortCols.map(c => `<option value="${c.key}" ${c.key === m.sortCol ? 'selected' : ''}>${c.label}</option>`).join('')}</select>
+              <button type="button" class="btn btn-outline btn-icon btn-sm dirbtn ${m.sortDir === 'desc' ? 'desc' : ''}" data-act="dir" id="${m.p}-dir" aria-label="Sort ${m.sortDir === 'asc' ? 'ascending, switch to descending' : 'descending, switch to ascending'}">${ic('arrowUp')}</button></div>` : ''}
+          </div>
+          ${body}
+          ${m.selectionOn ? `<div class="float-bar" role="region" aria-label="Selection"><span style="font-weight:600;font-variant-numeric:tabular-nums">${m.selected.size} selected</span><span class="sep"></span><span class="count" style="color:rgba(255,255,255,.75)">of <b style="color:#fff" data-countup>${m.shownTotal}</b></span><button type="button" class="btn btn-ghost btn-xs" data-act="clear-selection">Clear selection</button><button type="button" class="btn btn-danger btn-xs" data-act="delete" id="${m.p}-del">${ic('trash')}${R.Delete}</button></div>` : ''}
+        </div>`;
+      }
+    },
+    {
+      n: 5, name: 'Workspace with side navigation',
+      idea: 'The Users area becomes a workspace: its five sections in a collapsible sidebar, a breadcrumb, three live figures and a toolbar that gains Delete on selection.',
+      best: 'Admins who move between User, Access Profile and Contact Group often. Sections stay visible without taking a row of tabs.',
+      trade: 'The sidebar takes 236 px (64 px collapsed) from the table and is a pattern the Scheduler top bar does not use.',
+      proposal: 'Remember the collapsed sidebar per admin (needs a user id source, decision D-009).',
+      render: m => `<div class="d5 ${m.collapsed ? 'collapsed' : ''}">
+        <aside class="side" aria-label="Users area">
+          <div class="side-title">${R.Users}</div>
+          ${SUBNAV.map(s => `<button type="button" class="side-link" data-act="subnav" data-sub="${s.id}" ${s.id === 'user' ? 'aria-current="page"' : ''} title="${s.label} · needs ${esc(s.perm)}">${ic(s.icon)}<span class="side-label">${s.label}</span></button>`).join('')}
+          <div class="side-foot"><button type="button" class="side-link" data-act="collapse" id="${m.p}-collapse" aria-expanded="${!m.collapsed}" aria-label="${m.collapsed ? 'Expand' : 'Collapse'} sidebar">${ic('panel')}<span class="side-label">Collapse</span></button></div>
+        </aside>
+        <div class="d5-main">
+          <div class="between"><div><div class="crumb">${R.Users} ${ic('chevRight')} <span style="color:var(--fg)">${R.User}</span></div><h2 class="h2" style="margin-top:2px">${R.User}</h2></div>${m.permNote()}</div>
+          <div class="stats">
+            <div class="stat"><span>Total users${m.appliedSearch ? ' (search)' : ''}</span>${m.result && !m.error ? `<b data-countup>${m.shownTotal}</b>` : '<b aria-label="Not loaded">–</b>'}</div>
+            <div class="stat ${m.selectionOn ? 'hot' : ''}"><span>Selected ${m.selectionOn ? '<button type="button" class="link-btn" data-act="clear-selection">Clear</button>' : ''}</span><b>${m.selected.size}</b></div>
+            <div class="stat"><span>Page</span><b>${m.result && m.total ? `${m.pageIndex + 1} / ${m.pages()}` : '–'}</b></div>
+          </div>
+          <div class="card shadow-sm d5-tool">${m.searchBox()}<div class="row" style="gap:8px">${m.deleteBtn('btn-danger btn-sm')}${m.addBtn('btn-primary btn-sm')}</div></div>
+          <div class="tbox">${m.table()}${m.pager()}</div>
+        </div>
+      </div>`
+    }
+  ];
+
+  const jump = document.getElementById('jump');
+  jump.innerHTML = DESIGNS.map(d => `<a href="#design-${d.n}"><span>${d.n}</span>${esc(d.name)}</a>`).join('');
+  const host = document.getElementById('designs');
+  DESIGNS.forEach(d => {
+    const section = document.createElement('section');
+    section.className = 'design';
+    section.id = `design-${d.n}`;
+    section.setAttribute('aria-labelledby', `d${d.n}-title`);
+    host.appendChild(section);
+    new Preview(d, section);
+  });
+
+  addEventListener('resize', () => document.querySelectorAll('.pv-content').forEach(c => {
+    c.querySelectorAll('[data-ind]').forEach(ind => {
+      const on = ind.parentElement.querySelector(ind.dataset.ind);
+      if (on) { ind.style.width = `${on.offsetWidth}px`; ind.style.transform = `translateX(${on.offsetLeft}px)`; }
+    });
+  }));
+})();
+</script>
+</body>
+</html>

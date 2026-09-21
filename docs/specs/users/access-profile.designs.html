@@ -1,0 +1,550 @@
+<title>Access Profile Designs</title>
+<style>
+:root{--brand:#1566a2;--brand-2:#1d78bb;--brand-deep:#0f5288;--sky:#56bdea;--ink:#0f172a;--text:#334155;--muted:#64748b;--line:#e5e9ef;--soft:#f1f5f9;--page:#f5f6fa;--ok:#10b981;--warn:#f59e0b;--bad:#ef4444;--ease:cubic-bezier(.16,1,.3,1);--spring:cubic-bezier(.34,1.56,.64,1)}
+*{box-sizing:border-box}
+body{margin:0;background:#eef1f5;font:14px/1.45 "Segoe UI",system-ui,sans-serif;color:var(--ink);padding:28px 16px 120px}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1320px;margin:0 auto}
+h1{font-size:26px;margin:0 0 6px;letter-spacing:-.3px}
+.lead{color:var(--muted);margin:0 0 18px;max-width:900px}
+.explain{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 30px}
+.explain div{background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 1px 2px rgba(15,23,42,.05),0 8px 24px -16px rgba(15,23,42,.2)}
+.explain b{display:block;font-size:13px;margin-bottom:3px}.explain span{color:var(--muted);font-size:12.5px}
+@media(max-width:900px){.explain{grid-template-columns:1fr 1fr}}
+.variant{margin:0 0 44px}
+.vhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 14px;margin:0 0 12px}
+.vhead h2{margin:0;font-size:19px;letter-spacing:-.2px}
+.vhead p{margin:0;color:var(--muted);font-size:13px;flex:1;min-width:260px}
+.tag{font-size:11px;font-weight:700;color:var(--brand);background:#e6f1fa;border-radius:999px;padding:3px 10px}
+.scroll{overflow-x:auto;border-radius:18px;box-shadow:0 30px 60px -30px rgba(15,23,42,.35),0 0 0 1px rgba(15,23,42,.05)}
+.app{min-width:1180px;background:var(--page);display:grid;grid-template-rows:50px 1fr;height:760px;overflow:hidden;border-radius:18px}
+.nav{background:linear-gradient(90deg,#125e98,#1566a2 45%,#1a70ae);display:flex;align-items:center;gap:14px;padding:0 18px;color:#fff;position:relative;overflow:hidden}
+.nav::after{content:"";position:absolute;inset:0;background:linear-gradient(112deg,transparent 40%,rgba(255,255,255,.2) 50%,transparent 60%) no-repeat;background-size:240% 100%;animation:sweep 6s 1s var(--ease) infinite}
+@keyframes sweep{0%{background-position:140% 0}40%,100%{background-position:-40% 0}}
+.nav b{font-size:16px;letter-spacing:.3px}.nav i{width:1px;height:26px;background:rgba(255,255,255,.3)}.nav span{font-size:13.5px;opacity:.95}
+.nav .av{margin-left:auto;width:32px;height:32px;border-radius:50%;background:var(--sky);display:grid;place-items:center;font-size:12px;font-weight:600}
+.body{display:grid;grid-template-columns:196px 1fr;min-height:0}
+.side{background:#fff;border-right:1px solid var(--line);padding:16px 10px;display:flex;flex-direction:column;gap:4px}
+.side small{font-size:10.5px;font-weight:700;letter-spacing:.09em;color:var(--muted);padding:0 10px 8px}
+.side a{display:flex;align-items:center;gap:10px;height:38px;padding:0 12px;border-radius:8px;color:#475569;font-size:13.5px;font-weight:500;position:relative}
+.side a.on{background:rgba(21,102,162,.08);color:var(--brand)}
+.side a.on::before{content:"";position:absolute;left:-10px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--brand)}
+.main{min-height:0;display:flex;flex-direction:column;padding:18px 24px 0;overflow:hidden}
+.crumb{font-size:12.5px;color:var(--muted)}.crumb b{color:var(--ink);font-weight:500}
+.titlebar{display:flex;align-items:flex-end;gap:12px;margin:3px 0 14px}
+.titlebar h3{margin:0;font-size:21px;letter-spacing:-.25px}
+.grow{flex:1}
+svg.i{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* shared controls */
+.btn{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:9px;border:1px solid var(--line);background:#fff;font-weight:600;font-size:13.5px;cursor:pointer;transition:transform .35s var(--ease),box-shadow .35s var(--ease),background .25s,border-color .25s,color .25s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 22px -10px rgba(21,102,162,.5)}
+.btn:active{transform:scale(.97);transition-duration:.1s}
+.btn.primary{background:linear-gradient(180deg,#2d84c4,#1566a2 55%,#10568a);border-color:transparent;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 6px 14px -8px rgba(21,102,162,.7)}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--muted)}
+.btn.ghost:hover{background:#fff;color:var(--ink)}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.field label{display:block;font-size:12.5px;font-weight:600;color:#334155;margin:0 0 6px}
+.field label em{color:var(--bad);font-style:normal}
+.inp{width:100%;height:38px;border:1px solid #dfe5ec;border-radius:9px;background:#fff;padding:0 12px;font-size:13.5px;transition:border-color .25s,box-shadow .25s,background .25s;outline:none}
+.inp:hover{border-color:rgba(21,102,162,.4);box-shadow:0 8px 18px -10px rgba(21,102,162,.45)}
+.inp:focus{border-color:rgba(21,102,162,.6);box-shadow:0 0 0 4px rgba(21,102,162,.1)}
+.inp.bad{border-color:#fca5a5;box-shadow:0 0 0 4px rgba(239,68,68,.1);animation:shake .4s}
+@keyframes shake{25%{translate:-4px}50%{translate:4px}75%{translate:-2px}}
+.hint{font-size:11.5px;margin-top:5px;color:var(--muted);min-height:16px;transition:color .2s}
+.hint.bad{color:#b91c1c;animation:drop .3s var(--ease)}
+.hint.warn{color:#b45309}
+@keyframes drop{from{opacity:0;transform:translateY(-3px)}}
+.switch{position:relative;width:40px;height:22px;border-radius:999px;background:#cbd5e1;border:0;cursor:pointer;transition:background .3s,box-shadow .3s;flex:none}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.3);transition:transform .45s var(--spring)}
+.switch[aria-checked=true]{background:var(--brand)}
+.switch[aria-checked=true]::after{transform:translateX(18px)}
+.switch:hover{box-shadow:0 0 0 4px rgba(21,102,162,.1)}
+.chk{width:18px;height:18px;border-radius:5px;border:1.5px solid #b8c4d2;background:#fff;display:grid;place-items:center;cursor:pointer;transition:background .25s,border-color .25s,box-shadow .25s,transform .35s var(--spring);flex:none;padding:0}
+.chk:hover{box-shadow:0 0 0 4px rgba(21,102,162,.1)}
+.chk svg{width:11px;height:11px;stroke:#fff;stroke-width:3.4;fill:none;stroke-dasharray:22;stroke-dashoffset:22;transition:stroke-dashoffset .35s var(--ease)}
+.chk[aria-checked=true]{background:var(--brand);border-color:var(--brand);transform:scale(1.04)}
+.chk[aria-checked=true] svg{stroke-dashoffset:0}
+.chk[aria-checked=mixed]{background:var(--brand);border-color:var(--brand)}
+.chk[aria-checked=mixed]::after{content:"";width:8px;height:2px;border-radius:2px;background:#fff}
+.chk[aria-checked=mixed] svg{display:none}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:600}
+.pill i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.warn{background:#fff7e6;color:#b45309;box-shadow:inset 0 0 0 1px rgba(217,119,6,.2)}
+.pill.warn i{animation:pulse 1.6s infinite}
+.pill.ok{background:#ecfdf5;color:#047857;box-shadow:inset 0 0 0 1px rgba(5,150,105,.18)}
+.pill.info{background:#eaf3fa;color:var(--brand);box-shadow:inset 0 0 0 1px rgba(21,102,162,.15)}
+@keyframes pulse{50%{opacity:.35}}
+.card{background:#fff;border-radius:14px;box-shadow:0 1px 2px rgba(15,23,42,.05),0 12px 30px -20px rgba(15,23,42,.28);border:1px solid rgba(226,232,240,.8)}
+.rise{animation:rise .5s var(--ease) backwards}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+.count{font-variant-numeric:tabular-nums}
+.segs{display:inline-flex;padding:3px;border-radius:10px;background:var(--soft);position:relative;gap:2px}
+.segs button{position:relative;z-index:1;border:0;background:transparent;height:30px;padding:0 12px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:color .25s}
+.segs button[aria-selected=true]{color:var(--ink)}
+.segs .ind{position:absolute;top:3px;bottom:3px;border-radius:8px;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.12),0 6px 14px -8px rgba(15,23,42,.25);transition:left .45s var(--ease),width .45s var(--ease)}
+.segs button b{font-size:10.5px;background:rgba(15,23,42,.06);border-radius:999px;padding:0 6px;color:var(--muted)}
+.search{position:relative}.search svg{position:absolute;left:11px;top:11px;color:#94a3b8}.search .inp{padding-left:34px}
+.tipdot{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#e6f1fa;color:var(--brand);font-size:10px;font-weight:700;cursor:help;position:relative}
+.tipdot:hover::after{content:attr(data-tip);position:absolute;bottom:22px;left:50%;transform:translateX(-50%);white-space:normal;width:230px;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);color:var(--ink);font-weight:500;font-size:12px;padding:8px 10px;border-radius:10px;box-shadow:0 0 0 1px rgba(15,23,42,.06),0 14px 30px -12px rgba(15,23,42,.35);z-index:20;animation:drop .25s var(--ease)}
+.savebar{display:flex;align-items:center;gap:10px;padding:12px 24px;background:rgba(255,255,255,.82);backdrop-filter:blur(12px);border-top:1px solid var(--line);margin:0 -24px;transition:box-shadow .3s}
+.savebar.dirty{box-shadow:0 -12px 30px -18px rgba(21,102,162,.45)}
+.toast{position:absolute;left:50%;top:66px;transform:translateX(-50%);background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;font-weight:600;font-size:13px;box-shadow:0 0 0 1px rgba(15,23,42,.06),0 24px 44px -18px rgba(15,23,42,.45);z-index:40;animation:toast .5s var(--spring)}
+.toast span{width:26px;height:26px;border-radius:50%;background:#ecfdf5;color:#059669;display:grid;place-items:center}
+@keyframes toast{from{opacity:0;transform:translate(-50%,-12px) scale(.92)}}
+.appwrap{position:relative}
+.scrolly{overflow:auto;min-height:0}
+.scrolly::-webkit-scrollbar{width:8px;height:8px}.scrolly::-webkit-scrollbar-thumb{background:#d7dee7;border-radius:8px}
+.risk{color:#b45309}
+
+/* ---------- V1 Matrix ---------- */
+.v1 .grid{display:grid;grid-template-columns:320px 1fr;gap:16px;min-height:0;flex:1}
+.v1 .left{display:flex;flex-direction:column;gap:14px;min-height:0}
+.v1 .idcard{padding:18px;position:relative;overflow:hidden}
+.v1 .idcard::before{content:"";position:absolute;inset:0 0 auto 0;height:86px;background:radial-gradient(260px 90px at 20% 0%,rgba(86,189,234,.28),transparent 70%),linear-gradient(135deg,#1566a2,#1d78bb);}
+.v1 .idtop{position:relative;display:flex;align-items:center;gap:12px;color:#fff;margin:-2px 0 26px}
+.v1 .shield{width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,.18);display:grid;place-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.35);backdrop-filter:blur(6px)}
+.v1 .shield svg{width:22px;height:22px}
+.v1 .idtop b{font-size:15px;display:block}.v1 .idtop small{opacity:.85;font-size:12px}
+.v1 .stack{display:flex;flex-direction:column;gap:12px}
+.v1 .row{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.v1 .ring{display:flex;align-items:center;gap:14px;padding:16px 18px}
+.v1 .ring svg{width:64px;height:64px;transform:rotate(-90deg)}
+.v1 .ring circle{fill:none;stroke-width:7}
+.v1 .ring .bg{stroke:#eef2f6}.v1 .ring .fg{stroke:url(#g1);stroke-linecap:round;transition:stroke-dashoffset .8s var(--ease)}
+.v1 .ring b{font-size:22px}.v1 .ring small{color:var(--muted);display:block;font-size:12px}
+.v1 .right{display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.v1 .rhead{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.v1 table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.v1 th{position:sticky;top:0;z-index:2;background:linear-gradient(180deg,#1a70ae,#1566a2);color:#fff;font-weight:600;font-size:12px;padding:10px 8px;text-align:center}
+.v1 th:first-child{text-align:left;padding-left:16px}
+.v1 th .chk{margin:6px auto 0;border-color:rgba(255,255,255,.7);background:transparent}
+.v1 th .chk[aria-checked=true],.v1 th .chk[aria-checked=mixed]{background:#fff;border-color:#fff}
+.v1 th .chk[aria-checked=true] svg{stroke:var(--brand)}.v1 th .chk[aria-checked=mixed]::after{background:var(--brand)}
+.v1 td{border-bottom:1px solid #eef2f6;padding:9px 8px;text-align:center;transition:background .25s}
+.v1 td:first-child{text-align:left;padding-left:16px}
+.v1 tr.area td{background:#f8fafc;font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:8px 16px}
+.v1 tbody tr:not(.area):hover td{background:#f5f9fd}
+.v1 tbody tr:not(.area):hover td:first-child{box-shadow:inset 3px 0 0 var(--brand)}
+.v1 td .na{color:#cbd5e1}
+.v1 .rowname{display:flex;align-items:center;gap:10px}
+.v1 .rowname .chk{width:16px;height:16px}
+
+/* ---------- V2 Guided steps ---------- */
+.v2 .grid{display:grid;grid-template-columns:230px 1fr;gap:22px;min-height:0;flex:1}
+.v2 .rail{position:relative;padding:6px 0}
+.v2 .rail::before{content:"";position:absolute;left:17px;top:22px;bottom:30px;width:2px;background:#e2e8f0}
+.v2 .rail .prog{position:absolute;left:17px;top:22px;width:2px;background:linear-gradient(var(--sky),var(--brand));transition:height .6s var(--ease)}
+.v2 .step{position:relative;display:flex;gap:12px;align-items:flex-start;padding:8px 0 22px;cursor:pointer}
+.v2 .dot{width:36px;height:36px;border-radius:50%;background:#fff;border:2px solid #dbe3ec;display:grid;place-items:center;font-weight:700;color:var(--muted);position:relative;z-index:1;transition:all .4s var(--spring)}
+.v2 .step.on .dot{border-color:var(--brand);color:var(--brand);box-shadow:0 0 0 6px rgba(21,102,162,.12);transform:scale(1.06)}
+.v2 .step.done .dot{background:var(--brand);border-color:var(--brand);color:#fff}
+.v2 .step b{display:block;font-size:13.5px;margin-top:3px}.v2 .step small{color:var(--muted);font-size:12px}
+.v2 .panes{min-height:0;overflow:auto;padding:0 4px 20px}
+.v2 .pane{padding:22px 24px;margin-bottom:14px;transition:box-shadow .4s,transform .4s var(--ease),opacity .4s}
+.v2 .pane.dim{opacity:.55;transform:scale(.99)}
+.v2 .pane.on{box-shadow:0 0 0 2px rgba(21,102,162,.18),0 24px 50px -24px rgba(21,102,162,.45)}
+.v2 .ph{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.v2 .ph .n{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#1d78bb,#125e98);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px}
+.v2 .ph h4{margin:0;font-size:15px}.v2 .ph p{margin:0;color:var(--muted);font-size:12.5px}
+.v2 .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.v2 .presets{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.v2 .preset{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:left;background:#fff;cursor:pointer;transition:all .35s var(--ease)}
+.v2 .preset:hover{transform:translateY(-2px);box-shadow:0 12px 24px -14px rgba(21,102,162,.5);border-color:#b9d3e8}
+.v2 .preset.on{border-color:var(--brand);box-shadow:0 0 0 3px rgba(21,102,162,.12)}
+.v2 .preset b{display:block;font-size:13px}.v2 .preset small{color:var(--muted);font-size:11.5px}
+.v2 .acc{border:1px solid var(--line);border-radius:12px;margin-bottom:8px;overflow:hidden;transition:box-shadow .3s}
+.v2 .acc.open{box-shadow:0 12px 26px -18px rgba(15,23,42,.35)}
+.v2 .acch{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;background:#fff}
+.v2 .acch:hover{background:#f8fafc}
+.v2 .acch .chev{transition:transform .35s var(--ease);color:var(--muted)}
+.v2 .acc.open .chev{transform:rotate(90deg)}
+.v2 .accb{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s var(--ease)}
+.v2 .acc.open .accb{grid-template-rows:1fr}
+.v2 .accb>div{overflow:hidden}
+.v2 .acts{display:flex;flex-wrap:wrap;gap:8px;padding:4px 14px 14px 42px}
+.v2 .act{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:12.5px;font-weight:600;color:#475569;cursor:pointer;transition:all .3s var(--ease)}
+.v2 .act:hover{transform:translateY(-1px);box-shadow:0 6px 14px -8px rgba(21,102,162,.5)}
+.v2 .act[aria-pressed=true]{background:#eaf3fa;border-color:rgba(21,102,162,.35);color:var(--brand)}
+.v2 .act[aria-pressed=true].danger{background:#fff7ed;border-color:rgba(217,119,6,.35);color:#b45309}
+.v2 .act i{width:7px;height:7px;border-radius:50%;background:#cbd5e1;transition:background .3s,box-shadow .3s}
+.v2 .act[aria-pressed=true] i{background:currentColor;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 18%,transparent)}
+
+/* ---------- V3 Live preview ---------- */
+.v3 .grid{display:grid;grid-template-columns:1fr 420px;gap:18px;min-height:0;flex:1}
+.v3 .ed{display:flex;flex-direction:column;gap:14px;min-height:0;overflow:auto;padding-bottom:16px}
+.v3 .sec{padding:18px 20px}
+.v3 .sec h4{margin:0 0 12px;font-size:13px;display:flex;align-items:center;gap:8px}
+.v3 .four{display:grid;grid-template-columns:1.2fr 1fr;gap:14px}
+.v3 .modules{display:flex;flex-direction:column;gap:6px}
+.v3 .mod{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;transition:background .25s}
+.v3 .mod:hover{background:#f8fafc}
+.v3 .ico{width:30px;height:30px;border-radius:9px;background:#eef5fb;color:var(--brand);display:grid;place-items:center}
+.v3 .lvl{display:inline-flex;background:var(--soft);border-radius:9px;padding:3px;position:relative}
+.v3 .lvl button{position:relative;z-index:1;border:0;background:transparent;height:26px;padding:0 10px;font-size:11.5px;font-weight:600;color:var(--muted);cursor:pointer;border-radius:7px;transition:color .25s}
+.v3 .lvl button[aria-pressed=true]{color:#fff}
+.v3 .lvl .ind{position:absolute;top:3px;bottom:3px;border-radius:7px;background:linear-gradient(180deg,#2d84c4,#1566a2);box-shadow:0 4px 10px -4px rgba(21,102,162,.7);transition:left .4s var(--ease),width .4s var(--ease),background .3s}
+.v3 .lvl.none .ind{background:#94a3b8;box-shadow:none}
+.v3 .lvl.full .ind{background:linear-gradient(180deg,#f59e0b,#d97706);box-shadow:0 4px 10px -4px rgba(217,119,6,.6)}
+.v3 .prev{position:relative;overflow:hidden;display:flex;flex-direction:column;background:linear-gradient(160deg,#0f3f66,#1566a2 60%,#1d78bb);border-radius:16px;padding:16px;color:#fff}
+.v3 .prev::before{content:"";position:absolute;inset:-40%;background:radial-gradient(closest-side,rgba(86,189,234,.35),transparent);animation:float 12s ease-in-out infinite alternate}
+@keyframes float{to{transform:translate(20%,15%)}}
+.v3 .prev>*{position:relative}
+.v3 .prev h4{margin:0;font-size:13px;display:flex;align-items:center;gap:8px;letter-spacing:.02em}
+.v3 .prev p{margin:2px 0 12px;font-size:12px;opacity:.8}
+.v3 .device{background:#f5f6fa;border-radius:12px;overflow:hidden;color:var(--ink);box-shadow:0 30px 50px -20px rgba(0,0,0,.5);flex:1;display:flex;flex-direction:column;min-height:0}
+.v3 .dnav{height:32px;background:linear-gradient(90deg,#125e98,#1a70ae);display:flex;align-items:center;gap:4px;padding:0 10px;color:#fff;font-size:11px;overflow:hidden}
+.v3 .dnav span{padding:3px 8px;border-radius:6px;background:rgba(255,255,255,.12);white-space:nowrap;animation:pop .45s var(--spring) backwards}
+@keyframes pop{from{opacity:0;transform:scale(.6)}}
+.v3 .dbody{display:grid;grid-template-columns:96px 1fr;flex:1;min-height:0}
+.v3 .dside{background:#fff;border-right:1px solid var(--line);padding:8px 6px;display:flex;flex-direction:column;gap:3px}
+.v3 .dside span{font-size:10px;padding:5px 6px;border-radius:5px;color:#475569;animation:pop .4s var(--spring) backwards}
+.v3 .dside span:first-child{background:rgba(21,102,162,.08);color:var(--brand)}
+.v3 .dmain{padding:10px;display:flex;flex-direction:column;gap:8px}
+.v3 .dbar{display:flex;gap:5px;align-items:center}
+.v3 .dbar b{font-size:11px;flex:1}
+.v3 .dbtn{font-size:9.5px;font-weight:700;border-radius:6px;padding:4px 7px;transition:all .35s var(--ease)}
+.v3 .dbtn.add{background:var(--brand);color:#fff}.v3 .dbtn.del{background:#fee2e2;color:#b91c1c}.v3 .dbtn.exp{background:#fff;border:1px solid var(--line)}
+.v3 .dbtn.off{opacity:.18;filter:grayscale(1);transform:scale(.9)}
+.v3 .drow{height:18px;border-radius:5px;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.05)}
+.v3 .dlock{flex:1;display:grid;place-items:center;text-align:center;font-size:11px;color:var(--muted)}
+.v3 .legend{display:flex;gap:10px;margin-top:10px;font-size:11px;opacity:.85}
+.v3 .legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:0}
+
+/* ---------- V4 Module cards ---------- */
+.v4 .top{display:grid;grid-template-columns:1.3fr 1fr 1fr auto;gap:14px;align-items:end;padding:16px 18px;margin-bottom:14px}
+.v4 .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:2px 2px 16px;overflow:auto;min-height:0;flex:1;align-content:start}
+.v4 .mc{padding:14px;cursor:pointer;position:relative;overflow:hidden;transition:transform .45s var(--ease),box-shadow .45s var(--ease)}
+.v4 .mc:hover{transform:translateY(-3px);box-shadow:0 22px 40px -22px rgba(21,102,162,.55)}
+.v4 .mc::after{content:"";position:absolute;inset:auto 0 0 0;height:3px;background:linear-gradient(90deg,var(--sky),var(--brand));transform:scaleX(var(--p,0));transform-origin:left;transition:transform .6s var(--ease)}
+.v4 .mc .h{display:flex;align-items:center;gap:10px}
+.v4 .mc .ico{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,#eaf3fa,#dcecf8);color:var(--brand);transition:transform .5s var(--spring)}
+.v4 .mc:hover .ico{transform:rotate(-8deg) scale(1.06)}
+.v4 .mc b{font-size:13.5px}.v4 .mc small{display:block;color:var(--muted);font-size:11.5px}
+.v4 .dots{display:flex;gap:4px;margin:12px 0 0;flex-wrap:wrap}
+.v4 .dots span{font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:999px;background:#f1f5f9;color:#94a3b8;transition:all .3s}
+.v4 .dots span.on{background:#eaf3fa;color:var(--brand)}
+.v4 .dots span.on.danger{background:#fff7ed;color:#b45309}
+.v4 .mc.sel{box-shadow:0 0 0 2px var(--brand),0 22px 40px -22px rgba(21,102,162,.6)}
+.v4 .drawer{position:absolute;top:0;right:0;bottom:0;width:380px;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);box-shadow:-30px 0 60px -30px rgba(15,23,42,.45);transform:translateX(105%);transition:transform .55s var(--ease);z-index:30;display:flex;flex-direction:column}
+.v4 .drawer.open{transform:none}
+.v4 .dh{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center}
+.v4 .db{padding:14px 20px;overflow:auto;flex:1}
+.v4 .sub{margin-bottom:16px}
+.v4 .sub h5{margin:0 0 8px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.v4 .tr{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-radius:10px;transition:background .2s}
+.v4 .tr:hover{background:#f5f9fd}
+.v4 .tr small{display:block;color:var(--muted);font-size:11.5px}
+.v4 .shade{position:absolute;inset:0;background:rgba(15,23,42,.18);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .4s;z-index:25}
+.v4 .shade.open{opacity:1;pointer-events:auto}
+
+/* ---------- V5 Tree + inspector ---------- */
+.v5 .grid{display:grid;grid-template-columns:270px 1fr 300px;gap:14px;min-height:0;flex:1}
+.v5 .col{display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.v5 .ch{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+.v5 .tree{padding:8px;overflow:auto;flex:1}
+.v5 .tn{display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border-radius:9px;cursor:pointer;font-size:13px;color:#475569;position:relative;transition:background .25s,color .25s}
+.v5 .tn:hover{background:#f5f9fd}
+.v5 .tn.on{background:linear-gradient(90deg,rgba(21,102,162,.12),rgba(21,102,162,.04));color:var(--brand);font-weight:600}
+.v5 .tn.on::before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:3px;border-radius:3px;background:var(--brand)}
+.v5 .tn .cnt{margin-left:auto;font-size:11px;font-weight:600;color:var(--muted);background:#f1f5f9;border-radius:999px;padding:0 7px}
+.v5 .tn.on .cnt{background:#fff;color:var(--brand)}
+.v5 .grp{font-size:10.5px;font-weight:700;letter-spacing:.09em;color:#94a3b8;padding:12px 10px 4px}
+.v5 .tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:14px;overflow:auto}
+.v5 .tile{border:1px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;background:#fff;text-align:left;position:relative;overflow:hidden;transition:transform .45s var(--ease),box-shadow .45s var(--ease),border-color .3s,background .3s}
+.v5 .tile:hover{transform:translateY(-2px);box-shadow:0 16px 30px -18px rgba(21,102,162,.5)}
+.v5 .tile .th{display:flex;align-items:center;justify-content:space-between}
+.v5 .tile b{font-size:14px}
+.v5 .tile small{display:block;color:var(--muted);font-size:12px;margin-top:4px;line-height:1.4}
+.v5 .tile[aria-pressed=true]{border-color:rgba(21,102,162,.4);background:linear-gradient(160deg,#f5faff,#eaf3fa)}
+.v5 .tile[aria-pressed=true].danger{border-color:rgba(217,119,6,.35);background:linear-gradient(160deg,#fffbf2,#fff4e0)}
+.v5 .tile::after{content:"";position:absolute;width:140px;height:140px;border-radius:50%;right:-60px;top:-60px;background:radial-gradient(closest-side,rgba(86,189,234,.3),transparent);opacity:0;transition:opacity .5s}
+.v5 .tile[aria-pressed=true]::after{opacity:1}
+.v5 .insp{padding:16px;overflow:auto;display:flex;flex-direction:column;gap:14px}
+.v5 .meter{height:8px;border-radius:999px;background:#eef2f6;overflow:hidden}
+.v5 .meter i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--sky),var(--brand));transition:width .7s var(--ease)}
+.v5 .kv{display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-bottom:1px dashed #e7ecf2}
+.v5 .kv b{font-variant-numeric:tabular-nums}
+.v5 .changes{display:flex;flex-direction:column;gap:6px}
+.v5 .chg{font-size:12px;padding:7px 10px;border-radius:9px;background:#f8fafc;animation:rise .4s var(--ease)}
+.v5 .chg.add{box-shadow:inset 3px 0 0 var(--ok)}.v5 .chg.rem{box-shadow:inset 3px 0 0 var(--bad)}
+
+/* visibility lists (shared) */
+.vis{padding:4px 14px 14px;overflow:auto}
+.vitem{display:flex;align-items:center;gap:12px;padding:9px 6px;border-bottom:1px solid #eef2f6;font-size:13px;transition:background .2s}
+.vitem:hover{background:#f8fafc}
+.vitem .grow{min-width:0}
+.vitem small{color:var(--muted);font-size:11.5px}
+.vcols{display:flex;gap:18px}
+.vcols label{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+<linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#56bdea"/><stop offset="1" stop-color="#1566a2"/></linearGradient>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c2 .8 3.2 2.5 3.5 5.2"/></symbol>
+<symbol id="i-box" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></symbol>
+<symbol id="i-cap" viewBox="0 0 24 24"><path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5"/></symbol>
+<symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></symbol>
+<symbol id="i-case" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></symbol>
+<symbol id="i-save" viewBox="0 0 24 24"><path d="M5 3h11l5 5v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M7 3v5h8M7 21v-7h10v7"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9Z"/></symbol>
+<symbol id="i-flow" viewBox="0 0 24 24"><rect x="3" y="3" width="6" height="6" rx="1.5"/><rect x="15" y="15" width="6" height="6" rx="1.5"/><path d="M6 9v3a3 3 0 0 0 3 3h6"/></symbol>
+</defs></svg>
+
+<div class="wrap">
+  <h1>Access Profile — 5 redesigns</h1>
+  <p class="lead">Same legacy behaviour and API as today (name, external key, restricted, default landing page, Site Access permissions, and Event / Case / Workflow visibility that appear only when those permissions are on, Copy Profile, Save, Cancel). Only the layout, clarity and motion change. Every sample is clickable: tick permissions, change the landing page, search, switch tabs, press Save.</p>
+  <div class="explain">
+    <div><b>What is an Access Profile?</b><span>A named set of rights. Users get one or more profiles; the profile decides what they can open and do in Admin and the website.</span></div>
+    <div><b>Site Access</b><span>For each area (Users, Rooms, Students…) choose actions: Access to open it, then Add, Edit, Delete, Export and extras.</span></div>
+    <div><b>Default landing page</b><span>The page users with this profile see first. It must be an area the profile can Access, otherwise Save warns.</span></div>
+    <div><b>Visibility tabs</b><span>Event, Case and Workflow visibility appear only when the matching permission is ticked, and choose which items those users can see.</span></div>
+  </div>
+  <div id="variants"></div>
+</div>
+
+<script>
+const AREAS = [
+  { group: 'Users', icon: 'i-users', items: [
+    { name: 'User', desc: 'User accounts and passwords', acts: ['Access', 'Add', 'Edit', 'Delete', 'Activity'] },
+    { name: 'Access Profile', desc: 'Profiles like this one', acts: ['Access', 'Add', 'Edit', 'Delete'] },
+    { name: 'Contact Group', desc: 'Groups for notifications', acts: ['Access', 'Add', 'Edit', 'Delete'] },
+  ]},
+  { group: 'Resources', icon: 'i-box', items: [
+    { name: 'Room', desc: 'Rooms and buildings', acts: ['Access', 'Add', 'Edit', 'Delete'] },
+    { name: 'Device', desc: 'Card readers and batteries', acts: ['Access', 'Add', 'Edit', 'Delete', 'Export'] },
+    { name: 'Lesson Type', desc: 'Lesson type rules', acts: ['Access', 'Edit'] },
+  ]},
+  { group: 'Students', icon: 'i-cap', items: [
+    { name: 'Student', desc: 'Student records and timeline', acts: ['Access', 'Edit', 'Export', 'Event Visibility'] },
+    { name: 'GDPR Deletion', desc: 'Deletion queue and recycle bin', acts: ['Access', 'Delete'] },
+  ]},
+  { group: 'Engagement', icon: 'i-pulse', items: [
+    { name: 'Engagement', desc: 'Models and history', acts: ['Access', 'Edit', 'Export'] },
+  ]},
+  { group: 'Case', icon: 'i-case', items: [
+    { name: 'Case', desc: 'Cases for students', acts: ['Access', 'Add', 'Edit', 'Case Visibility'] },
+    { name: 'Workflow', desc: 'Case workflows', acts: ['Access', 'Edit', 'Workflow Visibility'] },
+  ]},
+  { group: 'Settings', icon: 'i-gear', items: [
+    { name: 'Settings', desc: 'General, branding, authentication', acts: ['Access', 'Edit'] },
+  ]},
+]
+const COLS = ['Access', 'Add', 'Edit', 'Delete', 'Export', 'Other']
+const LANDING = [{ id: '', label: 'Not Set' }, { id: 'User', label: 'Users' }, { id: 'Device', label: 'Devices' }, { id: 'Student', label: 'Students' }, { id: 'Engagement', label: 'Engagement' }]
+const EVENTS = [['Attendance marked', 'Case history'], ['Case opened', 'Case history'], ['Stage changed', 'Case history'], ['Note added', 'Events'], ['Email sent', 'Events'], ['Meeting booked', 'Events']]
+const CASES = ['Attendance concern', 'Wellbeing', 'Academic support', 'Visa compliance', 'Disability support']
+const WORKFLOWS = ['Low attendance', 'Mitigating circumstances', 'Withdrawal']
+const DANGER = new Set(['Delete'])
+const TOTAL = AREAS.flatMap(a => a.items).reduce((n, i) => n + i.acts.length, 0)
+
+const key = (item, act) => `${item}|${act}`
+const allItems = () => AREAS.flatMap(a => a.items.map(i => ({ ...i, group: a.group, icon: a.icon })))
+const svg = id => `<svg class="i"><use href="#${id}"/></svg>`
+const chk = (state, attrs = '') => `<button type="button" class="chk" role="checkbox" aria-checked="${state}" ${attrs}><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></button>`
+
+function makeState() {
+  const sel = new Set(['User|Access', 'User|Edit', 'Access Profile|Access', 'Room|Access', 'Device|Access', 'Student|Access', 'Student|Event Visibility'])
+  return { name: 'Timetable Officer', key: 'TT-OFFICER', restricted: false, landing: 'Device', sel, initial: new Set(sel), dirty: false, tab: 'site', events: new Set(['Attendance marked', 'Note added']), cases: new Set(), workflows: new Set() }
+}
+const landingOk = s => !s.landing || s.sel.has(key(s.landing, 'Access'))
+const tabsFor = s => [
+  { id: 'site', label: 'Site Access', icon: 'i-shield', count: s.sel.size },
+  ...(s.sel.has('Student|Event Visibility') ? [{ id: 'events', label: 'Event Visibility', icon: 'i-eye', count: s.events.size }] : []),
+  ...(s.sel.has('Case|Case Visibility') ? [{ id: 'cases', label: 'Case Visibility', icon: 'i-case', count: s.cases.size }] : []),
+  ...(s.sel.has('Workflow|Workflow Visibility') ? [{ id: 'workflows', label: 'Workflow Visibility', icon: 'i-flow', count: s.workflows.size }] : []),
+]
+
+function frame(title, inner, s) {
+  return `<div class="appwrap"><div class="app"><div class="nav"><b>SEAtS ONE</b><i></i><span>Users</span><span style="opacity:.7">Resources</span><span style="opacity:.7">Students</span><span style="opacity:.7">Settings</span><div class="av">GB</div></div>
+  <div class="body"><aside class="side"><small>USERS</small><a>${svg('i-users')}User</a><a class="on">${svg('i-shield')}Access Profile</a><a>${svg('i-users')}Contact Group</a><a>${svg('i-pulse')}Activity Log</a></aside>
+  <section class="main"><div class="crumb">Users › Access Profile › <b>${esc(s.name) || 'New profile'}</b></div>${inner}</section></div></div></div>`
+}
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
+
+function titleBar(s, extra = '') {
+  return `<div class="titlebar"><h3>${esc(s.name) || 'New profile'}</h3>${s.restricted ? '<span class="pill info">' + svg('i-lock') + ' Restricted</span>' : ''}${s.dirty ? '<span class="pill warn"><i></i>Unsaved changes</span>' : ''}${landingOk(s) ? '' : '<span class="pill warn"><i></i>Landing page needs Access</span>'}<div class="grow"></div>${extra}<button class="btn ghost" data-act="copy">${svg('i-copy')}Copy Profile</button><button class="btn" data-act="cancel">Cancel</button><button class="btn primary" data-act="save" ${s.dirty ? '' : 'disabled'}>${svg('i-save')}Save</button></div>`
+}
+function identityFields(s, cols = 'two') {
+  return `<div class="${cols}" style="display:grid;grid-template-columns:${cols === 'two' ? '1fr 1fr' : '1fr'};gap:14px">
+    <div class="field"><label>Name <em>*</em></label><input class="inp ${s.name.trim() ? '' : 'bad'}" data-f="name" value="${esc(s.name)}"><div class="hint ${s.name.trim() ? '' : 'bad'}">${s.name.trim() ? 'Shown to admins when assigning profiles' : 'Name is required'}</div></div>
+    <div class="field"><label>External Key</label><input class="inp" data-f="key" value="${esc(s.key)}"><div class="hint">Used to match profiles from your identity provider</div></div>
+    <div class="field"><label>Default Landing Page</label><select class="inp" data-f="landing">${LANDING.map(l => `<option value="${l.id}" ${l.id === s.landing ? 'selected' : ''}>${l.label}</option>`).join('')}</select><div class="hint ${landingOk(s) ? '' : 'warn'}">${landingOk(s) ? 'First page users see after sign in' : 'Tick Access for ' + s.landing + ' in Site Access, or pick another page'}</div></div>
+    <div class="field"><label>Restricted <span class="tipdot" data-tip="Restricted profiles can only be seen and assigned by users who already have this profile.">i</span></label><div style="display:flex;align-items:center;gap:10px;height:38px"><button class="switch" data-f="restricted" aria-checked="${s.restricted}"></button><span style="font-size:13px;color:var(--muted)">${s.restricted ? 'Only holders can assign it' : 'Anyone with Edit rights can assign it'}</span></div></div>
+  </div>`
+}
+function visibility(s) {
+  if (s.tab === 'events') return `<div class="vis"><div class="search" style="margin:10px 0">${svg('i-search')}<input class="inp" placeholder="Search events" data-q></div>${['Case history', 'Events'].map(g => `<div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin:12px 0 4px">${g.toUpperCase()}</div>` + EVENTS.filter(e => e[1] === g).map(([n]) => `<div class="vitem" data-row="${esc(n.toLowerCase())}">${chk(s.events.has(n), `data-ev="${esc(n)}"`)}<div class="grow"><b style="font-weight:600">${n}</b><br><small>Shown on activity timelines</small></div><div class="vcols"><label>${chk(s.events.has(n), `data-ev="${esc(n)}"`)}Details</label><label>${chk(false)}Comment</label></div></div>`).join('')).join('')}</div>`
+  const list = s.tab === 'cases' ? CASES : WORKFLOWS, set = s.tab === 'cases' ? s.cases : s.workflows
+  return `<div class="vis"><div class="search" style="margin:10px 0">${svg('i-search')}<input class="inp" placeholder="Search ${s.tab}" data-q></div>${list.map(n => `<div class="vitem" data-row="${esc(n.toLowerCase())}">${chk(set.has(n), `data-vl="${esc(n)}"`)}<div class="grow"><b style="font-weight:600">${n}</b><br><small>${set.has(n) ? 'Visible to this profile' : 'Hidden'}</small></div></div>`).join('')}</div>`
+}
+function segs(s) {
+  return `<div class="segs" role="tablist">${tabsFor(s).map(t => `<button role="tab" data-tab="${t.id}" aria-selected="${s.tab === t.id}">${svg(t.icon)}${t.label}<b class="count">${t.count}</b></button>`).join('')}<span class="ind"></span></div>`
+}
+
+/* ---------- V1 ---------- */
+function v1(s) {
+  const pct = s.sel.size / TOTAL, C = 2 * Math.PI * 27
+  const colState = c => { const cells = allItems().flatMap(i => i.acts.filter(a => colOf(a) === c).map(a => key(i.name, a))); const on = cells.filter(k => s.sel.has(k)).length; return cells.length === 0 ? 'false' : on === 0 ? 'false' : on === cells.length ? 'true' : 'mixed' }
+  const colOf = a => COLS.includes(a) ? a : 'Other'
+  const rowState = i => { const on = i.acts.filter(a => s.sel.has(key(i.name, a))).length; return on === 0 ? 'false' : on === i.acts.length ? 'true' : 'mixed' }
+  const body = s.tab === 'site' ? `<div class="scrolly" style="flex:1"><table><thead><tr><th>Area</th>${COLS.map(c => `<th>${c}${chk(colState(c), `data-col="${c}"`)}</th>`).join('')}</tr></thead><tbody>${AREAS.map(a => `<tr class="area"><td colspan="7">${a.group}</td></tr>` + a.items.map(i => `<tr><td><div class="rowname">${chk(rowState(i), `data-rowall="${esc(i.name)}"`)}<div><b style="font-weight:600">${i.name}</b><br><small style="color:var(--muted);font-size:11.5px">${i.desc}</small></div></div></td>${COLS.map(c => { const acts = i.acts.filter(x => colOf(x) === c); return `<td>${acts.length ? acts.map(x => `<span title="${x}" style="display:inline-flex;align-items:center;gap:5px">${chk(s.sel.has(key(i.name, x)), `data-k="${esc(key(i.name, x))}"`)}${c === 'Other' ? `<small style="font-size:11px;color:var(--muted)">${x.replace(' Visibility', '')}</small>` : ''}</span>`).join(' ') : '<span class="na">—</span>'}</td>` }).join('')}</tr>`).join('')).join('')}</tbody></table></div>` : `<div class="scrolly" style="flex:1">${visibility(s)}</div>`
+  return frame('', `${titleBar(s)}<div class="grid"><div class="left"><div class="card idcard rise"><div class="idtop"><div class="shield">${svg('i-shield')}</div><div><b>Profile identity</b><small>Who this profile is for</small></div></div><div class="stack">${identityFields(s, 'one')}</div></div>
+    <div class="card ring rise" style="animation-delay:.08s"><svg viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="27"/><circle class="fg" cx="32" cy="32" r="27" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pct)}"/></svg><div><b class="count">${s.sel.size}<span style="font-size:13px;color:var(--muted);font-weight:500"> / ${TOTAL}</span></b><small>permissions granted</small><small class="risk">${[...s.sel].filter(k => DANGER.has(k.split('|')[1])).length} delete rights</small></div></div></div>
+    <div class="card right rise" style="animation-delay:.12s"><div class="rhead">${segs(s)}<div class="grow"></div><span style="font-size:12px;color:var(--muted)">Tick a column header to grant it everywhere</span></div>${body}</div></div>`, s)
+}
+
+/* ---------- V2 ---------- */
+function v2(s) {
+  const done = [s.name.trim() !== '', landingOk(s), s.sel.size > 0, true]
+  const preset = n => `<button class="preset ${s.preset === n ? 'on' : ''}" data-preset="${n}"><b>${n}</b><small>${{ 'View only': 'Access on every area', 'Editor': 'Access, Add and Edit', 'Administrator': 'Everything, including Delete', 'Start empty': 'Choose each right' }[n]}</small></button>`
+  const acc = a => { const on = a.items.reduce((n, i) => n + i.acts.filter(x => s.sel.has(key(i.name, x))).length, 0), tot = a.items.reduce((n, i) => n + i.acts.length, 0); return `<div class="acc ${s.open?.has(a.group) ? 'open' : ''}"><div class="acch" data-accord="${a.group}">${svg('i-chev').replace('class="i"', 'class="i chev"')}<span style="width:28px;height:28px;border-radius:8px;background:#eef5fb;color:var(--brand);display:grid;place-items:center">${svg(a.icon)}</span><b style="font-size:13.5px">${a.group}</b><div class="grow"></div><span class="pill ${on ? 'info' : ''}" style="${on ? '' : 'background:#f1f5f9;color:var(--muted)'}"><span class="count">${on}</span>&nbsp;/ ${tot}</span></div><div class="accb"><div>${a.items.map(i => `<div style="padding:4px 14px 0 42px;font-size:12.5px;font-weight:600">${i.name} <small style="color:var(--muted);font-weight:400">— ${i.desc}</small></div><div class="acts">${i.acts.map(x => `<button class="act ${DANGER.has(x) ? 'danger' : ''}" aria-pressed="${s.sel.has(key(i.name, x))}" data-k="${esc(key(i.name, x))}"><i></i>${x}</button>`).join('')}</div>`).join('')}</div></div></div>` }
+  const tabs = tabsFor(s).filter(t => t.id !== 'site')
+  const steps = [['Identity', 'Name and key'], ['Landing page', 'First page after sign in'], ['Site Access', `${s.sel.size} rights`], ['Visibility', tabs.length ? tabs.length + ' lists' : 'Not needed']]
+  const cur = s.step ?? 2
+  return frame('', `${titleBar(s)}<div class="grid"><div class="rail"><span class="prog" style="height:${Math.min(cur, 3) * 33}%"></span>${steps.map((st, i) => `<div class="step ${i === cur ? 'on' : ''} ${done[i] && i !== cur ? 'done' : ''}" data-step="${i}"><div class="dot">${done[i] && i !== cur ? '✓' : i + 1}</div><div><b>${st[0]}</b><small>${st[1]}</small></div></div>`).join('')}</div>
+  <div class="panes scrolly">
+    <div class="card pane ${cur === 0 ? 'on' : 'dim'}" data-step="0"><div class="ph"><div class="n">1</div><div><h4>Identity</h4><p>Give the profile a clear name admins will recognise.</p></div></div>${identityFields(s).replace(/<div class="field"><label>Default Landing Page[\s\S]*?<\/select><div class="hint[^"]*">[^<]*<\/div><\/div>/, '')}</div>
+    <div class="card pane ${cur === 1 ? 'on' : 'dim'}" data-step="1"><div class="ph"><div class="n">2</div><div><h4>Landing page</h4><p>Where users with this profile start. It must be an area they can open.</p></div></div><div class="presets">${LANDING.slice(1).map(l => { const ok = s.sel.has(key(l.id, 'Access')); return `<button class="preset ${s.landing === l.id ? 'on' : ''}" data-land="${l.id}"><b>${svg('i-home')} ${l.label}</b><small style="color:${ok ? '#047857' : '#b45309'}">${ok ? 'Has Access' : 'Needs Access'}</small></button>` }).join('')}</div></div>
+    <div class="card pane ${cur === 2 ? 'on' : 'dim'}" data-step="2"><div class="ph"><div class="n">3</div><div><h4>Site Access</h4><p>Start from a preset, then fine-tune each area.</p></div></div><div class="presets">${['View only', 'Editor', 'Administrator', 'Start empty'].map(preset).join('')}</div>${AREAS.map(acc).join('')}</div>
+    <div class="card pane ${cur === 3 ? 'on' : 'dim'}" data-step="3"><div class="ph"><div class="n">4</div><div><h4>Visibility</h4><p>Appears when Event, Case or Workflow Visibility is ticked in Site Access.</p></div></div>${tabs.length ? segs({ ...s, tab: s.tab === 'site' ? tabs[0].id : s.tab }).replace(/<button role="tab" data-tab="site"[\s\S]*?<\/button>/, '') + visibility({ ...s, tab: s.tab === 'site' ? tabs[0].id : s.tab }) : '<p style="color:var(--muted);font-size:13px;margin:0">Nothing to choose — no visibility permissions are ticked.</p>'}</div>
+  </div></div>`, s)
+}
+
+/* ---------- V3 ---------- */
+function v3(s) {
+  const LV = ['None', 'View', 'Edit', 'Full']
+  const levelOf = i => { const on = i.acts.filter(x => s.sel.has(key(i.name, x))); if (!on.includes('Access')) return 0; if (on.length === i.acts.length) return 3; if (on.some(x => x === 'Edit' || x === 'Add')) return 2; return 1 }
+  const mods = allItems()
+  const visible = mods.filter(i => s.sel.has(key(i.name, 'Access')))
+  const focus = mods.find(i => i.name === s.focus) ?? visible[0] ?? mods[0]
+  const has = x => s.sel.has(key(focus.name, x))
+  return frame('', `${titleBar(s)}<div class="grid"><div class="ed"><div class="card sec rise"><h4>${svg('i-shield')} Profile</h4>${identityFields(s)}</div>
+    <div class="card sec rise" style="animation-delay:.06s"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><h4 style="margin:0">${svg('i-box')} Site Access</h4><div class="grow"></div>${segs(s)}</div>
+    ${s.tab === 'site' ? `<div class="modules">${mods.map(i => { const lv = levelOf(i); return `<div class="mod" data-focus="${esc(i.name)}"><span class="ico">${svg(i.icon)}</span><div><b style="font-size:13px">${i.name}</b><br><small style="color:var(--muted);font-size:11.5px">${i.acts.filter(x => s.sel.has(key(i.name, x))).join(' · ') || 'No access'}</small></div><div class="lvl ${lv === 0 ? 'none' : lv === 3 ? 'full' : ''}" data-lvl="${esc(i.name)}">${LV.map((l, n) => `<button aria-pressed="${n === lv}" data-level="${n}">${l}</button>`).join('')}<span class="ind"></span></div></div>` }).join('')}</div>` : visibility(s)}</div></div>
+    <div class="prev rise" style="animation-delay:.1s"><h4>${svg('i-eye')} LIVE PREVIEW</h4><p>What a user with this profile sees in Admin</p>
+      <div class="device"><div class="dnav">${visible.length ? [...new Set(visible.map(i => i.group))].map((g, n) => `<span style="animation-delay:${n * 50}ms">${g}</span>`).join('') : '<span>No menu</span>'}</div>
+      <div class="dbody"><div class="dside">${visible.length ? visible.map((i, n) => `<span style="animation-delay:${n * 40}ms">${i.name}</span>`).join('') : ''}</div>
+      <div class="dmain">${visible.length ? `<div class="dbar"><b>${focus.name}</b><span class="dbtn exp ${has('Export') ? '' : 'off'}">Export</span><span class="dbtn del ${has('Delete') ? '' : 'off'}">Delete</span><span class="dbtn add ${has('Add') ? '' : 'off'}">+ Add</span></div>${Array.from({ length: 7 }, (_, n) => `<div class="drow" style="opacity:${1 - n * .1}"></div>`).join('')}<div style="font-size:10px;color:var(--muted)">${has('Edit') ? 'Rows open in edit mode' : 'Rows are read-only'}</div>` : `<div class="dlock">${svg('i-lock')}<br>This profile can't open any page yet</div>`}</div></div></div>
+      <div class="legend"><span><i style="background:var(--brand)"></i>Allowed</span><span><i style="background:#94a3b8"></i>Hidden for this profile</span><span>Landing: <b>${LANDING.find(l => l.id === s.landing)?.label}</b> ${landingOk(s) ? '✓' : '⚠'}</span></div>
+    </div></div>`, s)
+}
+
+/* ---------- V4 ---------- */
+function v4(s) {
+  const items = allItems()
+  const open = items.find(i => i.name === s.drawer)
+  return frame('', `${titleBar(s)}<div class="card top rise">${identityFields(s).replace('grid-template-columns:1fr 1fr', 'grid-template-columns:1.3fr 1fr 1fr 1fr;grid-column:1/-1')}</div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">${segs(s)}<div class="grow"></div><div class="search" style="width:260px">${svg('i-search')}<input class="inp" placeholder="Find an area" data-cardq value="${esc(s.q ?? '')}"></div></div>
+  ${s.tab === 'site' ? `<div class="cards scrolly">${items.filter(i => !s.q || (i.name + i.group).toLowerCase().includes(s.q.toLowerCase())).map((i, n) => { const on = i.acts.filter(x => s.sel.has(key(i.name, x))); return `<div class="card mc rise ${s.drawer === i.name ? 'sel' : ''}" data-drawer="${esc(i.name)}" style="--p:${on.length / i.acts.length};animation-delay:${n * 30}ms"><div class="h"><span class="ico">${svg(i.icon)}</span><div><b>${i.name}</b><small>${i.group} · ${i.desc}</small></div></div><div class="dots">${i.acts.map(x => `<span class="${s.sel.has(key(i.name, x)) ? 'on' : ''} ${DANGER.has(x) ? 'danger' : ''}">${x}</span>`).join('')}</div></div>` }).join('')}</div>` : `<div class="card scrolly" style="flex:1;margin-bottom:16px">${visibility(s)}</div>`}
+  <div class="shade ${open ? 'open' : ''}" data-close></div>
+  <div class="drawer ${open ? 'open' : ''}">${open ? `<div class="dh"><span class="ico" style="width:40px;height:40px;border-radius:12px;background:#eaf3fa;color:var(--brand);display:grid;place-items:center">${svg(open.icon)}</span><div class="grow"><b style="font-size:15px">${open.name}</b><br><small style="color:var(--muted)">${open.desc}</small></div><button class="btn ghost" data-close>✕</button></div>
+    <div class="db"><div class="sub"><h5>Quick set</h5><div style="display:flex;gap:8px">${['None', 'View', 'Everything'].map(p => `<button class="btn" data-quick="${p}" style="height:32px;font-size:12.5px">${p}</button>`).join('')}</div></div>
+    <div class="sub"><h5>Actions</h5>${open.acts.map(x => `<div class="tr"><div><b style="font-size:13px;${DANGER.has(x) ? 'color:#b45309' : ''}">${x}</b><small>${{ Access: 'Open the ' + open.name + ' pages', Add: 'Create new records', Edit: 'Change existing records', Delete: 'Remove records permanently', Export: 'Download lists', Activity: 'See the activity log' }[x] ?? 'Shows the ' + x.replace(' Visibility', '').toLowerCase() + ' visibility tab'}</small></div><button class="switch" aria-checked="${s.sel.has(key(open.name, x))}" data-k="${esc(key(open.name, x))}"></button></div>`).join('')}</div></div>` : ''}</div>`, s)
+}
+
+/* ---------- V5 ---------- */
+function v5(s) {
+  const items = allItems()
+  const cur = items.find(i => i.name === s.node) ?? items[0]
+  const changes = [...new Set([...s.sel, ...s.initial])].filter(k => s.sel.has(k) !== s.initial.has(k))
+  const byGroup = AREAS.map(a => ({ a, on: a.items.reduce((n, i) => n + i.acts.filter(x => s.sel.has(key(i.name, x))).length, 0), tot: a.items.reduce((n, i) => n + i.acts.length, 0) }))
+  const DESC = { Access: 'Open these pages and see the list', Add: 'Create new records', Edit: 'Change existing records', Delete: 'Remove records — use with care', Export: 'Download data as a file', Activity: 'View the audit log' }
+  return frame('', `${titleBar(s)}<div class="card rise" style="padding:14px 18px;margin-bottom:14px">${identityFields(s).replace('grid-template-columns:1fr 1fr', 'grid-template-columns:1.4fr 1fr 1fr 1fr')}</div>
+  <div class="grid"><div class="card col rise"><div class="ch">${svg('i-search')}<input class="inp" style="height:32px;border:0;box-shadow:none;padding:0" placeholder="Search areas" data-treeq value="${esc(s.q ?? '')}"></div><div class="tree scrolly">${AREAS.map(a => { const list = a.items.filter(i => !s.q || i.name.toLowerCase().includes(s.q.toLowerCase())); return list.length ? `<div class="grp">${a.group.toUpperCase()}</div>` + list.map(i => `<div class="tn ${i.name === cur.name ? 'on' : ''}" data-node="${esc(i.name)}">${svg(a.icon)}${i.name}<span class="cnt">${i.acts.filter(x => s.sel.has(key(i.name, x))).length}/${i.acts.length}</span></div>`).join('') : '' }).join('')}</div></div>
+  <div class="card col rise" style="animation-delay:.05s"><div class="ch">${segs(s)}</div>${s.tab === 'site' ? `<div style="padding:14px 14px 0;display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:10px;background:#eaf3fa;color:var(--brand);display:grid;place-items:center">${svg(cur.icon)}</span><div><b>${cur.name}</b><br><small style="color:var(--muted)">${cur.desc}</small></div><div class="grow"></div><button class="btn" data-allnode style="height:30px;font-size:12px">${cur.acts.every(x => s.sel.has(key(cur.name, x))) ? 'Clear all' : 'Grant all'}</button></div><div class="tiles">${cur.acts.map((x, n) => `<div role="button" tabindex="0" class="tile rise ${DANGER.has(x) ? 'danger' : ''}" style="animation-delay:${n * 40}ms" aria-pressed="${s.sel.has(key(cur.name, x))}" data-k="${esc(key(cur.name, x))}"><div class="th"><b>${x}</b><span class="chk" role="presentation" aria-checked="${s.sel.has(key(cur.name, x))}"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div><small>${DESC[x] ?? 'Shows the ' + x.replace(' Visibility', '').toLowerCase() + ' visibility tab for this profile'}</small></div>`).join('')}</div>` : `<div class="scrolly">${visibility(s)}</div>`}</div>
+  <div class="card col insp rise" style="animation-delay:.1s"><div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px"><span>Coverage</span><b class="count" style="color:var(--ink)">${Math.round(s.sel.size / TOTAL * 100)}%</b></div><div class="meter"><i style="width:${s.sel.size / TOTAL * 100}%"></i></div></div>
+    <div>${byGroup.map(g => `<div class="kv"><span>${g.a.group}</span><b>${g.on} / ${g.tot}</b></div>`).join('')}</div>
+    <div><div style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin-bottom:8px">CHANGES ${changes.length ? '(' + changes.length + ')' : ''}</div><div class="changes">${changes.length ? changes.map(k => `<div class="chg ${s.sel.has(k) ? 'add' : 'rem'}">${s.sel.has(k) ? '+ ' : '− '}${k.replace('|', ' · ')}</div>`).join('') : '<small style="color:var(--muted)">No changes yet</small>'}</div></div>
+    ${[...s.sel].some(k => DANGER.has(k.split('|')[1])) ? '<div class="pill warn" style="align-self:flex-start"><i></i>Includes delete rights</div>' : ''}
+  </div></div>`, s)
+}
+
+const VARIANTS = [
+  ['v1', v1, '1 · Permission Matrix', 'Every area and action in one clear grid. Profile identity and a live coverage ring on the left; tick a column header to grant Add or Edit everywhere at once.', 'Fastest for admins'],
+  ['v2', v2, '2 · Guided Setup', 'A four-step journey — Identity, Landing page, Site Access, Visibility — with presets (View only, Editor, Administrator) and expandable areas. Nothing to learn.', 'Easiest to understand'],
+  ['v3', v3, '3 · Live Preview Studio', 'Pick None / View / Edit / Full per area, and a live mini-Admin on the right shows exactly which menus, buttons and pages this profile unlocks.', 'Most "mind-blowing"'],
+  ['v4', v4, '4 · Area Cards', 'Each area is a card with its rights as chips and a progress glow. Click a card to open a frosted side drawer with plain-English switches and quick sets.', 'Modern & visual'],
+  ['v5', v5, '5 · Navigator & Inspector', 'Refined three-column editor: searchable area tree with counts, big action tiles with explanations, and an inspector with coverage, per-area totals and a live change log.', 'Closest to today, pro'],
+]
+
+const host = document.getElementById('variants')
+VARIANTS.forEach(([cls, render, title, desc, tag]) => {
+  const sec = document.createElement('section'); sec.className = 'variant ' + cls
+  sec.innerHTML = `<div class="vhead"><h2>${title}</h2><p>${desc}</p><span class="tag">${tag}</span></div><div class="scroll"></div>`
+  host.append(sec)
+  const s = makeState(); s.open = new Set(['Users']); s.focus = 'Device'; s.node = 'Device'
+  const root = sec.querySelector('.scroll')
+  const paint = () => {
+    const focused = document.activeElement && root.contains(document.activeElement) ? document.activeElement.dataset.f || (document.activeElement.hasAttribute('data-q') ? 'q' : null) : null
+    root.innerHTML = render(s)
+    placeIndicators(root)
+    if (focused) { const el = root.querySelector(`[data-f="${focused}"]`) || root.querySelector('[data-q]'); if (el) { el.focus(); if (el.setSelectionRange) el.setSelectionRange(el.value.length, el.value.length) } }
+  }
+  const change = fn => { fn(); s.dirty = s.name !== 'Timetable Officer' || s.key !== 'TT-OFFICER' || s.restricted || s.landing !== 'Device' || s.sel.size !== s.initial.size || [...s.sel].some(k => !s.initial.has(k)) || s.touched; if (!tabsFor(s).some(t => t.id === s.tab)) s.tab = 'site'; paint() }
+  root.addEventListener('click', e => {
+    const t = e.target.closest('button,[data-k],[data-drawer],[data-node],[data-accord],[data-step],[data-close],[data-focus]'); if (!t) return
+    const d = t.dataset
+    if (d.k) return change(() => s.sel.has(d.k) ? s.sel.delete(d.k) : s.sel.add(d.k))
+    if (d.tab) return change(() => { s.tab = d.tab })
+    if (d.f === 'restricted') return change(() => { s.restricted = !s.restricted })
+    if (d.col) return change(() => { const cells = allItems().flatMap(i => i.acts.filter(a => (COLS.includes(a) ? a : 'Other') === d.col).map(a => key(i.name, a))); const all = cells.every(k => s.sel.has(k)); cells.forEach(k => all ? s.sel.delete(k) : s.sel.add(k)) })
+    if (d.rowall) return change(() => { const i = allItems().find(x => x.name === d.rowall); const ks = i.acts.map(a => key(i.name, a)); const all = ks.every(k => s.sel.has(k)); ks.forEach(k => all ? s.sel.delete(k) : s.sel.add(k)) })
+    if (d.ev) return change(() => { s.events.has(d.ev) ? s.events.delete(d.ev) : s.events.add(d.ev); s.touched = true })
+    if (d.vl) return change(() => { const set = s.tab === 'cases' ? s.cases : s.workflows; set.has(d.vl) ? set.delete(d.vl) : set.add(d.vl); s.touched = true })
+    if (d.preset) return change(() => { s.preset = d.preset; s.sel.clear(); allItems().forEach(i => i.acts.forEach(a => { if (d.preset === 'Administrator' || (d.preset === 'Editor' && ['Access', 'Add', 'Edit'].includes(a)) || (d.preset === 'View only' && a === 'Access')) s.sel.add(key(i.name, a)) })) })
+    if (d.accord) { s.open.has(d.accord) ? s.open.delete(d.accord) : s.open.add(d.accord); return paint() }
+    if (d.step !== undefined && !t.classList.contains('pane')) { s.step = Number(d.step); return paint() }
+    if (d.land !== undefined) return change(() => { s.landing = d.land })
+    if (d.level !== undefined) return change(() => { const name = t.parentElement.dataset.lvl; const i = allItems().find(x => x.name === name); i.acts.forEach(a => s.sel.delete(key(i.name, a))); const lv = Number(d.level); if (lv >= 1) s.sel.add(key(i.name, 'Access')); if (lv >= 2) ['Add', 'Edit'].forEach(a => i.acts.includes(a) && s.sel.add(key(i.name, a))); if (lv === 3) i.acts.forEach(a => s.sel.add(key(i.name, a))); s.focus = name })
+    if (d.focus) { s.focus = d.focus; return paint() }
+    if (d.drawer) { s.drawer = d.drawer; return paint() }
+    if (d.close !== undefined) { s.drawer = null; return paint() }
+    if (d.quick) return change(() => { const i = allItems().find(x => x.name === s.drawer); i.acts.forEach(a => s.sel.delete(key(i.name, a))); if (d.quick === 'View') s.sel.add(key(i.name, 'Access')); if (d.quick === 'Everything') i.acts.forEach(a => s.sel.add(key(i.name, a))) })
+    if (d.node) { s.node = d.node; return paint() }
+    if (d.allnode !== undefined) return change(() => { const i = allItems().find(x => x.name === s.node) ?? allItems()[0]; const ks = i.acts.map(a => key(i.name, a)); const all = ks.every(k => s.sel.has(k)); ks.forEach(k => all ? s.sel.delete(k) : s.sel.add(k)) })
+    if (d.act === 'copy') return change(() => { s.name = s.name + ' (1)'; s.touched = true })
+    if (d.act === 'cancel') { Object.assign(s, makeState(), { open: s.open, focus: s.focus, node: s.node }); return paint() }
+    if (d.act === 'save') {
+      if (!s.name.trim()) return paint()
+      if (!landingOk(s)) { const warn = root.querySelector('[data-f="landing"]'); warn?.classList.add('bad'); return }
+      s.initial = new Set(s.sel); s.dirty = false; s.touched = false; paint()
+      const toast = document.createElement('div'); toast.className = 'toast'; toast.innerHTML = `<span>${svg('i-check')}</span>The item was saved successfully.`
+      root.querySelector('.appwrap').append(toast); setTimeout(() => toast.remove(), 2400)
+    }
+  })
+  root.addEventListener('input', e => {
+    const d = e.target.dataset
+    if (d.f === 'name') { s.name = e.target.value; s.touched = true; return change(() => {}) }
+    if (d.f === 'key') { s.key = e.target.value; return change(() => {}) }
+    if (e.target.hasAttribute('data-q')) { const q = e.target.value.toLowerCase(); root.querySelectorAll('[data-row]').forEach(r => { r.style.display = r.dataset.row.includes(q) ? '' : 'none' }) }
+    if (d.cardq !== undefined || e.target.hasAttribute('data-cardq')) { s.q = e.target.value; paint(); const el = root.querySelector('[data-cardq]'); el.focus(); el.setSelectionRange(el.value.length, el.value.length) }
+    if (e.target.hasAttribute('data-treeq')) { s.q = e.target.value; paint(); const el = root.querySelector('[data-treeq]'); el.focus(); el.setSelectionRange(el.value.length, el.value.length) }
+  })
+  root.addEventListener('change', e => { if (e.target.dataset.f === 'landing') change(() => { s.landing = e.target.value }) })
+  paint()
+})
+
+function placeIndicators(root) {
+  root._ind = root._ind || {}
+  const slide = (sel, onSel) => root.querySelectorAll(sel).forEach((g, n) => {
+    const on = g.querySelector(onSel) || g.querySelector('button'); const ind = g.querySelector('.ind'); if (!on || !ind) return
+    const id = sel + n, prev = root._ind[id], next = { left: on.offsetLeft, width: on.offsetWidth }
+    if (prev) { ind.style.transition = 'none'; ind.style.left = prev.left + 'px'; ind.style.width = prev.width + 'px'; ind.getBoundingClientRect(); ind.style.transition = '' }
+    requestAnimationFrame(() => { ind.style.left = next.left + 'px'; ind.style.width = next.width + 'px' })
+    root._ind[id] = next
+  })
+  slide('.segs', '[aria-selected=true]')
+  slide('.lvl', '[aria-pressed=true]')
+}
+</script>
