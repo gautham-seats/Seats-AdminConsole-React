@@ -16,7 +16,9 @@
     "prepare": "husky",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "build:check": "node -e \"process.env.ADMIN_ALLOW_WRITES=process.env.ADMIN_ALLOW_WRITES||'false';require('child_process').execSync('npx next build',{stdio:'inherit',env:process.env})\"",
+    "check": "npm run format:check && npm run typecheck && npm run lint && npm test && npm run build:check"
   },
   "dependencies": {
     "next": "16.3.5",
