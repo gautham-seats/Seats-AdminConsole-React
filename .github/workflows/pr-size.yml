@@ -14,18 +14,22 @@ jobs:
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
-      - name: Count changed lines outside lockfiles and generated files
+      - name: Measure the largest commit
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
         run: |
-          changed=$(gh api "repos/$REPO/pulls/$PR/files?per_page=100" --paginate \
-            --jq '[.[] | select(.filename | test("package-lock[.]json$|[.]snap$") | not) | .additions + .deletions] | add // 0')
-          echo "Changed lines: $changed" >> "$GITHUB_STEP_SUMMARY"
-          if [ "$changed" -gt 600 ]; then
+          gh label create needs-split --repo "$REPO" --color d73a4a --description "A commit is too large to review in one sitting" --force
+          largest=0
+          for sha in $(gh api "repos/$REPO/pulls/$PR/commits?per_page=100" --paginate --jq '.[].sha'); do
+            lines=$(gh api "repos/$REPO/commits/$sha" --jq '[.files[] | select(.filename | test("package-lock[.]json$|[.]snap$") | not) | .additions + .deletions] | add // 0')
+            [ "$lines" -gt "$largest" ] && largest=$lines
+          done
+          echo "Largest commit: $largest changed lines" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$largest" -gt 600 ]; then
             gh pr edit "$PR" --repo "$REPO" --add-label needs-split
-            echo "::warning::This pull request changes $changed lines; split it so a reviewer can read it in one sitting."
+            echo "::warning::The largest commit changes $largest lines; split it so a reviewer can read it in one sitting."
           else
             gh pr edit "$PR" --repo "$REPO" --remove-label needs-split 2>/dev/null || true
           fi
