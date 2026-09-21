@@ -1,0 +1,5 @@
+{
+  "unit": "kB of uncompressed client JavaScript per route, framework included (the empty app measures 443)",
+  "default": 600,
+  "routes": {}
+}

@@ -1,7 +1,11 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "entry": ["src/app/**/{page,layout,error,global-error,not-found,loading}.tsx", ".github/scripts/*.mjs"],
-  "project": ["src/**/*.{ts,tsx,css}", ".github/scripts/**/*.mjs"],
+  "entry": [
+    "src/app/**/{page,layout,error,global-error,not-found,loading}.tsx",
+    ".github/scripts/*.mjs",
+    "scripts/*.mjs"
+  ],
+  "project": ["src/**/*.{ts,tsx,css}", ".github/scripts/**/*.mjs", "scripts/**/*.mjs"],
   "ignoreDependencies": [],
   "rules": {
     "unlisted": "error",
