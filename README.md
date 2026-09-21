@@ -5,7 +5,6 @@ integrations, job schedules and student workflows. A Next.js / React rewrite of 
 (`Seats.Trunk.Admin`) that runs beside it, calls the same API and shares its sign-in and permissions.
 
 [![CI](https://github.com/gautham-seats/Seats-AdminConsole-React/actions/workflows/ci.yml/badge.svg)](https://github.com/gautham-seats/Seats-AdminConsole-React/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/gautham-seats/Seats-AdminConsole-React/actions/workflows/codeql.yml/badge.svg)](https://github.com/gautham-seats/Seats-AdminConsole-React/actions/workflows/codeql.yml)
 [![Node](https://img.shields.io/badge/node-24-339933?logo=node.js&logoColor=white)](.nvmrc)
 [![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js&logoColor=white)](package.json)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)](tsconfig.json)
@@ -52,8 +51,8 @@ without changing data. A production build fails unless the value is set explicit
 | -------------------------------------------- | ------------------------------- |
 | Install, audit, Prettier, typecheck, ESLint  | `ci.yml` on every push and PR   |
 | Jest with a coverage floor, production build | `ci.yml`, sizes in the summary  |
-| Secret scan (gitleaks), dependency review    | `ci.yml`                        |
-| CodeQL security and quality queries          | `codeql.yml`, PRs and weekly    |
+| Secret scan (gitleaks)                       | `ci.yml`, PRs and main          |
+| Static security analysis (Semgrep)           | `ci.yml`                        |
 | Advisory model review with inline comments   | `ai-review.yml` on every PR     |
 | Bundle attached to the GitHub Release        | `release.yml` on every `v*` tag |
 | Dependabot, grouped minor/patch, weekly      | `dependabot.yml`                |
