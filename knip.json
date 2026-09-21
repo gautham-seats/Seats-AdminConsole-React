@@ -7,7 +7,7 @@
     ".github/scripts/*.mjs",
     "scripts/*.mjs"
   ],
-  "project": ["src/**/*.{ts,tsx,css}", ".github/scripts/**/*.mjs", "scripts/**/*.mjs"],
+  "project": ["src/**/*.{ts,tsx,css}", ".github/scripts/**/*.mjs", "scripts/**/*.mjs", "eslint-rules/*.mjs"],
   "ignoreDependencies": [],
   "rules": {
     "unlisted": "error",

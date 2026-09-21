@@ -3,6 +3,7 @@ import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
 import jest from 'eslint-plugin-jest'
+import parsedApiReads from './eslint-rules/parsed-api-reads.mjs'
 
 const browserObjects = ['window', 'globalThis', 'self']
 
@@ -64,6 +65,12 @@ const eslintConfig = defineConfig([
       // Label is a generic wrapper; each caller supplies htmlFor
       'jsx-a11y/label-has-associated-control': 'off',
     },
+  },
+  {
+    files: ['src/features/**/*.{ts,tsx}', 'src/shared/shell/**/*.{ts,tsx}'],
+    ignores: ['**/__tests__/**'],
+    plugins: { local: { rules: { 'parsed-api-reads': parsedApiReads } } },
+    rules: { 'local/parsed-api-reads': 'error' },
   },
   {
     files: ['src/shared/api/**/*.ts'],
