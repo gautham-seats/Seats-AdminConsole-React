@@ -40,8 +40,8 @@ const gh = (path, init = {}) =>
 
 const EXCLUDE = /\.(md|lock|css|png|svg|ico)$|package-lock\.json$/
 const TEST_FILE = /__tests__\/.*\.test\.tsx?$/
-// About 60k characters is roughly 15k tokens: a whole reviewable pull request for a cent or less per lane.
-const MAX_CHARS = 60_000
+// About 160k characters is roughly 40k tokens: a whole eight-commit pull request for two or three cents per lane.
+const MAX_CHARS = 160_000
 const MAX_COMMENTS = 12
 
 const pr = await (await gh(`/pulls/${PR_NUMBER}`)).json()
