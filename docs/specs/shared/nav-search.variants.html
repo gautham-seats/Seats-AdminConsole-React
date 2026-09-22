@@ -1,0 +1,314 @@
+<title>Admin Search Studio</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root{
+  --ground:#eef1f5;--surface:#fff;--raised:#fbfcfd;--sunken:#f3f5f8;--line:#e3e7ee;--line-2:#d0d7e1;
+  --ink:#0f1829;--ink-2:#465367;--ink-3:#7b8799;--brand:#1566a2;--brand-2:#0f5286;--brand-soft:#e9f2f9;--brand-ring:rgba(21,102,162,.22);
+  --mark:rgba(21,102,162,.16);--star:#c98a0e;
+  --sh1:0 1px 2px rgba(15,24,41,.06);--sh2:0 1px 2px rgba(15,24,41,.05),0 12px 30px -16px rgba(15,24,41,.3);
+  --sh3:0 0 0 1px rgba(15,24,41,.06),0 2px 6px rgba(15,24,41,.06),0 40px 90px -28px rgba(15,24,41,.45);
+  --scrim:rgba(15,24,41,.32);--ease:cubic-bezier(.22,1,.36,1);
+  --sans:"Inter",system-ui,"Segoe UI",sans-serif;--mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0a0f17;--surface:#121923;--raised:#151d28;--sunken:#0e141d;--line:#222c3a;--line-2:#2f3b4c;
+  --ink:#e6ebf2;--ink-2:#a8b3c3;--ink-3:#748197;--brand:#58a6dd;--brand-2:#7bb9e6;--brand-soft:#15283a;--brand-ring:rgba(88,166,221,.3);
+  --mark:rgba(88,166,221,.22);--star:#e6b44a;
+  --sh1:0 1px 2px rgba(0,0,0,.4);--sh2:0 1px 2px rgba(0,0,0,.4),0 12px 30px -14px rgba(0,0,0,.7);
+  --sh3:0 0 0 1px rgba(255,255,255,.06),0 2px 6px rgba(0,0,0,.4),0 40px 90px -24px rgba(0,0,0,.85);--scrim:rgba(0,0,0,.55);
+}}
+:root[data-theme="dark"]{
+  --ground:#0a0f17;--surface:#121923;--raised:#151d28;--sunken:#0e141d;--line:#222c3a;--line-2:#2f3b4c;
+  --ink:#e6ebf2;--ink-2:#a8b3c3;--ink-3:#748197;--brand:#58a6dd;--brand-2:#7bb9e6;--brand-soft:#15283a;--brand-ring:rgba(88,166,221,.3);
+  --mark:rgba(88,166,221,.22);--star:#e6b44a;
+  --sh1:0 1px 2px rgba(0,0,0,.4);--sh2:0 1px 2px rgba(0,0,0,.4),0 12px 30px -14px rgba(0,0,0,.7);
+  --sh3:0 0 0 1px rgba(255,255,255,.06),0 2px 6px rgba(0,0,0,.4),0 40px 90px -24px rgba(0,0,0,.85);--scrim:rgba(0,0,0,.55);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font:14px/1.45 var(--sans);padding-inline:16px;padding-block:16px 40px}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+svg.i{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+kbd{font:500 11px var(--mono);color:var(--ink-2);background:var(--surface);border:1px solid var(--line-2);border-bottom-width:2px;border-radius:5px;padding:1px 5px;min-width:20px;text-align:center;display:inline-block}
+mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
+
+/* studio chrome */
+.studio{max-width:1280px;margin:0 auto;display:grid;gap:14px}
+.bar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between}
+.bar h1{margin:0;font-size:18px;letter-spacing:-.01em}
+.bar p{margin:2px 0 0;color:var(--ink-2);font-size:13px;max-width:70ch}
+.seg{display:inline-flex;flex-wrap:wrap;gap:2px;padding:3px;border-radius:10px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--sh1)}
+.seg button{border:0;background:none;border-radius:7px;padding:6px 12px;cursor:pointer;color:var(--ink-2);font-weight:500;font-size:13px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px 24px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 18px;font-size:13px;color:var(--ink-2)}
+.notes b{color:var(--ink)}
+.notes ul{margin:4px 0 0;padding-left:18px}
+
+/* fake admin */
+.app{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--sh2);background:var(--ground);min-height:700px}
+.top{display:flex;align-items:center;gap:18px;height:56px;padding:0 18px;background:var(--surface);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:-.01em}
+.logo span{width:26px;height:26px;border-radius:7px;background:var(--brand);display:grid;place-items:center;color:#fff;font-size:12px}
+.menu{display:flex;gap:2px;overflow:hidden}
+.menu a{padding:7px 11px;border-radius:8px;color:var(--ink-2);text-decoration:none;font-weight:500;font-size:13px;white-space:nowrap}
+.menu a.on{color:var(--ink);background:var(--sunken)}
+@media (max-width:1000px){.menu{display:none}}
+.trigger{margin-left:auto;display:flex;align-items:center;gap:10px;height:36px;width:300px;max-width:45vw;padding:0 8px 0 11px;border-radius:10px;border:1px solid var(--line-2);background:var(--sunken);color:var(--ink-3);cursor:pointer;transition:border-color .2s,box-shadow .3s var(--ease),background .2s}
+.trigger:hover{border-color:var(--ink-3);background:var(--surface);box-shadow:var(--sh1)}
+.trigger .grow{flex:1;text-align:left}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;font-weight:600;font-size:12px}
+.page{padding:22px 26px;display:grid;gap:12px}
+.page h2{margin:0;font-size:20px}
+.ghost{height:120px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.ghost.t{height:320px}
+
+.scrim{position:absolute;inset:0;background:var(--scrim);backdrop-filter:blur(2px);animation:fade .2s ease both;z-index:20}
+@keyframes fade{from{opacity:0}}
+@keyframes drop{from{opacity:0;transform:translateY(-8px) scale(.985)}}
+@keyframes rise{from{opacity:0;transform:translateY(4px)}}
+
+/* rows shared */
+.row{position:relative;display:flex;align-items:center;gap:12px;padding:0 12px;height:44px;border-radius:9px;cursor:pointer;color:var(--ink-2);scroll-margin:8px}
+.row .ic{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--sunken);color:var(--ink-2);border:1px solid var(--line);flex:none;transition:background .2s,color .2s,border-color .2s}
+.row .nm{color:var(--ink);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .ar{color:var(--ink-3);font-size:12.5px;white-space:nowrap}
+.row .end{margin-left:auto;display:flex;align-items:center;gap:6px}
+.row .star{width:26px;height:26px;border:0;background:none;border-radius:6px;display:grid;place-items:center;color:var(--ink-3);cursor:pointer;opacity:0;transition:opacity .15s,background .15s,color .15s}
+.row .star.on{opacity:1;color:var(--star)}
+.row .star.on svg{fill:currentColor}
+.row:hover .star,.row[aria-selected="true"] .star{opacity:1}
+.row .star:hover{background:var(--line)}
+.row .enter{opacity:0;transition:opacity .15s}
+.row[aria-selected="true"]{background:var(--brand-soft);color:var(--ink)}
+.row[aria-selected="true"] .ic{background:var(--brand);border-color:var(--brand);color:#fff}
+.row[aria-selected="true"] .enter{opacity:1}
+.grp{display:flex;align-items:center;justify-content:space-between;padding:12px 12px 6px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.grp button{border:0;background:none;color:var(--ink-3);font:inherit;text-transform:none;letter-spacing:0;font-size:12px;cursor:pointer;border-radius:5px;padding:2px 6px}
+.grp button:hover{color:var(--ink);background:var(--sunken)}
+.empty{padding:36px 20px;text-align:center;color:var(--ink-2);display:grid;gap:10px;justify-items:center}
+.empty b{color:var(--ink);font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.chip{height:28px;padding:0 10px;border-radius:14px;border:1px solid var(--line-2);background:var(--surface);cursor:pointer;font-size:12.5px;color:var(--ink-2)}
+.chip:hover{border-color:var(--brand);color:var(--brand)}
+.scope{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 4px 0 9px;border-radius:7px;background:var(--brand-soft);color:var(--brand);font-weight:600;font-size:12.5px;white-space:nowrap}
+.scope button{border:0;background:none;color:inherit;width:18px;height:18px;border-radius:4px;display:grid;place-items:center;cursor:pointer}
+.scope button:hover{background:var(--brand-ring)}
+.foot{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:9px 14px;border-top:1px solid var(--line);color:var(--ink-3);font-size:12px}
+.foot span{display:inline-flex;align-items:center;gap:5px}
+.foot .r{margin-left:auto}
+.toast{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:40;background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:10px;box-shadow:var(--sh3);animation:rise .3s var(--ease);font-size:13px;white-space:nowrap}
+.list{overflow:auto;overscroll-behavior:contain;padding:4px 8px 8px}
+
+/* === A Spotlight === */
+.A{position:absolute;left:50%;top:72px;transform:translateX(-50%);width:min(640px,calc(100% - 32px));z-index:30;background:var(--surface);border-radius:16px;box-shadow:var(--sh3);overflow:hidden;animation:drop .28s var(--ease) both}
+.A .inp{display:flex;align-items:center;gap:10px;height:58px;padding:0 16px;border-bottom:1px solid var(--line)}
+.A .inp input{flex:1;min-width:0;border:0;outline:none;background:none;font-size:16px}
+.A .inp input::placeholder{color:var(--ink-3)}
+.A .list{max-height:420px}
+.A .row .ar::before{content:"";display:inline-block;width:3px;height:3px;border-radius:50%;background:var(--ink-3);vertical-align:middle;margin-right:8px}
+
+/* === B Console (anchored) === */
+.B{position:absolute;right:66px;top:10px;width:min(760px,calc(100% - 32px));z-index:30;background:var(--surface);border-radius:14px;box-shadow:var(--sh3);overflow:hidden;animation:drop .24s var(--ease) both}
+.B .inp{display:flex;align-items:center;gap:10px;height:48px;padding:0 12px;border-bottom:1px solid var(--line)}
+.B .inp input{flex:1;min-width:0;border:0;outline:none;background:none;font-size:14.5px}
+.B .body{display:grid;grid-template-columns:190px 1fr;min-height:0}
+@media (max-width:700px){.B .body{grid-template-columns:1fr}.B nav{display:none}}
+.B nav{border-right:1px solid var(--line);padding:10px 8px;display:grid;align-content:start;gap:2px;background:var(--raised)}
+.B nav button{display:flex;align-items:center;gap:9px;height:34px;padding:0 10px;border:0;border-radius:8px;background:none;cursor:pointer;color:var(--ink-2);font-weight:500;font-size:13px;text-align:left}
+.B nav button:hover{background:var(--sunken);color:var(--ink)}
+.B nav button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--sh1)}
+.B nav .n{margin-left:auto;font-size:11px;font-variant-numeric:tabular-nums;color:var(--ink-3)}
+.B nav hr{border:0;border-top:1px solid var(--line);margin:8px 4px}
+.B .list{max-height:430px}
+.B .tbl .row{display:grid;grid-template-columns:28px minmax(0,1.3fr) minmax(0,1fr) 60px;gap:12px}
+.B .th{display:grid;grid-template-columns:28px minmax(0,1.3fr) minmax(0,1fr) 60px;gap:12px;padding:10px 12px 4px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.B .row .end{justify-content:flex-end}
+
+/* === C Split with context === */
+.C{position:absolute;left:50%;top:64px;transform:translateX(-50%);width:min(860px,calc(100% - 32px));z-index:30;background:var(--surface);border-radius:18px;box-shadow:var(--sh3);overflow:hidden;animation:drop .3s var(--ease) both}
+.C .inp{display:flex;align-items:center;gap:12px;height:64px;padding:0 20px;border-bottom:1px solid var(--line)}
+.C .inp input{flex:1;min-width:0;border:0;outline:none;background:none;font-size:18px;letter-spacing:-.01em}
+.C .body{display:grid;grid-template-columns:minmax(0,1fr) 270px}
+@media (max-width:760px){.C .body{grid-template-columns:1fr}.C aside{display:none}}
+.C .list{max-height:440px}
+.C aside{border-left:1px solid var(--line);background:var(--raised);padding:16px;display:grid;align-content:start;gap:14px;animation:rise .25s var(--ease)}
+.C aside h4{margin:0;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.C .sib{display:grid;gap:2px}
+.C .sib button{display:flex;align-items:center;gap:9px;height:32px;padding:0 8px;border:0;border-radius:7px;background:none;cursor:pointer;color:var(--ink-2);font-size:13px;text-align:left}
+.C .sib button:hover{background:var(--sunken);color:var(--ink)}
+.C .sib button.cur{color:var(--brand);font-weight:600}
+.C .qa{display:grid;gap:6px}
+.C .qa button{display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border-radius:8px;border:1px solid var(--line-2);background:var(--surface);cursor:pointer;font-size:13px;color:var(--ink);transition:transform .2s var(--ease),box-shadow .2s}
+.C .qa button:hover{transform:translateY(-1px);box-shadow:var(--sh2)}
+.C .area{display:flex;align-items:center;gap:10px}
+.C .area .big{width:36px;height:36px;border-radius:10px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center}
+.C .area .big svg{width:18px;height:18px}
+.C .area b{display:block}
+.C .area span{font-size:12px;color:var(--ink-3)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<div class="studio">
+  <div class="bar">
+    <div><h1>Admin Search Studio</h1><p>Three search designs using the real SEAtS Admin pages. Press <kbd>Ctrl</kbd> <kbd>K</kbd> or click the search box in the top bar. Everything works: type, use the arrows, star favourites, type <b>@devices</b> to search one area, <b>&gt;</b> for actions.</p></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><div class="seg" id="vs"></div><div class="seg" id="ts"></div></div>
+  </div>
+  <div class="notes" id="notes"></div>
+  <div class="app" id="app">
+    <header class="top">
+      <div class="logo"><span>S</span>SEAtS Admin</div>
+      <nav class="menu" aria-label="Main"><a href="#" class="on">Users</a><a href="#">Devices</a><a href="#">Settings</a><a href="#">Rollback</a><a href="#">Job Schedule</a><a href="#">Cases</a><a href="#">More</a></nav>
+      <button class="trigger" id="trigger" aria-haspopup="dialog">SEARCH_ICON<span class="grow">Search Admin</span><kbd>Ctrl</kbd><kbd>K</kbd></button>
+      <div class="avatar" aria-label="Signed in as Gautham Binoy">GB</div>
+    </header>
+    <div class="page"><h2>User</h2><div class="ghost"></div><div class="ghost t"></div></div>
+    <div id="layer"></div>
+  </div>
+</div>
+
+<script>
+const P={
+ search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',star:'<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+ enter:'<path d="M20 5v7a3 3 0 0 1-3 3H5m0 0 4-4m-4 4 4 4"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+ users:'<circle cx="9" cy="8" r="3.5"/><path d="M2 21a7 7 0 0 1 14 0M16 4.5a3.5 3.5 0 0 1 0 7M22 21a7 7 0 0 0-4-6.3"/>',log:'<path d="M4 6h16M4 12h10M4 18h7"/>',key:'<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3"/>',
+ door:'<path d="M5 21V4h11v17M3 21h18M13 12h0"/>',chip:'<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',
+ chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',alert:'<path d="M12 3 2 21h20z"/><path d="M12 10v5M12 18h0"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+ file:'<path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4"/>',tag:'<path d="M3 12V3h9l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1.5"/>',box:'<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/>',
+ form:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',shield:'<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/>',book:'<path d="M4 5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/>',
+ cloud:'<path d="M7 18a5 5 0 0 1-.5-10A6 6 0 0 1 18 9a4.5 4.5 0 0 1-.5 9z"/>',undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+ flow:'<circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M6 8.5v1a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3v-1M12 12.5v3"/>',branch:'<circle cx="6" cy="5" r="2.5"/><circle cx="18" cy="8" r="2.5"/><path d="M6 7.5V21M18 10.5a6 6 0 0 1-6 6H6"/>',
+ grad:'<path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',upload:'<path d="M12 16V4m0 0-4 4m4-4 4 4M5 20h14"/>',gauge:'<path d="M4 18a8 8 0 1 1 16 0"/><path d="m12 14 4-4"/>',
+ hist:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/>',check:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',bin:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+ plug:'<path d="M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0zM12 18v4"/>',bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/>',swap:'<path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/>',
+ out:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',plus:'<path d="M12 5v14M5 12h14"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+ bolt:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>'
+};
+const ic=(n,st='')=>`<svg class="i" viewBox="0 0 24 24" aria-hidden="true" ${st}>${P[n]}</svg>`;
+document.getElementById('trigger').innerHTML=document.getElementById('trigger').innerHTML.replace('SEARCH_ICON',ic('search'));
+
+// Real SEAtS Admin menu (src/shared/shell/admin-menu.ts)
+const AREAS=[
+ ['Users','users',[['User','user','/users'],['Access Profile','lock','/users/access-profiles'],['Contact Group','users','/users/contact-groups'],['Activity Log','log','/users/activity'],['Developer Key','key','/users/developer-keys']]],
+ ['Devices','chip',[['Room','door','/resources/rooms'],['Device','chip','/resources/devices'],['Readings Report','chart','/resources/readings'],['Suspicious Readings Report','alert','/resources/suspicious-readings']]],
+ ['Settings','gear',[['Settings','gear','/settings'],['File Template','file','/settings/file-templates'],['Activity Types','tag','/settings/activity-types'],['Resources','box','/settings/resources'],['Custom Fields','form','/settings/custom-fields'],['Authentication','shield','/settings/authentication'],['Contacts','book','/settings/contacts'],['Graph API','cloud','/settings/graph-api']]],
+ ['Rollback','undo',[['Rollback','undo','/rollback']]],
+ ['Job Schedule','cal',[['Jobs','cal','/job-schedule']]],
+ ['Cases','flow',[['Workflow Admin','flow','/cases'],['Student Workflow','branch','/cases/student-workflow']]],
+ ['Lesson Type','book',[['Lesson Type','book','/lesson-types']]],
+ ['Imports','upload',[['Imports','upload','/imports']]],
+ ['Engagement','gauge',[['Configuration','gauge','/engagement'],['History','hist','/engagement/history']]],
+ ['Students','grad',[['Student Deletion','check','/students'],['Manual Student Deletion','grad','/students/manual'],['Recycle Bin','bin','/students/recycle-bin']]],
+ ['Integrations','plug',[['Integrations','plug','/integrations']]]
+];
+const PAGES=AREAS.flatMap(([area,aic,kids])=>kids.map(([name,icon,route])=>({id:route,kind:'page',name,icon,route,area,aic,keywords:''})));
+const ACTIONS=[
+ {id:'a-add-user',kind:'action',name:'Add user',icon:'plus',area:'Users',route:'/users/new'},
+ {id:'a-add-device',kind:'action',name:'Add device',icon:'plus',area:'Devices',route:'/resources/devices/new'},
+ {id:'a-export-devices',kind:'action',name:'Export devices to CSV',icon:'file',area:'Devices',route:'/resources/devices'},
+ {id:'a-notif',kind:'action',name:'Open notifications',icon:'bell',area:'Account',route:'/notifications'},
+ {id:'a-old',kind:'action',name:'Switch to old Admin',icon:'swap',area:'Account',route:'/Seats.Trunk.Admin/'},
+ {id:'a-out',kind:'action',name:'Sign out',icon:'out',area:'Account',route:'/signout'}
+];
+const ALL=[...PAGES,...ACTIONS];
+const SYN={'swipes':'Device','card':'Device','battery':'Device','gdpr':'Student Deletion','delete student':'Student Deletion','permissions':'Access Profile','roles':'Access Profile','audit':'Activity Log','api key':'Developer Key','cron':'Jobs','sso':'Authentication','zoom':'Integrations','csv':'Imports','score':'History'};
+
+const VARIANTS={
+ A:{name:'A · Spotlight',nb:'Linear, Raycast, Vercel',why:['One centred box and one list, nothing else','Recent and Favourites before you type, grouped Pages and Actions once you do','Area shown in grey on each row, so the name is never repeated','3 key hints only: move, open, new tab']},
+ B:{name:'B · Console',nb:'AWS, Azure portal, GitHub',why:['Opens right under the search box in the top bar, page stays visible','Left rail filters by All, Pages, Actions, Favourites or one area, with live counts','Results line up in columns: name, area, route','Built for admins who know where they are going']},
+ C:{name:'C · Navigator',nb:'Stripe, Notion, Atlassian',why:['Big calm input with the results on the left','Right panel adds new information, never repeats: other pages in the same area and quick actions for it','Great for finding a page you half remember','Collapses to one column on small screens']}
+};
+
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const st={v:store.get('ns-v','A'),theme:'',open:false,q:'',sel:0,filter:'all',recent:store.get('ns-recent',['/users/access-profiles','/resources/devices','/users','/settings/custom-fields']),fav:store.get('ns-fav',['/resources/rooms','/engagement/history']),toast:''};
+
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function hl(text,term){if(!term)return esc(text);const i=text.toLowerCase().indexOf(term.toLowerCase());if(i<0){ // subsequence
+  let out='',j=0;const t=term.toLowerCase();for(const ch of text){if(j<t.length&&ch.toLowerCase()===t[j]){out+=`<mark>${esc(ch)}</mark>`;j++}else out+=esc(ch)}return j===t.length?out:esc(text)}
+  return esc(text.slice(0,i))+'<mark>'+esc(text.slice(i,i+term.length))+'</mark>'+esc(text.slice(i+term.length));}
+function score(item,t){if(!t)return 1;const n=item.name.toLowerCase(),a=item.area.toLowerCase();t=t.toLowerCase();
+  if(n===t)return 100;if(n.startsWith(t))return 80;if(n.split(' ').some(w=>w.startsWith(t)))return 65;if(n.includes(t))return 50;if(a.startsWith(t))return 30;
+  for(const k in SYN)if(k.includes(t)||t.includes(k))if(SYN[k]===item.name)return 40;
+  let j=0;for(const ch of n)if(ch===t[j])j++;return j===t.length?15:0;}
+function parse(){let q=st.q,scope=null,actions=false;const m=q.match(/^@(\S+)\s?(.*)$/);
+  if(m){const s=AREAS.find(([a])=>a.toLowerCase().replace(/\s/g,'').startsWith(m[1].toLowerCase()));if(s){scope=s[0];q=m[2]}}
+  if(q.startsWith('>')){actions=true;q=q.slice(1).trim()}
+  return{q:q.trim(),scope,actions};}
+function results(){const{q,scope,actions}=parse();let pool=actions?ACTIONS:ALL;
+  if(st.v==='B'){if(st.filter==='pages')pool=PAGES;else if(st.filter==='actions')pool=ACTIONS;else if(st.filter==='fav')pool=ALL.filter(x=>st.fav.includes(x.id));else if(st.filter.startsWith('area:'))pool=ALL.filter(x=>x.area===st.filter.slice(5));}
+  if(scope)pool=pool.filter(x=>x.area===scope);
+  return pool.map(x=>[x,score(x,q)]).filter(([,s])=>s>0).sort((a,b)=>b[1]-a[1]).map(([x])=>x);}
+function groups(){const{q,scope,actions}=parse();const byId=id=>ALL.find(x=>x.id===id);
+  if(!q&&!scope&&!actions&&st.v!=='B'){const g=[];const rec=st.recent.map(byId).filter(Boolean);const fav=st.fav.map(byId).filter(Boolean);
+    if(rec.length)g.push(['Recent',rec.slice(0,5),'recent']);if(fav.length)g.push(['Favourites',fav,'fav']);g.push(['Actions',ACTIONS.slice(0,3)]);return g;}
+  const r=results();if(st.v==='B')return[[null,r]];
+  const pages=r.filter(x=>x.kind==='page'),acts=r.filter(x=>x.kind==='action');const g=[];if(pages.length)g.push(['Pages',pages]);if(acts.length)g.push(['Actions',acts]);return g;}
+const flat=()=>groups().flatMap(([,items])=>items);
+
+function row(x,i,t){const on=i===st.sel,fav=st.fav.includes(x.id);
+  const star=x.kind==='page'?`<button class="star ${fav?'on':''}" data-fav="${x.id}" aria-label="${fav?'Remove from':'Add to'} favourites" tabindex="-1">${ic('star')}</button>`:'';
+  if(st.v==='B')return `<div class="row" role="option" id="opt-${i}" aria-selected="${on}" data-i="${i}"><span class="ic">${ic(x.icon)}</span><span class="nm">${hl(x.name,t)}</span><span class="ar">${hl(x.area,t)}</span><span class="end">${star}<span class="enter">${ic('enter')}</span></span></div>`;
+  return `<div class="row" role="option" id="opt-${i}" aria-selected="${on}" data-i="${i}"><span class="ic">${ic(x.icon)}</span><span class="nm">${hl(x.name,t)}</span><span class="ar">${esc(x.kind==='action'?x.area:x.area)}</span><span class="end">${star}<span class="enter"><kbd>↵</kbd></span></span></div>`;}
+function listHTML(){const{q}=parse();const gs=groups();let i=0;
+  if(!gs.some(([,items])=>items.length))return `<div class="empty">${ic('search','style="width:22px;height:22px;color:var(--ink-3)"')}<b>No pages match “${esc(q)}”</b><span>Try a shorter word, or search one area:</span><div class="chips">${['Users','Devices','Settings','Students'].map(a=>`<button class="chip" data-scope="${a}">@${a}</button>`).join('')}</div></div>`;
+  return gs.map(([title,items,kind])=>(title?`<div class="grp"><span>${title}${items.length>1&&title!=='Recent'&&title!=='Favourites'&&q?` · ${items.length}`:''}</span>${kind==='recent'?'<button data-clear-recent>Clear</button>':''}</div>`:'')+`<div role="group" aria-label="${title||'Results'}">${items.map(x=>row(x,i++,q)).join('')}</div>`).join('');}
+function inputHTML(size){const{scope}=parse();const shown=scope?st.q.replace(/^@\S+\s?/,''):st.q;
+  return `<div class="inp">${ic('search',size==='l'?'style="width:20px;height:20px;color:var(--ink-3)"':'style="color:var(--ink-3)"')}${scope?`<span class="scope">${ic(AREAS.find(a=>a[0]===scope)[1],'style="width:13px;height:13px"')}${scope}<button data-unscope aria-label="Remove area">${ic('x','style="width:11px;height:11px"')}</button></span>`:''}
+  <input id="q" role="combobox" aria-expanded="true" aria-controls="lb" aria-activedescendant="opt-${st.sel}" autocomplete="off" spellcheck="false" placeholder="${scope?`Search ${scope}`:'Search pages and actions'}" value="${esc(shown)}">${st.q?`<button class="chip" style="height:24px" data-clearq>Clear</button>`:''}<kbd>Esc</kbd></div>`;}
+const foot=()=>`<div class="foot"><span><kbd>↑</kbd><kbd>↓</kbd> Move</span><span><kbd>↵</kbd> Open</span><span><kbd>Ctrl</kbd><kbd>↵</kbd> New tab</span><span class="r">Type <kbd>@</kbd> for an area · <kbd>&gt;</kbd> for actions</span></div>`;
+
+function renderA(){return `<div class="scrim" data-close></div><div class="A" role="dialog" aria-label="Search Admin">${inputHTML('l')}<div class="list" id="lb" role="listbox">${listHTML()}</div>${foot()}</div>`}
+function renderB(){const counts={all:ALL.length,pages:PAGES.length,actions:ACTIONS.length,fav:st.fav.length};
+  const nav=[['all','All','grid'],['pages','Pages','file'],['actions','Actions','bolt'],['fav','Favourites','star']].map(([k,l,i])=>`<button data-filter="${k}" aria-pressed="${st.filter===k}">${ic(i)}${l}<span class="n">${counts[k]}</span></button>`).join('')+'<hr>'+AREAS.filter(a=>a[2].length>1).map(([a,i,kids])=>`<button data-filter="area:${a}" aria-pressed="${st.filter==='area:'+a}">${ic(i)}${a}<span class="n">${kids.length}</span></button>`).join('');
+  const r=flat();
+  return `<div class="scrim" data-close style="background:transparent;backdrop-filter:none"></div><div class="B" role="dialog" aria-label="Search Admin">${inputHTML()}<div class="body"><nav aria-label="Filter results">${nav}</nav><div class="tbl"><div class="th"><span></span><span>Name</span><span>Area</span><span></span></div><div class="list" id="lb" role="listbox">${listHTML()}</div><div class="foot" style="border-top:1px solid var(--line)"><span><b style="color:var(--ink);font-variant-numeric:tabular-nums">${r.length}</b> results</span><span><kbd>↑</kbd><kbd>↓</kbd> Move</span><span><kbd>↵</kbd> Open</span><span><kbd>Ctrl</kbd><kbd>↵</kbd> New tab</span></div></div></div></div>`;}
+function renderC(){const f=flat();const cur=f[st.sel];let side='';
+  if(cur){const area=AREAS.find(a=>a[0]===cur.area);const sibs=area?area[2]:[];
+    const qa=cur.area==='Users'?['Add user','Open Activity Log']:cur.area==='Devices'?['Add device','Export devices to CSV']:cur.area==='Account'?['Open notifications']:[`Open ${cur.name}`];
+    side=`<aside aria-label="About this area"><div class="area"><span class="big">${ic(area?area[1]:cur.icon)}</span><div><b>${esc(cur.area)}</b><span>${sibs.length>1?`${sibs.length} pages in this area`:cur.kind==='action'?'Account action':'Single page'}</span></div></div>
+    ${sibs.length>1?`<div><h4>In this area</h4><div class="sib">${sibs.map(([n,i,r])=>`<button data-go="${r}" class="${r===cur.id?'cur':''}">${ic(i)}${n}</button>`).join('')}</div></div>`:''}
+    <div><h4>Quick actions</h4><div class="qa">${qa.map(a=>`<button data-toast="${esc(a)}">${ic(a.startsWith('Add')?'plus':a.startsWith('Export')?'file':'enter')}${esc(a)}</button>`).join('')}</div></div>
+    <div><h4>Your favourites</h4><div class="sib">${st.fav.length?st.fav.map(id=>ALL.find(x=>x.id===id)).filter(Boolean).map(x=>`<button data-go="${x.id}">${ic('star','style="color:var(--star);fill:var(--star)"')}${x.name}</button>`).join(''):'<span style="font-size:12.5px;color:var(--ink-3)">Star a page to pin it here.</span>'}</div></div></aside>`;}
+  return `<div class="scrim" data-close></div><div class="C" role="dialog" aria-label="Search Admin">${inputHTML('l')}<div class="body"><div class="list" id="lb" role="listbox">${listHTML()}</div>${side}</div>${foot()}</div>`;}
+
+function render(){
+  document.getElementById('vs').innerHTML=Object.entries(VARIANTS).map(([k,x])=>`<button data-v="${k}" aria-pressed="${st.v===k}">${x.name}</button>`).join('');
+  document.getElementById('ts').innerHTML=[['','System'],['light','Light'],['dark','Dark']].map(([k,l])=>`<button data-t="${k}" aria-pressed="${st.theme===k}">${l}</button>`).join('');
+  const V=VARIANTS[st.v];document.getElementById('notes').innerHTML=`<div><b>${V.name}</b><br>Inspired by how ${V.nb} do it.</div><div><ul>${V.why.map(w=>`<li>${w}</li>`).join('')}</ul></div>`;
+  const pos=document.activeElement&&document.activeElement.id==='q'?document.activeElement.selectionStart:null;
+  document.getElementById('layer').innerHTML=(st.open?({A:renderA,B:renderB,C:renderC})[st.v]():'')+(st.toast?`<div class="toast" role="status">${esc(st.toast)}</div>`:'');
+  const q=document.getElementById('q');if(q){q.focus();const p=pos??q.value.length;q.setSelectionRange(p,p)}
+  const s=document.getElementById('opt-'+st.sel);if(s)s.scrollIntoView({block:'nearest'});}
+let tt;function toast(m){st.toast=m;clearTimeout(tt);tt=setTimeout(()=>{st.toast='';render()},2200)}
+function openItem(x,newTab){if(!x)return;if(x.kind==='page'){st.recent=[x.id,...st.recent.filter(r=>r!==x.id)].slice(0,6);store.set('ns-recent',st.recent)}
+  st.open=false;st.q='';st.sel=0;toast(`${newTab?'Opening in a new tab':'Opening'}: ${x.name}  ${x.route}`);render();}
+function openPal(){st.open=true;st.q='';st.sel=0;render()}
+
+document.addEventListener('click',e=>{const t=e.target;
+  const v=t.closest('[data-v]');if(v){st.v=v.dataset.v;store.set('ns-v',st.v);st.open=true;st.sel=0;st.filter='all';render();return}
+  const th=t.closest('[data-t]');if(th){st.theme=th.dataset.t;th.dataset.t?document.documentElement.dataset.theme=th.dataset.t:delete document.documentElement.dataset.theme;render();return}
+  if(t.closest('#trigger')){openPal();return}
+  const fav=t.closest('[data-fav]');if(fav){e.stopPropagation();const id=fav.dataset.fav;st.fav=st.fav.includes(id)?st.fav.filter(f=>f!==id):[...st.fav,id];store.set('ns-fav',st.fav);render();return}
+  if(t.closest('[data-clear-recent]')){st.recent=[];store.set('ns-recent',[]);st.sel=0;render();return}
+  if(t.closest('[data-clearq]')){st.q='';st.sel=0;render();return}
+  if(t.closest('[data-unscope]')){st.q=st.q.replace(/^@\S+\s?/,'');st.sel=0;render();return}
+  const sc=t.closest('[data-scope]');if(sc){st.q=`@${sc.dataset.scope.toLowerCase()} `;st.sel=0;render();return}
+  const f=t.closest('[data-filter]');if(f){st.filter=f.dataset.filter;st.sel=0;render();return}
+  const go=t.closest('[data-go]');if(go){openItem(ALL.find(x=>x.id===go.dataset.go));return}
+  const ta=t.closest('[data-toast]');if(ta){st.open=false;toast(ta.dataset.toast);render();return}
+  const r=t.closest('.row[data-i]');if(r){openItem(flat()[+r.dataset.i],e.ctrlKey||e.metaKey);return}
+  if(t.closest('[data-close]')){st.open=false;render();}});
+document.addEventListener('mousemove',e=>{const r=e.target.closest&&e.target.closest('.row[data-i]');if(r&&+r.dataset.i!==st.sel){st.sel=+r.dataset.i;document.querySelectorAll('.row[data-i]').forEach(el=>el.setAttribute('aria-selected',+el.dataset.i===st.sel));if(st.v==='C')render();}});
+document.addEventListener('input',e=>{if(e.target.id==='q'){const{scope}=parse();st.q=(scope?`@${scope.toLowerCase().replace(/\s/g,'')} `:'')+e.target.value;
+  if(!scope&&/^@\S+\s$/.test(e.target.value)){st.q=e.target.value}st.sel=0;render();}});
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();st.open?(st.open=false,render()):openPal();return}
+  if(!st.open)return;const n=flat().length;
+  if(e.key==='Escape'){e.preventDefault();if(st.q){st.q='';st.sel=0}else st.open=false;render()}
+  else if(e.key==='ArrowDown'){e.preventDefault();st.sel=n?(st.sel+1)%n:0;render()}
+  else if(e.key==='ArrowUp'){e.preventDefault();st.sel=n?(st.sel-1+n)%n:0;render()}
+  else if(e.key==='Enter'){e.preventDefault();openItem(flat()[st.sel],e.ctrlKey||e.metaKey)}
+  else if(e.key==='Backspace'&&e.target.id==='q'&&e.target.value===''&&parse().scope){e.preventDefault();st.q='';render()}
+  else if(e.key==='Tab'&&e.target.id==='q'){const x=flat()[st.sel];if(x){e.preventDefault();const{scope}=parse();st.q=(scope?`@${scope.toLowerCase()} `:'')+x.name;render()}}});
+st.open=true;render();
+</script>

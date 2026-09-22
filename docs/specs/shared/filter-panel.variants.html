@@ -1,0 +1,298 @@
+<title>Filter Panel Variants</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --brand:#1566a2; --ink:#0f172a; --ink2:#334155; --mute:#64748b; --faint:#94a3b8; --line:#e2e8f0; --line2:#eef2f6; --bg:#f5f6fa; --ease:cubic-bezier(.16,1,.3,1); }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.45 Inter, ui-sans-serif, system-ui, "Segoe UI", sans-serif; padding-inline:16px; padding-block:32px 80px; }
+  .wrap { max-width:1180px; margin:0 auto; }
+  h1 { font-size:22px; margin:0 0 4px; letter-spacing:-.01em; }
+  .lead { color:var(--mute); margin:0 0 28px; }
+  .variant { margin:0 0 44px; }
+  .vhead { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin:0 0 10px; }
+  .vtag { font:600 11px/1 Inter,sans-serif; letter-spacing:.08em; color:var(--brand); background:#1566a214; padding:5px 8px; border-radius:6px; }
+  .vname { font-weight:600; font-size:16px; }
+  .vnote { color:var(--mute); font-size:13px; }
+  button { font:inherit; color:inherit; background:none; border:0; cursor:pointer; }
+  .card { background:#fff; border:1px solid #e5e9f0; border-radius:12px; box-shadow:0 1px 2px rgba(15,23,42,.04),0 10px 28px -18px rgba(15,23,42,.22); transition:box-shadow .3s var(--ease); }
+  .card:hover { box-shadow:0 1px 2px rgba(15,23,42,.05),0 16px 36px -18px rgba(15,23,42,.28); }
+  svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex:none; }
+  .ctl { display:flex; align-items:center; gap:8px; height:38px; padding:0 10px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); white-space:nowrap; transition:border-color .2s, box-shadow .2s, transform .2s var(--ease); min-width:0; }
+  .ctl:hover { border-color:#cbd5e1; box-shadow:0 2px 6px -2px rgba(15,23,42,.12); }
+  .ctl:focus-within, .ctl.focus { border-color:#1566a299; box-shadow:0 0 0 4px #1566a21a; }
+  .ctl .ic { color:var(--faint); }
+  .ctl .grow { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+  .ctl .chev { color:var(--faint); width:14px; height:14px; }
+  .lbl { font-size:12px; font-weight:500; color:var(--mute); margin:0 0 6px; display:block; }
+  .btn-primary { position:relative; overflow:hidden; display:inline-flex; align-items:center; gap:8px; height:38px; padding:0 16px; border-radius:8px; color:#fff; font-weight:600; background:linear-gradient(#1b74b5,var(--brand)); box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 1px 2px rgba(15,23,42,.2),0 6px 16px -8px rgba(21,102,162,.7); transition:transform .2s var(--ease), box-shadow .2s; }
+  .btn-primary:hover { transform:translateY(-1px); box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 2px 4px rgba(15,23,42,.18),0 10px 22px -8px rgba(21,102,162,.8); }
+  .btn-primary:active { transform:scale(.97); }
+  .btn-primary::after { content:""; position:absolute; inset:0 auto 0 -50%; width:50%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent); transform:skewX(-12deg); opacity:0; transition:transform .7s var(--ease), opacity .7s; }
+  .btn-primary:hover::after { transform:translateX(300%) skewX(-12deg); opacity:1; }
+  .btn-ghost { display:inline-flex; align-items:center; gap:6px; height:38px; padding:0 12px; border-radius:8px; color:var(--mute); font-weight:500; transition:background .2s, color .2s; }
+  .btn-ghost:hover { background:#f1f5f9; color:var(--ink); }
+  .btn-ghost:hover svg { transform:rotate(-200deg); }
+  .btn-ghost svg { width:14px; height:14px; transition:transform .5s var(--ease); }
+  .dot { width:6px; height:6px; border-radius:50%; flex:none; }
+  .d-brand{background:var(--brand)} .d-slate{background:#94a3b8} .d-green{background:#10b981} .d-amber{background:#f59e0b}
+  .count { font-size:11px; font-weight:600; padding:1px 6px; border-radius:99px; background:#1566a21a; color:var(--brand); font-variant-numeric:tabular-nums; }
+  .switch { display:inline-flex; align-items:center; gap:10px; cursor:pointer; color:var(--ink2); white-space:nowrap; }
+  .switch i { width:36px; height:20px; border-radius:99px; background:#cbd5e1; position:relative; transition:background .2s; flex:none; }
+  .switch i::after { content:""; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(15,23,42,.3); transition:transform .3s var(--ease); }
+  .switch.on i { background:var(--brand); } .switch.on i::after { transform:translateX(16px); }
+  .pending { display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:500; color:#b45309; }
+  .pending b { width:8px; height:8px; border-radius:50%; background:#f59e0b; position:relative; }
+  .pending b::after { content:""; position:absolute; inset:0; border-radius:50%; background:#fbbf24; animation:ping 1.4s cubic-bezier(0,0,.2,1) infinite; }
+  @keyframes ping { 75%,100% { transform:scale(2.4); opacity:0; } }
+  @media (prefers-reduced-motion:reduce) { *,*::after { transition:none!important; animation:none!important; } }
+
+  /* V1 */
+  .v1 .top { display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:10px 16px; border-bottom:1px solid var(--line2); }
+  .v1 .title { display:flex; align-items:center; gap:8px; font-weight:600; }
+  .v1 .title svg { color:var(--mute); }
+  .v1 .seg { display:flex; gap:2px; background:#f1f5f9; padding:3px; border-radius:9px; overflow-x:auto; max-width:100%; }
+  .v1 .seg button { display:flex; align-items:center; gap:7px; height:30px; padding:0 12px; border-radius:7px; font-size:13px; font-weight:500; color:var(--mute); white-space:nowrap; transition:color .2s, background .2s; }
+  .v1 .seg button:hover { color:var(--ink); background:#ffffffa0; }
+  .v1 .seg button.on { background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(15,23,42,.08),0 3px 10px -4px rgba(15,23,42,.18); }
+  .v1 .body { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,2.2fr) auto; gap:16px; align-items:end; padding:14px 16px; }
+  .range { display:flex; align-items:stretch; border:1px solid var(--line); border-radius:8px; background:#fff; height:38px; transition:border-color .2s, box-shadow .2s; min-width:0; }
+  .range:hover { border-color:#cbd5e1; box-shadow:0 2px 6px -2px rgba(15,23,42,.12); }
+  .range .part { display:flex; align-items:center; gap:8px; padding:0 10px; flex:1; min-width:0; white-space:nowrap; border-radius:7px; transition:background .2s; }
+  .range .part:hover { background:#f8fafc; }
+  .range .part .t { color:var(--mute); }
+  .range .arrow { display:flex; align-items:center; color:var(--faint); padding:0 2px; }
+  .range .sep { width:1px; background:var(--line2); margin:8px 0; }
+  .v1 .foot { display:flex; align-items:center; gap:8px; justify-content:flex-end; padding:10px 16px; border-top:1px solid var(--line2); background:linear-gradient(#f8fafc66,#f8fafce6); border-radius:0 0 12px 12px; }
+  .v1 .foot .pending { margin-right:auto; }
+  @media (max-width:860px) { .v1 .body { grid-template-columns:1fr; } .range { height:auto; flex-wrap:wrap; } .range .part { height:38px; } }
+
+  /* V2 */
+  .v2 { display:grid; grid-template-columns:auto minmax(0,1fr); }
+  .v2 .rail { padding:14px; border-right:1px solid var(--line2); display:flex; flex-direction:column; gap:2px; min-width:170px; background:linear-gradient(#fbfcfe,#f7f9fc); border-radius:12px 0 0 12px; }
+  .v2 .rail h4 { margin:2px 8px 8px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); font-weight:600; }
+  .v2 .rail button { display:flex; align-items:center; gap:10px; height:34px; padding:0 10px; border-radius:8px; color:var(--ink2); font-weight:500; text-align:left; transition:background .2s, transform .2s var(--ease); }
+  .v2 .rail button:hover { background:#fff; transform:translateX(2px); }
+  .v2 .rail button.on { background:#fff; color:var(--brand); box-shadow:0 1px 2px rgba(15,23,42,.06),inset 3px 0 0 var(--brand); }
+  .v2 .rail button .count { margin-left:auto; }
+  .v2 .main { padding:14px 16px; display:flex; flex-direction:column; gap:14px; min-width:0; }
+  .v2 .groups { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.6fr); gap:14px; }
+  .v2 fieldset { border:1px solid var(--line2); border-radius:10px; padding:12px; margin:0; display:flex; flex-direction:column; gap:10px; min-width:0; }
+  .v2 legend { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); font-weight:600; padding:0 6px; }
+  .v2 .pair { display:grid; grid-template-columns:auto minmax(0,1fr) minmax(0,.8fr); gap:8px; align-items:center; }
+  .v2 .pair span { font-size:12px; color:var(--mute); width:34px; }
+  .v2 .connector { margin-left:16px; height:8px; border-left:2px dotted #cbd5e1; }
+  .v2 .actions { display:flex; align-items:center; gap:8px; justify-content:flex-end; }
+  .v2 .actions .pending { margin-right:auto; }
+  @media (max-width:860px) { .v2 { grid-template-columns:1fr; } .v2 .rail { flex-direction:row; overflow-x:auto; border-right:0; border-bottom:1px solid var(--line2); border-radius:12px 12px 0 0; } .v2 .rail h4 { display:none; } .v2 .groups { grid-template-columns:1fr; } }
+
+  /* V3 */
+  .v3 { padding:16px; display:flex; flex-direction:column; gap:14px; }
+  .v3 .row1 { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .v3 .chip { display:inline-flex; align-items:center; gap:7px; height:30px; padding:0 12px; border-radius:99px; border:1px solid var(--line); background:#fff; font-size:13px; font-weight:500; color:var(--ink2); transition:border-color .2s, box-shadow .2s, transform .2s var(--ease); }
+  .v3 .chip:hover { transform:translateY(-1px); border-color:#cbd5e1; box-shadow:0 4px 10px -4px rgba(15,23,42,.18); }
+  .v3 .chip.on { background:var(--ink); border-color:var(--ink); color:#fff; }
+  .v3 .chip.on .count { background:#ffffff26; color:#fff; }
+  .v3 .row1 .spacer { flex:1; }
+  .v3 .timeline { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:0; border:1px solid var(--line); border-radius:12px; background:linear-gradient(#fff,#fbfcfe); }
+  .v3 .end { padding:12px 14px; display:flex; flex-direction:column; gap:4px; border-radius:11px; transition:background .2s; min-width:0; }
+  .v3 .end:hover { background:#f5f8fc; }
+  .v3 .end small { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); font-weight:600; }
+  .v3 .end .val { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .v3 .end .val b { font-size:17px; font-weight:600; letter-spacing:-.01em; font-variant-numeric:tabular-nums; }
+  .v3 .end .val span { color:var(--mute); font-size:13px; }
+  .v3 .end.right { text-align:right; align-items:flex-end; }
+  .v3 .mid { display:flex; align-items:center; gap:8px; color:var(--mute); font-size:12px; padding:0 8px; }
+  .v3 .mid i { display:block; width:48px; height:2px; background:linear-gradient(90deg,#cbd5e1,var(--brand)); border-radius:2px; }
+  .v3 .mid em { font-style:normal; font-weight:600; color:var(--brand); background:#1566a214; padding:3px 8px; border-radius:99px; white-space:nowrap; }
+  .v3 .row3 { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .v3 .row3 .ctl { width:240px; max-width:100%; }
+  .v3 .row3 .spacer { flex:1; }
+  @media (max-width:700px) { .v3 .timeline { grid-template-columns:1fr; } .v3 .mid { justify-content:center; padding:4px; } .v3 .end.right { text-align:left; align-items:flex-start; } }
+
+  /* V4 */
+  .v4 { padding:8px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; border-radius:12px; }
+  .v4 .tabs { display:flex; gap:0; padding:0 6px 0 4px; border-right:1px solid var(--line2); overflow-x:auto; max-width:100%; }
+  .v4 .tabs button { position:relative; height:38px; padding:0 10px; font-size:13px; font-weight:500; color:var(--mute); white-space:nowrap; transition:color .2s; }
+  .v4 .tabs button::after { content:""; position:absolute; left:10px; right:10px; bottom:4px; height:2px; border-radius:2px; background:var(--brand); transform:scaleX(0); transition:transform .3s var(--ease); }
+  .v4 .tabs button:hover { color:var(--ink); }
+  .v4 .tabs button:hover::after { transform:scaleX(.35); background:#cbd5e1; }
+  .v4 .tabs button.on { color:var(--ink); }
+  .v4 .tabs button.on::after { transform:scaleX(1); background:var(--brand); }
+  .v4 .ctl { border-color:transparent; background:#f4f6f9; }
+  .v4 .ctl:hover { background:#eef1f5; border-color:transparent; box-shadow:none; }
+  .v4 .range { background:#f4f6f9; border-color:transparent; }
+  .v4 .range:hover { background:#eef1f5; box-shadow:none; }
+  .v4 .range .part:hover { background:#e8ecf2; }
+  .v4 .grow1 { flex:1; }
+  .v4 .iconbtn { width:38px; height:38px; display:flex; align-items:center; justify-content:center; border-radius:8px; color:var(--mute); transition:background .2s, color .2s; }
+  .v4 .iconbtn:hover { background:#f1f5f9; color:var(--ink); }
+  .v4 .iconbtn:hover svg { transform:rotate(-200deg); }
+  .v4 .iconbtn svg { transition:transform .5s var(--ease); }
+
+  /* V5 */
+  .v5 .head { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:14px 18px 0; }
+  .v5 .head h3 { margin:0; font-size:15px; font-weight:600; }
+  .v5 .head p { margin:2px 0 0; color:var(--mute); font-size:12.5px; }
+  .v5 .under { display:flex; gap:18px; padding:0 18px; border-bottom:1px solid var(--line2); margin-top:10px; overflow-x:auto; }
+  .v5 .under button { position:relative; display:flex; align-items:center; gap:7px; height:40px; font-size:13px; font-weight:500; color:var(--mute); white-space:nowrap; transition:color .2s; }
+  .v5 .under button:hover { color:var(--ink); }
+  .v5 .under button.on { color:var(--brand); }
+  .v5 .under button.on::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--brand); border-radius:2px; }
+  .v5 .rows { padding:6px 18px; }
+  .v5 .r { display:grid; grid-template-columns:150px minmax(0,1fr); gap:16px; align-items:center; padding:10px 0; border-bottom:1px dashed var(--line2); }
+  .v5 .r:last-child { border-bottom:0; }
+  .v5 .r > span { font-size:13px; color:var(--ink2); font-weight:500; }
+  .v5 .r > span small { display:block; color:var(--faint); font-weight:400; font-size:11.5px; }
+  .v5 .dt { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); gap:10px; align-items:center; max-width:640px; }
+  .v5 .dt .half { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:6px; }
+  .v5 .dt .to { color:var(--faint); font-size:12px; }
+  .v5 .foot { display:flex; align-items:center; justify-content:flex-end; gap:8px; padding:12px 18px; border-top:1px solid var(--line2); }
+  .v5 .foot .pending { margin-right:auto; }
+  @media (max-width:760px) { .v5 .r { grid-template-columns:1fr; gap:6px; } .v5 .dt { grid-template-columns:1fr; } }
+</style>
+
+<div class="wrap">
+  <h1>Filter panel · 5 variants</h1>
+  <p class="lead">Same filters as Readings Report. Every variant pairs Start and End as one date range, with icons beside the text, one line per control.</p>
+
+  <svg style="display:none"><defs>
+    <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+  </defs></svg>
+
+  <!-- V1 -->
+  <section class="variant">
+    <div class="vhead"><span class="vtag">V1</span><span class="vname">Refined Current</span><span class="vnote">Your current layout, cleaned up: quiet icons, one date-range control, 3 columns.</span></div>
+    <div class="card v1">
+      <div class="top">
+        <span class="title"><svg><use href="#i-filter"/></svg>Filters</span>
+        <div class="seg">
+          <button class="on"><span class="dot d-brand"></span>Today <span class="count">0</span></button>
+          <button><span class="dot d-slate"></span>Yesterday</button>
+          <button><span class="dot d-green"></span>Last 7 days</button>
+          <button><span class="dot d-amber"></span>Last 30 days</button>
+        </div>
+      </div>
+      <div class="body">
+        <div><span class="lbl">Device</span><button class="ctl" style="width:100%"><svg class="ic"><use href="#i-cpu"/></svg><span class="grow">All devices</span><svg class="chev"><use href="#i-chev"/></svg></button></div>
+        <div><span class="lbl">Date range</span>
+          <div class="range">
+            <button class="part"><svg class="ic" style="color:var(--faint)"><use href="#i-cal"/></svg>15/09/2026 <span class="t">· All day</span></button>
+            <span class="arrow"><svg><use href="#i-arrow"/></svg></span>
+            <button class="part">15/09/2026 <span class="t">· All day</span></button>
+          </div>
+        </div>
+        <label class="switch" style="height:38px"><i></i>Include out of service</label>
+      </div>
+      <div class="foot"><span class="pending"><b></b>Not applied yet</span><button class="btn-ghost"><svg><use href="#i-reset"/></svg>Reset</button><button class="btn-primary"><svg><use href="#i-search"/></svg>Search</button></div>
+    </div>
+  </section>
+
+  <!-- V2 -->
+  <section class="variant">
+    <div class="vhead"><span class="vtag">V2</span><span class="vname">Grouped Sections</span><span class="vnote">Views in a side rail; fields grouped into "Device" and "Time period" with From/To stacked.</span></div>
+    <div class="card v2">
+      <nav class="rail">
+        <h4>Views</h4>
+        <button class="on"><span class="dot d-brand"></span>Today<span class="count">0</span></button>
+        <button><span class="dot d-slate"></span>Yesterday</button>
+        <button><span class="dot d-green"></span>Last 7 days</button>
+        <button><span class="dot d-amber"></span>Last 30 days</button>
+      </nav>
+      <div class="main">
+        <div class="groups">
+          <fieldset><legend>Device</legend>
+            <button class="ctl"><svg class="ic"><use href="#i-cpu"/></svg><span class="grow">All devices</span><svg class="chev"><use href="#i-chev"/></svg></button>
+            <label class="switch on"><i></i>Include out of service</label>
+          </fieldset>
+          <fieldset><legend>Time period</legend>
+            <div class="pair"><span>From</span><button class="ctl"><svg class="ic"><use href="#i-cal"/></svg><span class="grow">15/09/2026</span></button><button class="ctl"><svg class="ic"><use href="#i-clock"/></svg><span class="grow">All day</span><svg class="chev"><use href="#i-chev"/></svg></button></div>
+            <div class="connector"></div>
+            <div class="pair"><span>To</span><button class="ctl"><svg class="ic"><use href="#i-cal"/></svg><span class="grow">15/09/2026</span></button><button class="ctl"><svg class="ic"><use href="#i-clock"/></svg><span class="grow">All day</span><svg class="chev"><use href="#i-chev"/></svg></button></div>
+          </fieldset>
+        </div>
+        <div class="actions"><span class="pending"><b></b>Not applied yet</span><button class="btn-ghost"><svg><use href="#i-reset"/></svg>Reset</button><button class="btn-primary"><svg><use href="#i-search"/></svg>Search</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- V3 -->
+  <section class="variant">
+    <div class="vhead"><span class="vtag">V3</span><span class="vname">Time Range Hero</span><span class="vnote">The date range is the star: big From → To with the length shown; quick picks as pills.</span></div>
+    <div class="card v3">
+      <div class="row1">
+        <button class="chip on">Today <span class="count">0</span></button>
+        <button class="chip">Yesterday</button>
+        <button class="chip">Last 7 days</button>
+        <button class="chip">Last 30 days</button>
+      </div>
+      <div class="timeline">
+        <button class="end"><small>From</small><span class="val"><b>15 Sep 2026</b><span>All day</span></span></button>
+        <div class="mid"><i></i><em>1 day</em><i style="background:linear-gradient(90deg,var(--brand),#cbd5e1)"></i></div>
+        <button class="end right"><small>To</small><span class="val"><b>15 Sep 2026</b><span>All day</span></span></button>
+      </div>
+      <div class="row3">
+        <button class="ctl"><svg class="ic"><use href="#i-cpu"/></svg><span class="grow">All devices</span><svg class="chev"><use href="#i-chev"/></svg></button>
+        <label class="switch"><i></i>Include out of service</label>
+        <span class="spacer"></span>
+        <button class="btn-ghost"><svg><use href="#i-reset"/></svg>Reset</button><button class="btn-primary"><svg><use href="#i-search"/></svg>Search</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- V4 -->
+  <section class="variant">
+    <div class="vhead"><span class="vtag">V4</span><span class="vname">Slim Toolbar</span><span class="vnote">Everything in one quiet bar, no labels or borders; most compact, best for busy pages.</span></div>
+    <div class="card v4">
+      <div class="tabs"><button class="on">Today</button><button>Yesterday</button><button>Last 7 days</button><button>Last 30 days</button></div>
+      <button class="ctl" style="width:190px"><svg class="ic"><use href="#i-cpu"/></svg><span class="grow">All devices</span><svg class="chev"><use href="#i-chev"/></svg></button>
+      <div class="range grow1" style="min-width:300px">
+        <button class="part"><svg class="ic" style="color:var(--faint)"><use href="#i-cal"/></svg>15/09/2026 <span class="t">All day</span></button>
+        <span class="arrow"><svg><use href="#i-arrow"/></svg></span>
+        <button class="part">15/09/2026 <span class="t">All day</span></button>
+      </div>
+      <label class="switch" style="padding:0 8px"><i></i>Out of service</label>
+      <button class="iconbtn" aria-label="Reset"><svg><use href="#i-reset"/></svg></button>
+      <button class="btn-primary"><svg><use href="#i-search"/></svg>Search</button>
+    </div>
+  </section>
+
+  <!-- V5 -->
+  <section class="variant">
+    <div class="vhead"><span class="vtag">V5</span><span class="vname">Form Rows</span><span class="vnote">Scheduler-style settings form: a label with a hint on the left, fields on the right. Easiest to read.</span></div>
+    <div class="card v5">
+      <div class="head"><div><h3>Filters</h3><p>Choose what to show in the report, then Search.</p></div></div>
+      <div class="under">
+        <button class="on"><span class="dot d-brand"></span>Today <span class="count">0</span></button>
+        <button><span class="dot d-slate"></span>Yesterday</button>
+        <button><span class="dot d-green"></span>Last 7 days</button>
+        <button><span class="dot d-amber"></span>Last 30 days</button>
+      </div>
+      <div class="rows">
+        <div class="r"><span>Time period<small>From and to, inclusive</small></span>
+          <div class="dt">
+            <div class="half"><button class="ctl"><svg class="ic"><use href="#i-cal"/></svg><span class="grow">15/09/2026</span></button><button class="ctl"><svg class="ic"><use href="#i-clock"/></svg><span class="grow">All day</span><svg class="chev"><use href="#i-chev"/></svg></button></div>
+            <span class="to">to</span>
+            <div class="half"><button class="ctl"><svg class="ic"><use href="#i-cal"/></svg><span class="grow">15/09/2026</span></button><button class="ctl"><svg class="ic"><use href="#i-clock"/></svg><span class="grow">All day</span><svg class="chev"><use href="#i-chev"/></svg></button></div>
+          </div>
+        </div>
+        <div class="r"><span>Device<small>Leave as All for every device</small></span><button class="ctl" style="max-width:310px"><svg class="ic"><use href="#i-cpu"/></svg><span class="grow">All devices</span><svg class="chev"><use href="#i-chev"/></svg></button></div>
+        <div class="r"><span>Out of service</span><label class="switch"><i></i>Include out of service devices</label></div>
+      </div>
+      <div class="foot"><span class="pending"><b></b>Not applied yet</span><button class="btn-ghost"><svg><use href="#i-reset"/></svg>Reset</button><button class="btn-primary"><svg><use href="#i-search"/></svg>Search</button></div>
+    </div>
+  </section>
+</div>
+<script>
+  document.querySelectorAll('.switch').forEach(s => s.addEventListener('click', e => { e.preventDefault(); s.classList.toggle('on') }))
+  document.querySelectorAll('.seg, .rail, .row1, .tabs, .under').forEach(g => g.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b || !g.contains(b)) return
+    g.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b))
+  }))
+</script>
