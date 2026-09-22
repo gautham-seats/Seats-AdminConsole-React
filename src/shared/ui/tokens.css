@@ -94,9 +94,15 @@
   --shadow-mat-1: #0003;
   --shadow-mat-2: #00000024;
   --shadow-mat-3: #0000001f;
-  --color-nav-bar-start: #10537f;
-  --color-nav-bar-mid: #125b8b;
-  --color-nav-bar-end: #115685;
+  --color-nav-bar-start: #135d93;
+  --color-nav-bar-mid: #1566a2;
+  --color-nav-bar-end: #145f9c;
+  --color-nav-bar-shadow: rgba(19, 93, 147, 0.55);
+  --color-seal-bright: #ffffff;
+  --color-seal-cool: #8fb4d3;
+  --color-seal-deep: #6f98bb;
+  --color-seal-glint: rgba(214, 232, 247, 0.9);
+  --color-seal-shadow: rgba(4, 32, 56, 0.32);
 
   --radius-lg: 0.5rem;
   --radius-md: calc(0.5rem - 2px);
@@ -114,7 +120,6 @@
   --animate-sheen: sheen 120s 400ms linear infinite both;
   --animate-aurora: aurora 18s ease-in-out infinite alternate;
   --animate-search-aurora: search-aurora 22s ease-in-out infinite alternate;
-  --animate-logo-glint: logo-glint 120s 400ms linear infinite both;
   --animate-hairline-in: fade-in 1400ms 400ms ease-out both;
 
   --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
@@ -436,18 +441,6 @@
   }
 
   /* The logo catches the light as the sweep passes it. */
-  @keyframes logo-glint {
-    0%,
-    0.9%,
-    2.2%,
-    100% {
-      filter: brightness(1) drop-shadow(0 0 0 rgba(255, 255, 255, 0));
-    }
-    1.4% {
-      filter: brightness(1.18) drop-shadow(0 0 6px rgba(191, 232, 251, 0.75));
-    }
-  }
-
   @keyframes fade-in {
     from {
       opacity: 0;
