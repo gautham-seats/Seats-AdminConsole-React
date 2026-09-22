@@ -52,23 +52,24 @@ cookie and never shows a login form of its own.
 
 ## Commands
 
-| Command                           | Purpose                                                                                    |
-| --------------------------------- | ------------------------------------------------------------------------------------------ |
-| `npm run dev`                     | Start the app on port 3001                                                                 |
-| `npm run check`                   | The quality gate CI runs: format, types, lint, deps, dead code, tokens, tests, build:check |
-| `npm run format:check`            | Prettier, no rewrites                                                                      |
-| `npm run typecheck`               | `next typegen` + `tsc --noEmit`                                                            |
-| `npm run lint`                    | ESLint, zero warnings                                                                      |
-| `npm run lint:types`              | type-coverage, strict, at least 95 %                                                       |
-| `npm run lint:deps`               | dependency-cruiser: no cycles, no orphans, layer rules                                     |
-| `npm run lint:dead`               | knip: unused files, dependencies and exports                                               |
-| `npm run lint:tokens`             | Fails when a design token is declared but never referenced                                 |
-| `npm run build:check`             | Production build with `ADMIN_ALLOW_WRITES` forced to `false`                               |
-| `npm test` / `npm run test:watch` | Jest + Testing Library                                                                     |
-| `npm run test:coverage`           | Coverage report                                                                            |
-| `npm run test:e2e`                | Playwright route sweep and axe scan (needs a signed-in profile)                            |
-| `npm run build`                   | Production bundle; reads `ADMIN_ALLOW_WRITES` from `.env.local`                            |
-| `npm run format`                  | Prettier, rewriting files                                                                  |
+| Command                           | Purpose                                                                                             |
+| --------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `npm run dev`                     | Start the app on port 3001                                                                          |
+| `npm run check`                   | The quality gate CI runs: format, types, lint, deps, dead code, tokens, tests, build, bundle budget |
+| `npm run format:check`            | Prettier, no rewrites                                                                               |
+| `npm run typecheck`               | `next typegen` + `tsc --noEmit`                                                                     |
+| `npm run lint`                    | ESLint, zero warnings                                                                               |
+| `npm run lint:types`              | type-coverage, strict, at least 95 %                                                                |
+| `npm run lint:deps`               | dependency-cruiser: no cycles, no orphans, layer rules                                              |
+| `npm run lint:dead`               | knip: unused files, dependencies and exports                                                        |
+| `npm run lint:tokens`             | Fails when a design token is declared but never referenced                                          |
+| `npm run build:check`             | Production build with `ADMIN_ALLOW_WRITES` forced to `false`                                        |
+| `npm run lint:budget`             | Fails when a route's client JavaScript passes its cap in `bundle-budget.json`                       |
+| `npm test` / `npm run test:watch` | Jest + Testing Library                                                                              |
+| `npm run test:coverage`           | Coverage report                                                                                     |
+| `npm run test:e2e`                | Playwright route sweep and axe scan (needs a signed-in profile)                                     |
+| `npm run build`                   | Production bundle; reads `ADMIN_ALLOW_WRITES` from `.env.local`                                     |
+| `npm run format`                  | Prettier, rewriting files                                                                           |
 
 A pre-commit hook runs lint-staged, typecheck and the tests for changed files; commit messages are checked by
 commitlint; a pre-push hook runs `npm run check` and, when the browser profile exists, the route sweep.
@@ -221,14 +222,14 @@ flowchart TB
 Every pull request and every push to `main` runs the jobs below; a tag `v*` also builds and attaches the bundle
 to a GitHub Release.
 
-| Job                           | What it checks                                                                                                                                                                                |
-| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Typecheck, lint, tests, build | `npm ci`, `npm audit` (high), Prettier, `tsc`, ESLint, type-coverage, dependency-cruiser, knip, Jest with coverage floors, `next build`, bundle budget (600 kB per route), unused-token check |
-| Secret scan                   | gitleaks over the diff and the history                                                                                                                                                        |
-| Static security analysis      | Semgrep with the JavaScript, TypeScript, React, Node and secrets rule packs                                                                                                                   |
-| Review the diff               | Two advisory model lanes: one hunts defects, one judges test adequacy and security; a finding both make is marked agreed                                                                      |
-| Label oversized pull requests | Adds `needs-split` when one commit changes more than 600 lines                                                                                                                                |
-| Dependabot                    | Weekly grouped updates for npm and Actions                                                                                                                                                    |
+| Job                           | What it checks                                                                                                                                                                                                       |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Typecheck, lint, tests, build | `npm ci`, `npm audit` (high), Prettier, `tsc`, ESLint, type-coverage, dependency-cruiser, knip, Jest with coverage floors, `next build`, bundle budget (a cap per route in `bundle-budget.json`), unused-token check |
+| Secret scan                   | gitleaks over the diff and the history                                                                                                                                                                               |
+| Static security analysis      | Semgrep with the JavaScript, TypeScript, React, Node and secrets rule packs                                                                                                                                          |
+| Review the diff               | Two advisory model lanes: one hunts defects, one judges test adequacy and security; a finding both make is marked agreed                                                                                             |
+| Label oversized pull requests | Adds `needs-split` when one commit changes more than 600 lines                                                                                                                                                       |
+| Dependabot                    | Weekly grouped updates for npm and Actions                                                                                                                                                                           |
 
 Every step runs with `pipefail`, so a failure piped into a summary file still fails the job. Deployment
 and rollback are owned outside this repo; the bundle is built with `ADMIN_ALLOW_WRITES` set explicitly per
