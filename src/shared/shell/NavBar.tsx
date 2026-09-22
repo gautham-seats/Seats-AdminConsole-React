@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { ChevronDown, LayoutGrid, User, type LucideIcon } from 'lucide-react'
@@ -22,6 +21,7 @@ import { AccountMenu } from './AccountMenu'
 import { MENU_ICONS as ICONS } from './menu-icons'
 import { CARD_PANEL, MenuCard, MenuCardGrid } from './NavMenuCards'
 import { NavSearch } from './NavSearch'
+import { NavLogo } from './NavLogo'
 import logo from './seats-one-logo.png'
 import { useNotificationCount, useSessionHeader, useShellMenu } from './use-shell-data'
 
@@ -338,14 +338,14 @@ export function NavBar() {
   const notificationsLabel = label({ labelKey: 'UserNotifications', fallback: 'User Notifications' })
 
   return (
-    <header className="relative z-40 flex min-h-[50px] w-full min-w-0 shrink-0 flex-wrap items-center gap-y-1 bg-brand bg-[linear-gradient(90deg,var(--color-nav-bar-start)_0%,var(--color-nav-bar-mid)_45%,var(--color-nav-bar-end)_100%)] pl-4 pr-3 md:pr-10 [html[data-contrast=high]_&]:bg-none shadow-[inset_0_1px_0_rgba(255,255,255,.22),inset_0_-1px_0_rgba(0,0,0,.12),0_6px_22px_-8px_rgba(15,82,136,.55)]">
+    <header className="relative z-40 flex min-h-[50px] w-full min-w-0 shrink-0 flex-wrap items-center gap-y-1 bg-brand bg-[linear-gradient(90deg,var(--color-nav-bar-start)_0%,var(--color-nav-bar-mid)_45%,var(--color-nav-bar-end)_100%)] pl-4 pr-3 md:pr-10 [html[data-contrast=high]_&]:bg-none shadow-[inset_0_1px_0_rgba(255,255,255,.22),inset_0_-1px_0_rgba(0,0,0,.12),0_6px_22px_-8px_var(--color-nav-bar-shadow)]">
       {/* Approved look at full strength; High Contrast mode swaps to a solid bar for readable text. */}
       <span
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 overflow-hidden [html[data-contrast=high]_&]:hidden"
       >
         <span className="absolute inset-0">
-          <span className="absolute -inset-x-[10%] -inset-y-[60px] animate-aurora bg-[radial-gradient(260px_90px_at_20%_50%,rgba(86,189,234,.10),transparent_70%),radial-gradient(320px_100px_at_70%_40%,rgba(255,255,255,.04),transparent_70%),radial-gradient(240px_80px_at_95%_60%,rgba(86,189,234,.08),transparent_70%)] blur-[6px] motion-reduce:animate-none" />
+          <span className="absolute -inset-x-[10%] -inset-y-[60px] animate-aurora bg-[radial-gradient(260px_90px_at_20%_50%,rgba(86,189,234,.15),transparent_70%),radial-gradient(320px_100px_at_70%_40%,rgba(255,255,255,.06),transparent_70%),radial-gradient(240px_80px_at_95%_60%,rgba(86,189,234,.12),transparent_70%)] blur-[6px] motion-reduce:animate-none" />
           <span ref={randomAuroraStart(26)} className="nav-aurora nav-aurora-a" />
           <span ref={randomAuroraStart(32)} className="nav-aurora nav-aurora-b" />
           <span ref={randomAuroraStart(38)} className="nav-aurora nav-aurora-c" />
@@ -355,13 +355,7 @@ export function NavBar() {
         <span className="absolute inset-x-0 bottom-0 h-px animate-hairline-in bg-[linear-gradient(90deg,transparent,rgba(160,220,248,.9),transparent)] motion-reduce:animate-none" />
       </span>
       <div className="relative flex min-w-0 flex-wrap items-center">
-        <Image
-          src={logo}
-          alt={LOGO_ALT}
-          priority
-          unoptimized
-          className="h-8 w-auto animate-logo-glint transition-transform duration-300 hover:scale-[1.03] motion-reduce:animate-none"
-        />
+        <NavLogo src={logo} alt={LOGO_ALT} />
         <span className="ml-4 mr-3.5 h-[30px] w-px bg-white/30" />
         <nav aria-label={MENU_LABEL} aria-busy={menu.status === 'loading' || undefined}>
           {menu.status === 'error' ? (

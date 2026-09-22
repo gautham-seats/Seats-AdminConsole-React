@@ -879,6 +879,76 @@ p[id$='-error'] {
   fill: color-mix(in srgb, var(--color-brand) 55%, var(--color-brand-avatar));
 }
 
+/* Silver Seal logo (NavLogo.tsx): a chrome ring turns round the disc, a glint crosses the logo now and then. */
+.nav-seal-disc {
+  position: absolute;
+  left: 16.333%;
+  top: 47.872%;
+  width: 26.667%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.nav-seal-disc svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.nav-seal-ring {
+  fill: none;
+  stroke-width: 3;
+  transform-origin: 50px 50px;
+  animation: nav-seal-spin 14s linear infinite;
+}
+.nav-seal-glint {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.nav-seal-glint::before {
+  content: '';
+  position: absolute;
+  inset-block: -30%;
+  left: 0;
+  width: 18%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    var(--color-seal-glint) 40%,
+    var(--color-seal-bright) 50%,
+    var(--color-seal-glint) 60%,
+    transparent
+  );
+  transform: translateX(-140%) skewX(-18deg);
+  animation: nav-seal-glint 11s cubic-bezier(0.5, 0, 0.2, 1) 1s infinite;
+}
+@keyframes nav-seal-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes nav-seal-glint {
+  0%,
+  68% {
+    transform: translateX(-140%) skewX(-18deg);
+  }
+  90%,
+  100% {
+    transform: translateX(480%) skewX(-18deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-seal-ring,
+  .nav-seal-glint::before {
+    animation: none;
+  }
+  .nav-seal-glint {
+    display: none;
+  }
+}
+
 /* Top bar aurora: three soft light clouds drift slowly across the brand blue, behind every link. */
 .nav-aurora {
   position: absolute;
@@ -891,19 +961,19 @@ p[id$='-error'] {
 .nav-aurora-a {
   left: 0;
   width: 32%;
-  background: radial-gradient(closest-side, rgba(66, 160, 214, 0.1), transparent);
+  background: radial-gradient(closest-side, rgba(66, 160, 214, 0.15), transparent);
   animation: nav-aurora-a 26s ease-in-out infinite alternate;
 }
 .nav-aurora-b {
   left: 35%;
   width: 28%;
-  background: radial-gradient(closest-side, rgba(40, 130, 196, 0.1), transparent);
+  background: radial-gradient(closest-side, rgba(40, 130, 196, 0.15), transparent);
   animation: nav-aurora-b 32s ease-in-out infinite alternate;
 }
 .nav-aurora-c {
   left: 62%;
   width: 34%;
-  background: radial-gradient(closest-side, rgba(76, 170, 222, 0.07), transparent);
+  background: radial-gradient(closest-side, rgba(76, 170, 222, 0.105), transparent);
   animation: nav-aurora-c 38s ease-in-out infinite alternate;
 }
 @keyframes nav-aurora-a {
