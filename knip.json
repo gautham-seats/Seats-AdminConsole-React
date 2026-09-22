@@ -13,16 +13,15 @@
     ".github/scripts/**/*.mjs",
     "scripts/**/*.mjs",
     "eslint-rules/*.mjs",
-    "e2e/**/*.ts",
-    "playwright.config.ts"
+    "e2e/**/*.ts"
   ],
   "ignoreDependencies": [],
   "rules": {
     "unlisted": "error",
     "unresolved": "error",
     "files": "error",
-    "exports": "warn",
-    "types": "warn",
+    "exports": "error",
+    "types": "error",
     "dependencies": "error",
     "devDependencies": "error",
     "duplicates": "warn"
