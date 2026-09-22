@@ -12,6 +12,11 @@ concurrency:
 permissions:
   contents: read
 
+# Explicit bash adds pipefail, so a failing command piped into tee still fails its step.
+defaults:
+  run:
+    shell: bash
+
 jobs:
   check:
     name: Typecheck, lint, tests, build
@@ -43,7 +48,7 @@ jobs:
           echo '```' >> "$GITHUB_STEP_SUMMARY"
       - run: npm run build | tee build.txt
       - run: node scripts/check-bundle-budget.mjs | tee -a build.txt
-      - run: node scripts/check-css-tokens.mjs | tee -a build.txt
+      - run: npm run lint:tokens | tee -a build.txt
       - name: Bundle summary
         run: |
           echo '## Routes and bundle sizes' >> "$GITHUB_STEP_SUMMARY"
