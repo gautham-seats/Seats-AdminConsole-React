@@ -12,7 +12,7 @@ import { useToastAutoClose } from '@/shared/ui/Toast'
 import { cn } from '@/shared/ui/cn'
 import { ENGAGEMENT_FALLBACK_ONLY, useEngagementText } from './engagement-text'
 
-export const ENGAGEMENT_ACCESS = { item: PermissionItem.Engagement, action: PermissionAction.Access }
+const ENGAGEMENT_ACCESS = { item: PermissionItem.Engagement, action: PermissionAction.Access }
 export const ENGAGEMENT_ADD = { item: PermissionItem.Engagement, action: PermissionAction.Add }
 export const ENGAGEMENT_RECALCULATE = {
   item: PermissionItem.Engagement,

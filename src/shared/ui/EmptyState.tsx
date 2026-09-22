@@ -20,7 +20,7 @@ export type EmptyStateProps = {
 }
 
 // English fallback: legacy resources have no short label for a search with no matches.
-export const EMPTY_FALLBACK_ONLY = { resultsLabel: 'No results' } as const
+const EMPTY_FALLBACK_ONLY = { resultsLabel: 'No results' } as const
 
 // Shared "nothing here" block: open, no box, and centred in whatever height it is given.
 export function EmptyState({

@@ -9,9 +9,8 @@ import {
   readCookieValue,
 } from '@/shared/ui/accessibility-prefs'
 
-export { AUTO_CLOSE_BANNER_COOKIE, HIGH_CONTRAST_COOKIE }
 // selectLanguageController.js:24.
-export const CULTURE_COOKIE = '_cultureInfo'
+const CULTURE_COOKIE = '_cultureInfo'
 const ACCESSIBILITY_DAYS = 360
 const CULTURE_DAYS = 180
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -27,7 +26,7 @@ export const LANGUAGE_OPTIONS = [
 // _ConfigureAccessibility.cshtml:37 hard-codes the SEAtS statement link.
 export const SEATS_ACCESSIBILITY_STATEMENT_URL = 'https://www.seatssoftware.com/accessibility-statement/'
 
-export const SETTING_KEY = {
+const SETTING_KEY = {
   onlineHelpUrl: 'ONLINE_HELP_URL',
   customStatementName: 'CUSTOM_ACCESSIBILITY_STATEMENT_NAME',
   customStatementUrl: 'CUSTOM_ACCESSIBILITY_STATEMENT_URL',
@@ -64,7 +63,7 @@ export const ACCOUNT_TEXT = {
   safeMode: 'Saving is turned off in this environment (safe mode).',
 } as const
 
-export function readCookie(
+function readCookie(
   name: string,
   source = typeof document === 'undefined' ? '' : document.cookie,
 ): string | null {

@@ -59,8 +59,8 @@ import {
 import { IMPORT_FALLBACK_ONLY, useImportText } from './import-text'
 import { StatusBadge } from '@/shared/ui/StatusBadge'
 
-export const IMPORT_ACCESS = { item: PermissionItem.Import, action: PermissionAction.Access }
-export const IMPORT_ADD = { item: PermissionItem.Import, action: PermissionAction.Add }
+const IMPORT_ACCESS = { item: PermissionItem.Import, action: PermissionAction.Access }
+const IMPORT_ADD = { item: PermissionItem.Import, action: PermissionAction.Add }
 
 const SECTION: MenuLink = {
   id: 'imports',

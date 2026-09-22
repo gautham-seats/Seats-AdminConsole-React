@@ -24,7 +24,7 @@ import type { ListState } from './list-state'
 import { ListTable, type ListColumn, type RowAction } from './ListTable'
 import { CountUp } from '@/shared/ui/CountUp'
 
-export type AddLink = { kind: 'react' | 'legacy'; href: string }
+type AddLink = { kind: 'react' | 'legacy'; href: string }
 
 // swgrid.js:434-451: a refused delete (400) is a 5 s warning with the server text, anything else a 5 s error.
 export function deleteFailureNotice(error: unknown, fallback: string, generalError: string): Notice {

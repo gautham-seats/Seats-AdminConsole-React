@@ -34,6 +34,3 @@ export type AuditParameters = {
   from: string
   to: string
 }
-
-// ViewModels/Audit/AuditExportParameters.cs; ExportToEnum Pdf 0, Csv 1.
-export type AuditExportParameters = AuditParameters & { exportTo: 0 | 1 }

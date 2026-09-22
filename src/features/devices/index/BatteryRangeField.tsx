@@ -5,7 +5,7 @@ import { cn } from '@/shared/ui/cn'
 import { SHELL } from './BatteryGlyph'
 import { BATTERY_CEILING, BATTERY_FLOOR, setBatteryBound, type BatteryRange } from './device-filters'
 
-export type BatteryRangeLabels = { title: string; from: string; to: string; adjusted: string }
+type BatteryRangeLabels = { title: string; from: string; to: string; adjusted: string }
 
 type Bound = 'min' | 'max'
 

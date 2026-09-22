@@ -5,7 +5,7 @@ import { deleteIdsPath } from '../list/client-list'
 const text = (value: unknown): string | null => (typeof value === 'string' ? value : null)
 const int = (value: unknown): number | null => (typeof value === 'number' ? value : null)
 
-export function parseContactGroups(raw: unknown): ContactGroupDto[] {
+function parseContactGroups(raw: unknown): ContactGroupDto[] {
   if (!Array.isArray(raw)) return []
   return raw.flatMap(entry => {
     if (!entry || typeof entry !== 'object') return []

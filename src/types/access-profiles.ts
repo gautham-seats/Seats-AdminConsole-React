@@ -37,7 +37,7 @@ export type AccessProfileViewModel = {
 }
 
 // Seats.Trunk.Contracts PermissionDefinitionActionDto.
-export type PermissionDefinitionActionDto = {
+type PermissionDefinitionActionDto = {
   id: number
   name: string | null
   permissionDefinitionActionInItemId: number
@@ -81,7 +81,7 @@ export type ItemTypeViewModel = {
   description: string | null
 }
 
-export type EventTypeGroup = { id: string; value: ItemTypeViewModel[] }
+type EventTypeGroup = { id: string; value: ItemTypeViewModel[] }
 
 export type AccessProfileEventTypes = {
   events: ItemTypeViewModel[]

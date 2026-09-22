@@ -45,7 +45,7 @@ export function hasUnsavedChanges(): boolean {
 }
 
 // Asks once when any form is dirty; resolves true when the user may leave (or nothing is dirty).
-export function confirmLeave(): Promise<boolean> {
+function confirmLeave(): Promise<boolean> {
   if (bypass || guards.size === 0) return Promise.resolve(true)
   const message = currentMessage()
   if (askLeave) return askLeave(message)

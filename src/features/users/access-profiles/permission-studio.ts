@@ -1,7 +1,7 @@
 import type { AccessProfilePermissionNode, PermissionDefinitionItemDto } from '@/types/access-profiles'
 
 export type PermissionLevel = 'none' | 'view' | 'edit' | 'full'
-export const PERMISSION_LEVELS: readonly PermissionLevel[] = ['none', 'view', 'edit', 'full']
+const PERMISSION_LEVELS: readonly PermissionLevel[] = ['none', 'view', 'edit', 'full']
 
 export type StudioPermission = {
   id: number

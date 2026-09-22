@@ -10,11 +10,11 @@ import { cn } from './cn'
 import { STATE_ART_TONE, StateArt, type StateArtKind } from './StateArt'
 
 // Page fills a route, card fills its area, panel sits in a table cell; all are open and centred (D-084).
-export type ErrorStateVariant = 'page' | 'panel' | 'card'
+type ErrorStateVariant = 'page' | 'panel' | 'card'
 
-export type ErrorStateTone = 'signal' | 'warning' | 'danger'
+type ErrorStateTone = 'signal' | 'warning' | 'danger'
 
-export type ErrorStateGlyph = 'connection' | 'permission' | 'session' | 'missing' | 'problem'
+type ErrorStateGlyph = 'connection' | 'permission' | 'session' | 'missing' | 'problem'
 
 export type ErrorStateProps = {
   message: string
@@ -42,7 +42,7 @@ export type ErrorStateProps = {
 
 // GeneralResources carries the headline only, so the supporting line and state name default here.
 // English fallbacks, like src/app/loading.tsx: no legacy resource key exists for either.
-export const ERROR_FALLBACK_ONLY = {
+const ERROR_FALLBACK_ONLY = {
   stateLabel: 'Unable to load',
   hint: 'Nothing was changed. Please try again.',
 } as const
@@ -79,7 +79,7 @@ export const ERROR_KIND_FALLBACK_ONLY = {
   },
 } as const satisfies Record<string, Described>
 
-export const ERROR_ACTION_FALLBACK_ONLY = { signIn: 'Sign in again' } as const
+const ERROR_ACTION_FALLBACK_ONLY = { signIn: 'Sign in again' } as const
 
 // A 401 or a missing anti-forgery token both mean the legacy session is gone.
 export function isSessionError(error: ApiError | null | undefined): boolean {

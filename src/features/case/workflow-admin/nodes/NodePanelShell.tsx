@@ -5,12 +5,7 @@ import { toApiError } from '@/shared/api'
 import { PermissionAction, PermissionItem } from '@/shared/shell/admin-menu'
 import { useProfile } from '@/shared/shell/profile'
 import { ConfirmDialog } from '@/shared/ui'
-import {
-  FormStatusPill,
-  SaveActions,
-  useSaveShortcut,
-  FRAME_EN,
-} from '@/features/settings/shared/SettingsFrame'
+import { FormStatusPill, SaveActions, useSaveShortcut } from '@/features/settings/shared/SettingsFrame'
 import { saveFailureMessage } from '@/features/settings/shared/use-object-form'
 import { useScreenText } from '@/features/settings/shared/use-screen-text'
 
@@ -168,5 +163,3 @@ export function NodePanelShell<T>({
     </div>
   )
 }
-
-export { FRAME_EN }

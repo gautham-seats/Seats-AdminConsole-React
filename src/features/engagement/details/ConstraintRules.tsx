@@ -43,7 +43,7 @@ const fieldIds = (prefix: string) => ({
 })
 
 // Which parts of a rule are still missing; empty once the rule can be added.
-export function missingRuleParts(draft: Draft): { include: boolean; category: boolean; value: boolean } {
+function missingRuleParts(draft: Draft): { include: boolean; category: boolean; value: boolean } {
   return {
     include: !draft.include,
     category: !draft.category,

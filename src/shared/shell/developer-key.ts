@@ -16,7 +16,7 @@ export const DEVELOPER_KEY_TEXT = {
 const pad = (value: number) => String(value).padStart(2, '0')
 
 // developerKeyGeneratorController.js:30-38 and :63 both show DD/MM/YYYY HH:mm:ss in local time.
-export function formatKeyDate(date: Date): string {
+function formatKeyDate(date: Date): string {
   return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
 }
 

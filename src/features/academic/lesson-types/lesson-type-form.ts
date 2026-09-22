@@ -163,7 +163,7 @@ export function toLessonTypeForm(detail: LessonTypeDto): LessonTypeForm {
   }
 }
 
-export type FieldError = 'required' | 'wholeNumber'
+type FieldError = 'required' | 'wholeNumber'
 export type LessonTypeErrors = Partial<Record<NumberField, FieldError>>
 
 // Required cutoffs as legacy; a typed value must be a whole Int32 because the column is an Int32.

@@ -171,7 +171,7 @@ export const TIME_OPTIONS: readonly string[] = Array.from({ length: 65 }, (_, in
 const DATE_TIME = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/
 
 // _Layout.cshtml:310-313: globalTimeWithSecondsFormat is hh:mm:ss A for en-US and HH:mm:ss for every other culture.
-export function formatTimeWithSeconds(hour: string, minute: string, second: string): string {
+function formatTimeWithSeconds(hour: string, minute: string, second: string): string {
   if (getUiCulture() !== 'en-US') return `${hour}:${minute}:${second}`
   const hours = Number(hour)
   return `${String(hours % 12 || 12).padStart(2, '0')}:${minute}:${second} ${hours < 12 ? 'AM' : 'PM'}`

@@ -3,7 +3,7 @@
 import { ErrorState } from '@/shared/ui'
 
 // Views/Error/*.cshtml text; the legacy pages hard-code English, and GeneralResources has no key for the first two.
-export const ERROR_PAGES_EN = {
+const ERROR_PAGES_EN = {
   notAuthorisedLabel: 'No access',
   notAuthorised: 'You do not have permission to view this page within the SEAtS application.',
   notActiveLabel: 'Account inactive',

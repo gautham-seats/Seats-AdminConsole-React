@@ -1,8 +1,8 @@
 import type { ActivityTypeDetailsDto, ActivityTypeDto } from '@/types/activity-types'
 
 // Notification type 3 is Letter; file template type 1 is Letter (Details.cshtml:52-77).
-export const LETTER_NOTIFICATION = 3
-export const LETTER_TEMPLATE_TYPE = 1
+const LETTER_NOTIFICATION = 3
+const LETTER_TEMPLATE_TYPE = 1
 
 // Knockout selects without a caption take the first option when the value matches none (Details.cshtml:125-131).
 export function withSelectDefaults(details: ActivityTypeDetailsDto): ActivityTypeDto {
