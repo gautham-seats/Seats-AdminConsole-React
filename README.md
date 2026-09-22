@@ -15,6 +15,8 @@ integrations, job schedules and student workflows. A Next.js / React rewrite of 
 
 History begins on 22 September 2026 as a structured import of the rewrite, landed in reviewable slices.
 
+**Status:** `v0.1.0` — every Admin area is on the shell, safe mode is on, not yet deployed.
+
 ## Purpose
 
 |                    |                                                                                                |
@@ -26,10 +28,10 @@ History begins on 22 September 2026 as a structured import of the rewrite, lande
 
 ## Environments
 
-| Environment | Where                                                   | Data                            | Writes                                  |
-| ----------- | ------------------------------------------------------- | ------------------------------- | --------------------------------------- |
-| Local       | `https://dev.seats.local/admin-next` → `localhost:3001` | Alpha (through the legacy site) | Off unless `ADMIN_ALLOW_WRITES=true`    |
-| Production  | Beside the legacy Admin under `/admin-next`             | Live                            | Deployment is handled outside this repo |
+| Environment | Where                                                   | Data                                        | Writes                                  |
+| ----------- | ------------------------------------------------------- | ------------------------------------------- | --------------------------------------- |
+| Local       | `https://dev.seats.local/admin-next` → `localhost:3001` | The local legacy site; some services mocked | Off unless `ADMIN_ALLOW_WRITES=true`    |
+| Production  | Beside the legacy Admin under `/admin-next`             | Live                                        | Deployment is handled outside this repo |
 
 No credentials or connection strings live in this repo. The local proxy setup is in
 [docs/local-environment.md](docs/local-environment.md).
@@ -50,19 +52,26 @@ cookie and never shows a login form of its own.
 
 ## Commands
 
-| Command                           | Purpose                                                      |
-| --------------------------------- | ------------------------------------------------------------ |
-| `npm run dev`                     | Start the app on port 3001                                   |
-| `npm run check`                   | Typecheck, lint, unit tests, production build — what CI runs |
-| `npm test` / `npm run test:watch` | Jest + Testing Library                                       |
-| `npm run test:coverage`           | Coverage report                                              |
-| `npm run lint` / `npm run format` | ESLint (zero warnings) / Prettier                            |
-| `npm run typecheck`               | `next typegen` + `tsc --noEmit`                              |
-| `npm run sweep`                   | Playwright route sweep (needs a signed-in browser profile)   |
-| `npm run playwright`              | All browser tests, including the axe accessibility scan      |
-| `npm run build`                   | Production bundle (fails unless `ADMIN_ALLOW_WRITES` is set) |
+| Command                           | Purpose                                                                            |
+| --------------------------------- | ---------------------------------------------------------------------------------- |
+| `npm run dev`                     | Start the app on port 3001                                                         |
+| `npm run check`                   | The quality gate CI runs: format, types, lint, deps, dead code, tests, build:check |
+| `npm run format:check`            | Prettier, no rewrites                                                              |
+| `npm run typecheck`               | `next typegen` + `tsc --noEmit`                                                    |
+| `npm run lint`                    | ESLint, zero warnings                                                              |
+| `npm run lint:types`              | type-coverage, strict, at least 95 %                                               |
+| `npm run lint:deps`               | dependency-cruiser: no cycles, no orphans, layer rules                             |
+| `npm run lint:dead`               | knip: unused files, dependencies and exports                                       |
+| `npm run lint:tokens`             | Design tokens declared but never referenced (advisory)                             |
+| `npm run build:check`             | Production build with `ADMIN_ALLOW_WRITES` forced to `false`                       |
+| `npm test` / `npm run test:watch` | Jest + Testing Library                                                             |
+| `npm run test:coverage`           | Coverage report                                                                    |
+| `npm run test:e2e`                | Playwright route sweep and axe scan (needs a signed-in profile)                    |
+| `npm run build`                   | Production bundle; reads `ADMIN_ALLOW_WRITES` from `.env.local`                    |
+| `npm run format`                  | Prettier, rewriting files                                                          |
 
-A pre-commit hook runs lint-staged, typecheck and the tests for changed files.
+A pre-commit hook runs lint-staged, typecheck and the tests for changed files; commit messages are checked by
+commitlint; a pre-push hook runs `npm run check` and, when the browser profile exists, the route sweep.
 
 ## Safe mode
 
@@ -136,81 +145,18 @@ e2e/                Playwright sweep and axe scan
 **Dependency rule:** `shared` never imports from `features` or `app`; `features` never import each other.
 Every request goes through `src/shared/api/client.ts`.
 
-### Request lifecycle
+### Behaviour that every screen shares
 
-```mermaid
-sequenceDiagram
-    actor User
-    participant Screen as Feature screen
-    participant Read as useApiRead
-    participant Client as shared/api/client
-    participant Layout as Legacy layout HTML
-    participant API as Admin API
+- Every request goes through `src/shared/api/client.ts`, carries the legacy session cookie and the anti-forgery
+  token, and comes back as typed data or one `ApiError` kind (`http`, `network`, `aborted`, `blocked`, `parse`,
+  `auth`, `token`).
+- A 401 stays on the page as "Not authorised"; a 403 or a sign-in redirect means the session is gone and
+  triggers one `ForceLogin` redirect; 408 and 428 sign the user out.
+- Every data-driven screen renders loading (after 400 ms), populated, empty, error with Retry, and
+  not-authorised. An API error is never shown as an empty list.
 
-    User->>Screen: opens page
-    Screen->>Read: key + load()
-    Read->>Client: api.get / api.post
-    Client->>Layout: GET / (once, cached) — anti-forgery token
-    Client->>API: fetch, same-origin cookie, RequestVerificationToken
-    alt 2xx
-        API-->>Client: JSON
-        Client-->>Read: typed data
-        Read-->>Screen: populated
-    else 401 / 403 / redirect to sign-in
-        Client-->>Read: ApiError('auth') and ForceLogin redirect (403)
-    else network / parse / 5xx
-        Client-->>Read: ApiError('network' | 'parse' | 'http')
-        Read-->>Screen: ErrorState with Retry
-    end
-```
-
-| Concern        | Rule                                                                                                                              |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Base URL       | Same origin, `/Seats.Trunk.Admin/api/*`; app served under `/admin-next`                                                           |
-| Auth           | Legacy session cookie; anti-forgery token scraped once from the legacy layout HTML                                                |
-| 401            | Stays on the page as "Not authorised" (session may still be valid)                                                                |
-| 403 / redirect | Session gone → one ForceLogin redirect (latched, released after 5 s or on `pageshow`); permission-only endpoints are allow-listed |
-| Errors         | Normalised to `ApiError` kinds: `http`, `network`, `aborted`, `blocked`, `parse`, `auth`, `token`                                 |
-| Cancellation   | Every read carries an `AbortSignal`; unmount aborts                                                                               |
-| Retries        | None automatic; the user retries from the error state. SignalR reconnects with backoff                                            |
-| Cache          | `useApiRead` keeps the last good data while reloading; resource strings cached per culture                                        |
-
-### Session expiry
-
-```mermaid
-sequenceDiagram
-    participant Console
-    participant API as Admin API
-    participant Legacy as Legacy Admin
-    participant IdP as Identity provider
-
-    Console->>API: fetch (redirect: manual)
-    API-->>Console: 403 or opaque redirect
-    Console->>Console: reset cached layout, latch redirect
-    Console->>Legacy: /Account/ForceLogin?returnUrl=…
-    Legacy->>IdP: WS-Fed sign-in
-    IdP-->>Legacy: token
-    Legacy-->>Console: back to returnUrl
-```
-
-### UI state model
-
-Every data-driven screen renders all of these; an API error is never shown as an empty list.
-
-```mermaid
-stateDiagram-v2
-    [*] --> Loading
-    Loading --> Populated: data
-    Loading --> Empty: valid empty answer
-    Loading --> Error: ApiError
-    Error --> Loading: Retry
-    Populated --> Refreshing: reload
-    Refreshing --> Populated: success (old rows stay meanwhile)
-    Refreshing --> Error: failure
-    Populated --> NotAuthorised: 401 / permission-only 403
-```
-
-Loading shows after 400 ms (`DelayedLoading`), errors use `ErrorState`, nothing uses `EmptyState`.
+The sequence diagrams, the error table and the state chart are in
+[docs/architecture.md](docs/architecture.md).
 
 ## Routes and permissions
 
@@ -257,28 +203,36 @@ flowchart TB
     E2E --> Screen --> Unit
 ```
 
-| Level   | Covers                                      | Tool             | Where              |
-| ------- | ------------------------------------------- | ---------------- | ------------------ |
-| Unit    | Client, errors, cron, validators, resources | Jest             | `src/**/__tests__` |
-| Screen  | Rendering, states, permissions, keyboard    | Testing Library  | `src/**/__tests__` |
-| Browser | Route sweep, accessibility scan             | Playwright + axe | `e2e/`             |
+| Level   | Covers                                      | Tool             | Where              | Size at `v0.1.0`                    |
+| ------- | ------------------------------------------- | ---------------- | ------------------ | ----------------------------------- |
+| Unit    | Client, errors, cron, validators, resources | Jest             | `src/**/__tests__` | 126 suites, 954 tests (with screen) |
+| Screen  | Rendering, states, permissions, keyboard    | Testing Library  | `src/**/__tests__` | see above                           |
+| Browser | Route sweep, accessibility scan             | Playwright + axe | `e2e/`             | 49 routes, WCAG scan on each        |
 
 - One test: `npx jest src/shared/api/__tests__/client.test.ts -t "SF-13"`.
 - Browser tests need a signed-in persistent profile; sign in on the legacy site first. A `403` on every call is
   an expired session, not a product defect.
 - Every fix ships with a test named after its issue id (`F3-01`, `SF-26`…).
+- Coverage floors in `jest.config.ts` (65 % statements and lines, 55 % branches and functions) only go up.
+- Console output fails a test: an `act` warning or a stray `console.error` is a failure, not noise.
 
 ## Delivery pipeline
 
-```mermaid
-flowchart LR
-    PR[Push / PR] --> Install[npm ci] --> Audit[npm audit high] --> Types[typecheck] --> Lint[lint] --> Tests[jest] --> Build[next build]
-    PR --> Secrets[gitleaks]
-    Build --> Review[Review + merge]
-```
+Every pull request and every push to `main` runs the jobs below; a tag `v*` also builds and attaches the bundle
+to a GitHub Release.
 
-CI is [`.github/workflows/ci.yml`](.github/workflows/ci.yml). Deployment and rollback are owned outside this
-repo; the bundle is built with `ADMIN_ALLOW_WRITES` set explicitly per environment.
+| Job                           | What it checks                                                                                                                                                                          |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Typecheck, lint, tests, build | `npm ci`, `npm audit` (high), Prettier, `tsc`, ESLint, type-coverage, dependency-cruiser, knip, Jest with coverage floors, `next build`, bundle budget (600 kB per route), token report |
+| Secret scan                   | gitleaks over the diff and the history                                                                                                                                                  |
+| Static security analysis      | Semgrep with the JavaScript, TypeScript, React, Node and secrets rule packs                                                                                                             |
+| Review the diff               | Two advisory model lanes: one hunts defects, one judges test adequacy and security; a finding both make is marked agreed                                                                |
+| Label oversized pull requests | Adds `needs-split` when one commit changes more than 600 lines                                                                                                                          |
+| Dependabot                    | Weekly grouped updates for npm and Actions                                                                                                                                              |
+
+Two checks are advisory until a clean-up lands: knip's unused-export rules (warn) and the token report. Deployment
+and rollback are owned outside this repo; the bundle is built with `ADMIN_ALLOW_WRITES` set explicitly per
+environment.
 
 ## Definition of done
 
@@ -297,25 +251,27 @@ repo; the bundle is built with `ADMIN_ALLOW_WRITES` set explicitly per environme
 | "Saving is turned off"                        | Safe mode                  | Expected with `ADMIN_ALLOW_WRITES=false`                                    |
 | 502.3 on `/admin-next`                        | Port 3001 not running      | `npm run dev`                                                               |
 | Blank text / keys shown                       | Resource POST failed       | Check the legacy site is up; keys fall back to English                      |
-| Build fails at `next.config.ts`               | `ADMIN_ALLOW_WRITES` unset | Set it in `.env.local` or the CI env                                        |
+| Build fails at `next.config.ts`               | `ADMIN_ALLOW_WRITES` unset | Set it in `.env.local`, or use `npm run build:check`                        |
 
 Deeper notes: [docs/local-environment.md](docs/local-environment.md).
 
 ## Contributing
 
-1. Branch per area (`feat/<area>`), Conventional Commits, one area per commit.
+1. Branch per area (`feat/<area>`), Conventional Commits, one small slice with its tests per commit (about
+   600 lines at most; the size label says when to split).
 2. Read the rules in this README and `docs/`; they apply to every contributor.
 3. Every screen has a spec in `docs/specs/`; update it with the change.
-4. `npm run check` must pass; pull requests are reviewed before merge.
+4. `npm run check` must pass locally; a pull request needs CI, the secret scan, static analysis, the advisory
+   review and the size label green, then a rebase merge.
 5. Deliberate departures from legacy go in `docs/decisions.md` (numbered, newest last).
 
 ## Ownership
 
-| Responsibility             | Owner                        |
-| -------------------------- | ---------------------------- |
-| Product and decisions      | Gautham Binoy                |
-| Frontend                   | Gautham Binoy                |
-| Backend API and deployment | SEAtS backend team (Rodrigo) |
-| Accessibility evidence     | SEAtS accessibility team     |
+| Responsibility             | Owner                    |
+| -------------------------- | ------------------------ |
+| Product and decisions      | Gautham Binoy            |
+| Frontend                   | Gautham Binoy            |
+| Backend API and deployment | SEAtS backend team       |
+| Accessibility evidence     | SEAtS accessibility team |
 
 Issues and questions: the repository issue tracker.
