@@ -26,7 +26,7 @@ All filters apply immediately; there is no Search button. Evidence: `seats-admin
 | Site | select | All `''`, Admin `admin`, Web `web` | `site` | `seats-admin-audit.html:141-147` |
 | Type | select | All `''`, Logon `Login`, Page `Page`, Action `Action`, Cancel `Cancel` | `type` | `:150-157` |
 | User | remote autocomplete, placeholder All | Typing calls `GET api/Audit/GetUser?query={text}`; selecting sets the user id and reloads; clearing resets to all users and page 0 | `user` (int?) | `:160-171,464-478,577-594`, `Controllers/Api/AuditController.cs:199-211` |
-| Select Range | date range (From / To) | Defaults to today–today; end date cannot be before start; no preset buttons (`hidden-section-button`) | `from`, `to` as `YYYY-MM-DD` | `:174-182,381-382,555-566`, `seats-range-date-picker.html:124-150,331-334` |
+| Select Range | date range (From / To) | Defaults to today–today; end date cannot be before start; legacy has no preset buttons (`hidden-section-button`), React keeps the shared preset rail (D-050, 2026-09-22) | `from`, `to` as `YYYY-MM-DD` | `:174-182,381-382,555-566`, `seats-range-date-picker.html:124-150,331-334` |
 | Clean | button | Resets sort to `accessDate desc`, site/type/user to all, range to today, page 0, then reloads | — | `:187-189,487-516` |
 
 User lookup (`GetUser`): server returns up to 10 users ordered by user name as `{ id, description }`, hiding the tenant super user. Evidence: `Controllers/Api/AuditController.cs:199-211`

@@ -225,8 +225,8 @@ describe('ActivityScreen', () => {
     await screen.findByText('SEAtS Pageview')
     fireEvent.click(screen.getByRole('button', { name: 'Start Date' }))
     const dialog = await screen.findByRole('dialog', { name: 'Date Range' })
-    // seats-admin-audit.html:177 hides the preset buttons.
-    expect(within(dialog).queryByRole('button', { name: 'Last 7 Days' })).not.toBeInTheDocument()
+    // Legacy hides the presets (seats-admin-audit.html:177); React keeps the shared rail (D-050).
+    expect(within(dialog).getAllByRole('button', { name: 'Last 7 Days' }).length).toBeGreaterThan(0)
     fireEvent.click(within(dialog).getByRole('button', { name: 'Select Range' }))
     await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Date Range' })).not.toBeInTheDocument())
     expect(auditBodies().at(-1)).toMatchObject({ from: '2026-09-15', to: '2026-09-15' })

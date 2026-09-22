@@ -364,7 +364,7 @@ Built on 2026-09-14. Spec: `docs/specs/users/access-profile.md` (details). Route
 Built on 2026-09-15 with Gautham's approval to write the spec and edit the shared shell. Spec: `docs/specs/users/audit.md` (new) and `docs/specs/users/developer-key.md` (generator).
 
 - Route `/users/activity` gated by Users + Activity; the Users sidebar and the top menu Audit entry now open it.
-- Filters Site, Type, User (lookup `GET Audit/GetUser`, lists users on focus as the `min-length="0"` autocomplete did) and Select Range (From/To calendar, To never before From, no presets as `hidden-section-button`). Every change reloads from page 0 (LB-050). Clean resets filters, sort, range and page.
+- Filters Site, Type, User (lookup `GET Audit/GetUser`, lists users on focus as the `min-length="0"` autocomplete did) and Select Range (From/To calendar, To never before From). Legacy hides the preset buttons (`hidden-section-button`); since 2026-09-22 React keeps the shared preset rail (Today, Last 7 Days…), which no other date range in the console hides (approved by Gautham on 2026-09-22 when he asked for this work to land). Every change reloads from page 0 (LB-050). Clean resets filters, sort, range and page.
 - `POST audit/GetAudit` and `POST UserApi/GetUserDeveloperKey` have no side effects (`_auditApiClient.GetAsync`, `GetUserDeveloperKeyExpirationAsync`), so they join the read-only POST list in `src/shared/api/config.ts`. Export and GenerateDeveloperKey stay blocked in safe mode.
 - Detail text and link rules follow `_detail`/`_isAction`; only absolute http(s) links render, opened with `noopener noreferrer`.
 - Export: an Export button (hidden with no rows) opens Export As Pdf/Csv with Save; `POST audit/Export` shows `ReportProcessing`.

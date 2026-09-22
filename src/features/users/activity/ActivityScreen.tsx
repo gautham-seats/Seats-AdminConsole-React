@@ -350,7 +350,6 @@ function ActivityWorkspace() {
           />
         </FilterField>
         <DateRangeField
-          hidePresets
           id="activity-range"
           start={query.range.from}
           end={query.range.to}
