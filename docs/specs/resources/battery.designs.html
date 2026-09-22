@@ -1,0 +1,238 @@
+<title>Device Battery Studio</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --page: #f5f6fa; --ink: #0b1220; --ink-2: #4b5567; --ink-3: #7c8697; --line: #e2e6ee; --white: #fff;
+    --brand: #1566a2;
+    --good: #34c759; --good-d: #1fa544; --mid: #ffcc00; --mid-d: #e0a800; --low: #ff3b30; --low-d: #d92d23;
+    --glass: rgba(255,255,255,.55); --glass-line: rgba(255,255,255,.85); --shell: rgba(15,23,42,.28);
+    --font: "Inter", "Segoe UI", system-ui, sans-serif; --ease: cubic-bezier(.22, 1, .36, 1); --spring: cubic-bezier(.3, 1.5, .5, 1);
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --page: #f5f6fa; } }
+  :root[data-theme="dark"] { --page: #f5f6fa; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--ink); font-family: var(--font); padding-inline: 16px; padding-block: 0; font-feature-settings: "tnum"; }
+  h1, h2 { margin: 0; text-wrap: balance; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-block: 28px 56px; display: grid; gap: 36px; }
+  .head h1 { font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
+  .head p { color: var(--ink-2); font-size: 14px; margin: 4px 0 0; max-width: 64ch; }
+  h2 { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+  h2 small { font-size: 12px; font-weight: 500; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 18px; margin-top: 12px; }
+  .card { background: var(--white); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 14px 34px -22px rgba(15,23,42,.28); overflow: hidden; }
+  .card.rec { border-color: rgba(21,102,162,.4); box-shadow: 0 0 0 3px rgba(21,102,162,.08), 0 14px 34px -22px rgba(15,23,42,.28); }
+  .card header { padding: 12px 16px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .card header b { font-size: 14px; font-weight: 600; } .card header span { font-size: 12px; color: var(--ink-3); }
+  .card footer { padding: 10px 16px 14px; font-size: 12.5px; color: var(--ink-2); line-height: 1.5; border-top: 1px solid var(--line); background: #fbfcfd; }
+  .card footer b { color: var(--ink); font-weight: 600; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; background: rgba(21,102,162,.1); color: var(--brand); }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+  th { text-align: left; height: 36px; padding: 0 14px; color: #fff; font-size: 12px; font-weight: 500; letter-spacing: .02em; background: linear-gradient(180deg, color-mix(in srgb, var(--brand) 84%, white), var(--brand) 55%, color-mix(in srgb, var(--brand) 92%, black)); }
+  td { padding: 8px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; white-space: nowrap; height: 40px; }
+  tr { animation: rowin .6s var(--ease) both; animation-delay: calc(var(--i) * 45ms); }
+  @keyframes rowin { from { opacity: 0; transform: translateY(6px); } }
+  tr:hover td { background: #f8fafc; }
+  td.name { color: var(--ink); font-weight: 500; }
+  .lv-good { --c: var(--good); --cd: var(--good-d); } .lv-mid { --c: var(--mid); --cd: var(--mid-d); } .lv-low { --c: var(--low); --cd: var(--low-d); }
+
+  /* ============ A · iPhone Glass ============ */
+  .ba { display: inline-flex; align-items: center; gap: 9px; }
+  .ba .shell { position: relative; width: 40px; height: 18px; border-radius: 6px; border: 1.5px solid var(--shell); background: rgba(15,23,42,.05); box-shadow: inset 0 1px 1px rgba(255,255,255,.7); }
+  .ba .shell::after { content: ""; position: absolute; right: -5.5px; top: 5px; width: 3px; height: 6px; border-radius: 0 3px 3px 0; background: var(--shell); }
+  .ba .fill { position: absolute; top: 2px; bottom: 2px; left: 2px; width: calc((100% - 4px) * var(--p) / 100); min-width: 4px; border-radius: 3.5px; background: linear-gradient(180deg, color-mix(in srgb, var(--c) 80%, white) 0%, var(--c) 45%, var(--cd) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 0 10px -2px var(--c); animation: fillin 1.1s var(--ease) both; animation-delay: calc(var(--i) * 45ms + 120ms); overflow: hidden; }
+  .ba .fill::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.55) 50%, transparent 70%); background-size: 200% 100%; animation: sheen 3.6s linear infinite; animation-delay: calc(var(--i) * 300ms); }
+  @keyframes fillin { from { width: 4px; } }
+  @keyframes sheen { from { background-position: 150% 0; } to { background-position: -50% 0; } }
+  .ba .pct { font-weight: 600; font-size: 13px; min-width: 34px; color: var(--ink); }
+  .ba.lv-low .pct { color: var(--low-d); }
+  .ba.lv-low .shell { border-color: color-mix(in srgb, var(--low) 60%, var(--shell)); animation: lowglow 2.2s ease-in-out infinite; }
+  @keyframes lowglow { 50% { box-shadow: inset 0 1px 1px rgba(255,255,255,.7), 0 0 0 4px rgba(255,59,48,.14); } }
+
+  /* ============ B · Liquid Capsule ============ */
+  .bb { display: inline-flex; align-items: center; gap: 9px; }
+  .bb .cap { position: relative; width: 58px; height: 22px; border-radius: 999px; overflow: hidden; background: rgba(15,23,42,.06); box-shadow: inset 0 0 0 1px rgba(15,23,42,.08), inset 0 2px 4px rgba(15,23,42,.08); }
+  .bb .liq { position: absolute; top: 0; bottom: 0; left: 0; width: calc(var(--p) * 1%); min-width: 10px; background: linear-gradient(180deg, color-mix(in srgb, var(--c) 70%, white), var(--c) 55%, var(--cd)); animation: fillin-w 1.2s var(--ease) both; animation-delay: calc(var(--i) * 45ms + 120ms); }
+  @keyframes fillin-w { from { width: 10px; } }
+  .bb .liq::before, .bb .liq::after { content: ""; position: absolute; top: -4px; bottom: -4px; right: -12px; width: 24px; border-radius: 45%; background: rgba(255,255,255,.35); animation: wave 2.8s linear infinite; }
+  .bb .liq::after { background: color-mix(in srgb, var(--cd) 50%, transparent); animation-duration: 3.6s; animation-direction: reverse; }
+  @keyframes wave { to { transform: rotate(360deg); } }
+  .bb .gloss { position: absolute; inset: 2px 3px auto 3px; height: 8px; border-radius: 999px; background: linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,0)); pointer-events: none; }
+  .bb .pct { position: absolute; inset: 0; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.35); mix-blend-mode: normal; }
+  .bb[data-dark] .pct { color: var(--ink); text-shadow: none; }
+  .bb .word { font-size: 12px; color: var(--ink-3); }
+
+  /* ============ C · Segment Lux ============ */
+  .bc { display: inline-flex; align-items: center; gap: 10px; }
+  .bc .segs { display: inline-flex; gap: 2px; padding: 3px; border-radius: 7px; background: rgba(15,23,42,.06); box-shadow: inset 0 1px 2px rgba(15,23,42,.08), inset 0 0 0 1px rgba(255,255,255,.6); position: relative; }
+  .bc .segs::after { content: ""; position: absolute; right: -5px; top: 6px; width: 3px; height: 8px; border-radius: 0 2px 2px 0; background: rgba(15,23,42,.25); }
+  .bc .segs i { width: 7px; height: 14px; border-radius: 2px; background: rgba(15,23,42,.08); transition: background .4s, box-shadow .4s; }
+  .bc .segs i.on { background: linear-gradient(180deg, color-mix(in srgb, var(--c) 75%, white), var(--c) 50%, var(--cd)); box-shadow: 0 0 6px -1px var(--c), inset 0 1px 0 rgba(255,255,255,.6); animation: segin .5s var(--spring) both; animation-delay: calc(var(--i) * 45ms + var(--k) * 70ms + 150ms); }
+  .bc .segs i.on.half { background: linear-gradient(90deg, var(--c) 50%, rgba(15,23,42,.08) 50%); box-shadow: none; }
+  @keyframes segin { from { transform: scaleY(.3); opacity: 0; } }
+  .bc .pct { font-weight: 600; font-size: 13px; color: var(--ink); }
+  .bc .pct small { font-weight: 500; font-size: 11px; color: var(--ink-3); margin-left: 4px; }
+
+  /* ============ Pickers ============ */
+  .body { padding: 18px 16px; }
+  .lbl { font-size: 13px; font-weight: 500; margin-bottom: 10px; display: block; }
+  .out { display: flex; gap: 8px; margin-top: 12px; font-size: 12.5px; color: var(--ink-2); align-items: center; }
+  .out b { color: var(--ink); }
+  /* ---- P1 · Glass slider with live battery preview ---- */
+  .p1 { display: grid; gap: 14px; }
+  .p1 .preview { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 14px; border-radius: 14px; background: linear-gradient(180deg, #f8fafc, #eef2f7); box-shadow: inset 0 1px 0 #fff, inset 0 0 0 1px rgba(15,23,42,.05); }
+  .big { position: relative; width: 120px; height: 46px; border-radius: 13px; border: 2px solid var(--shell); background: rgba(15,23,42,.05); box-shadow: inset 0 1px 2px rgba(255,255,255,.8); }
+  .big::after { content: ""; position: absolute; right: -9px; top: 14px; width: 5px; height: 16px; border-radius: 0 4px 4px 0; background: var(--shell); }
+  .big .band { position: absolute; top: 4px; bottom: 4px; left: calc(4px + (100% - 8px) * var(--a) / 100); width: calc((100% - 8px) * (var(--b) - var(--a)) / 100); border-radius: 8px; background: linear-gradient(90deg, var(--low) 0 15%, var(--mid) 15% 40%, var(--good) 40% 100%); background-size: calc((100% - 8px)) 100%; background-attachment: fixed; box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 0 14px -3px rgba(52,199,89,.5); transition: left .25s var(--ease), width .25s var(--ease); overflow: hidden; }
+  .big .band::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.5) 50%, transparent 70%); background-size: 200% 100%; animation: sheen 3s linear infinite; }
+  .big .ghost { position: absolute; inset: 4px; border-radius: 8px; background: linear-gradient(90deg, var(--low) 0 15%, var(--mid) 15% 40%, var(--good) 40% 100%); opacity: .12; }
+  .p1 .nums { font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
+  .p1 .nums span { color: var(--ink-3); font-weight: 400; margin: 0 6px; }
+  .dual { position: relative; height: 40px; }
+  .dual .track { position: absolute; left: 10px; right: 10px; top: 16px; height: 8px; border-radius: 999px; background: rgba(15,23,42,.08); box-shadow: inset 0 1px 2px rgba(15,23,42,.1); }
+  .dual .sel { position: absolute; top: 16px; height: 8px; border-radius: 999px; background: linear-gradient(90deg, var(--brand), #56bdea); box-shadow: 0 0 10px -2px rgba(21,102,162,.6); transition: left .15s, width .15s; }
+  .dual input[type=range] { position: absolute; left: 0; right: 0; top: 8px; width: 100%; height: 24px; margin: 0; -webkit-appearance: none; appearance: none; background: transparent; pointer-events: none; }
+  .dual input::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.9); border: 1px solid rgba(255,255,255,1); box-shadow: 0 1px 2px rgba(15,23,42,.2), 0 6px 14px -4px rgba(15,23,42,.35), inset 0 0 0 1px rgba(15,23,42,.06); pointer-events: auto; cursor: grab; transition: transform .25s var(--spring); backdrop-filter: blur(6px); }
+  .dual input::-webkit-slider-thumb:hover, .dual input:active::-webkit-slider-thumb { transform: scale(1.2); }
+  .dual input::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 1px solid #fff; box-shadow: 0 6px 14px -4px rgba(15,23,42,.35); pointer-events: auto; cursor: grab; }
+  .dual input:focus-visible { outline: none; } .dual input:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(21,102,162,.25), 0 6px 14px -4px rgba(15,23,42,.35); }
+  .ticks { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-3); padding: 0 10px; }
+  /* ---- P2 · Paint the segments ---- */
+  .paint { display: flex; gap: 4px; padding: 6px; border-radius: 12px; background: rgba(15,23,42,.05); box-shadow: inset 0 1px 2px rgba(15,23,42,.08); user-select: none; touch-action: none; }
+  .paint i { flex: 1; height: 42px; border-radius: 6px; background: #fff; box-shadow: 0 1px 2px rgba(15,23,42,.08); position: relative; cursor: pointer; transition: transform .3s var(--spring), background .3s, box-shadow .3s; display: grid; place-items: end center; font-size: 10px; color: var(--ink-3); padding-bottom: 3px; font-style: normal; }
+  .paint i::before { content: ""; position: absolute; inset: 4px 4px 14px; border-radius: 3px; background: var(--c); opacity: .18; transition: opacity .3s; }
+  .paint i:hover { transform: translateY(-2px); }
+  .paint i.on { color: var(--ink); box-shadow: 0 6px 14px -8px var(--c), 0 1px 2px rgba(15,23,42,.1); }
+  .paint i.on::before { opacity: 1; box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 0 8px -2px var(--c); }
+  .paint i.on { animation: pop .35s var(--spring); }
+  @keyframes pop { 50% { transform: translateY(-4px) scale(1.06); } }
+  .p2 .hint { font-size: 12px; color: var(--ink-3); margin-top: 8px; }
+  /* ---- P3 · Twin glass batteries ---- */
+  .twin { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; }
+  .tb { border-radius: 16px; padding: 12px 14px 14px; background: linear-gradient(180deg, #fff, #f5f7fb); box-shadow: 0 1px 2px rgba(15,23,42,.05), 0 10px 24px -18px rgba(15,23,42,.3), inset 0 0 0 1px rgba(15,23,42,.05); display: grid; gap: 10px; outline: none; transition: box-shadow .3s; }
+  .tb:focus-within { box-shadow: 0 0 0 4px rgba(21,102,162,.12), 0 10px 24px -18px rgba(15,23,42,.3), inset 0 0 0 1px rgba(21,102,162,.5); }
+  .tb .t { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; display: flex; justify-content: space-between; }
+  .tb .t b { font-size: 20px; letter-spacing: -.01em; text-transform: none; color: var(--ink); }
+  .tb .cell { position: relative; height: 44px; border-radius: 12px; border: 2px solid var(--shell); background: rgba(15,23,42,.05); box-shadow: inset 0 1px 2px rgba(255,255,255,.8); }
+  .tb .cell::after { content: ""; position: absolute; right: -8px; top: 13px; width: 4px; height: 14px; border-radius: 0 3px 3px 0; background: var(--shell); }
+  .tb .cell i { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) * var(--p) / 100); min-width: 8px; border-radius: 7px; background: linear-gradient(180deg, color-mix(in srgb, var(--c) 75%, white), var(--c) 50%, var(--cd)); box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 0 12px -3px var(--c); transition: width .35s var(--ease), background .4s; overflow: hidden; }
+  .tb .cell i::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.5) 50%, transparent 70%); background-size: 200% 100%; animation: sheen 3.2s linear infinite; }
+  .tb input[type=range] { width: 100%; margin: 0; -webkit-appearance: none; appearance: none; height: 22px; background: transparent; }
+  .tb input::-webkit-slider-runnable-track { height: 4px; border-radius: 999px; background: rgba(15,23,42,.1); }
+  .tb input::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; margin-top: -7px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(15,23,42,.25), 0 4px 10px -3px rgba(15,23,42,.35); cursor: grab; transition: transform .25s var(--spring); }
+  .tb input::-webkit-slider-thumb:hover { transform: scale(1.15); }
+  .tb input::-moz-range-track { height: 4px; border-radius: 999px; background: rgba(15,23,42,.1); }
+  .tb input::-moz-range-thumb { width: 18px; height: 18px; border: 0; border-radius: 50%; background: #fff; box-shadow: 0 4px 10px -3px rgba(15,23,42,.35); }
+  .tb input:focus-visible { outline: none; }
+  .link { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: #fff; box-shadow: 0 1px 2px rgba(15,23,42,.08), 0 4px 10px -6px rgba(15,23,42,.3); color: var(--brand); font-size: 15px; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <div class="head">
+    <h1>Device Battery Studio</h1>
+    <p>Round two. iPhone-style batteries: glass shells, translucent fills, a slow light sweep, low ones glowing softly. Three cells for the grid, three ways to pick a from–to range. Rows use your real values.</p>
+  </div>
+
+  <section>
+    <h2>Battery cell <small>Devices grid · Battery % column</small></h2>
+    <div class="grid" id="cells"></div>
+  </section>
+
+  <section>
+    <h2>Battery from / to <small>Devices filter panel</small></h2>
+    <div class="grid">
+
+      <div class="card rec">
+        <header><b>Picker A · Glass slider + live battery</b><span class="tag">Recommended</span></header>
+        <div class="body p1">
+          <div class="preview">
+            <div class="big" id="bigp" style="--a:0;--b:100"><div class="ghost"></div><div class="band"></div></div>
+            <div class="nums"><em id="na" style="font-style:normal">0</em><span>–</span><em id="nb" style="font-style:normal">100</em><small style="font-size:13px;color:#7c8697;font-weight:500"> %</small></div>
+          </div>
+          <div class="dual">
+            <div class="track"></div><div class="sel" id="sel"></div>
+            <input type="range" id="ra" min="0" max="100" value="0" aria-label="Battery % from">
+            <input type="range" id="rb" min="0" max="100" value="100" aria-label="Battery % to">
+          </div>
+          <div class="ticks"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
+        </div>
+        <footer>The big battery above shows exactly the band you're filtering, in real time, with the same red / amber / green as the grid. Glass thumbs grow on touch. Keys: ← → (Shift = 10).</footer>
+      </div>
+
+      <div class="card">
+        <header><b>Picker B · Paint the range</b><span>drag across</span></header>
+        <div class="body p2">
+          <span class="lbl">Battery %</span>
+          <div class="paint" id="paint" role="group" aria-label="Battery % range"></div>
+          <div class="hint">Click a block, or drag across blocks. Click the same block again to reset.</div>
+          <div class="out">Showing <b id="pa">0 %</b>&nbsp;to&nbsp;<b id="pb">100 %</b></div>
+        </div>
+        <footer>Ten glass blocks, one per 10 %. Painting them feels like filling a battery. Best for coarse picks ("everything under 30 %"); exact numbers stay in the chip.</footer>
+      </div>
+
+      <div class="card">
+        <header><b>Picker C · Twin glass batteries</b><span>from · to</span></header>
+        <div class="body">
+          <div class="twin">
+            <div class="tb" data-k="a"><div class="t">From <b>0<small style="font-size:12px;color:#7c8697;font-weight:500">%</small></b></div><div class="cell lv-low"><i style="--p:0"></i></div><input type="range" min="0" max="100" value="0" aria-label="Battery % from"></div>
+            <div class="link" aria-hidden="true">→</div>
+            <div class="tb" data-k="b"><div class="t">To <b>100<small style="font-size:12px;color:#7c8697;font-weight:500">%</small></b></div><div class="cell lv-good"><i style="--p:100"></i></div><input type="range" min="0" max="100" value="100" aria-label="Battery % to"></div>
+          </div>
+        </div>
+        <footer>Each bound is its own iPhone battery that fills as you slide, changing colour through the levels. Handles can't cross. Most visual; needs the full filter-row width.</footer>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<script>
+  const rows = [['SW101R505',12],['SW101R504',19],['SW101R503',81],['SW101R502',79],['SW101R501',3],['SW101R412',76],['SW101R411',3],['SW101R410',90],['SW101R409',24]];
+  const lv = p => p > 40 ? 'lv-good' : p > 15 ? 'lv-mid' : 'lv-low';
+  const word = { 'lv-good': 'Good', 'lv-mid': 'Medium', 'lv-low': 'Low' };
+  const cell = {
+    A: (p,i) => `<span class="ba ${lv(p)}" style="--i:${i}" title="${word[lv(p)]}"><span class="shell"><span class="fill" style="--p:${p}"></span></span><span class="pct">${p}%</span></span>`,
+    B: (p,i) => `<span class="bb ${lv(p)}" style="--i:${i}" ${p<35?'data-dark':''}><span class="cap"><span class="liq" style="--p:${p}"></span><span class="gloss"></span><span class="pct">${p}%</span></span><span class="word">${word[lv(p)]}</span></span>`,
+    C: (p,i) => { const full = Math.floor(p/20), half = p % 20 >= 10; return `<span class="bc ${lv(p)}" style="--i:${i}"><span class="segs">${[0,1,2,3,4].map(k => `<i style="--k:${k}" class="${k<full?'on':(k===full&&half?'on half':'')}"></i>`).join('')}</span><span class="pct">${p}%<small>${word[lv(p)]}</small></span></span>`; },
+  };
+  const meta = {
+    A: ['Battery A · iPhone Glass', 'status-bar', 'The iPhone status-bar battery: translucent shell, rounded fill with a slow light sweep, number beside it. Low = red number and a soft red breathing glow. <b>Recommended.</b>', true],
+    B: ['Battery B · Liquid Capsule', 'liquid', 'A glass capsule with liquid inside: two waves ripple on the surface, the number floats over it. Dark number on low fills so it always reads.', false],
+    C: ['Battery C · Segment Lux', 'five bars', 'Five glass segments that light up one after another when the row appears, glowing in the level colour. Number and level word beside it.', false],
+  };
+  document.getElementById('cells').innerHTML = ['A','B','C'].map(v => `
+    <div class="card ${meta[v][3]?'rec':''}"><header><b>${meta[v][0]}</b><span>${meta[v][1]}</span></header>
+    <table><thead><tr><th>Description</th><th>Battery %</th></tr></thead><tbody>
+    ${rows.map(([n,p],i) => `<tr style="--i:${i}"><td class="name">${n}</td><td>${cell[v](p,i)}</td></tr>`).join('')}
+    </tbody></table><footer>${meta[v][2]}</footer></div>`).join('');
+
+  // Picker A
+  const ra = document.getElementById('ra'), rb = document.getElementById('rb'), big = document.getElementById('bigp');
+  function drawA() {
+    let a = +ra.value, b = +rb.value; if (a > b) { [a, b] = [b, a]; ra.value = a; rb.value = b; }
+    const sel = document.getElementById('sel'); const w = ra.clientWidth - 20; sel.style.left = (10 + w * a / 100) + 'px'; sel.style.width = (w * (b - a) / 100) + 'px';
+    big.style.setProperty('--a', a); big.style.setProperty('--b', b);
+    const band = big.querySelector('.band'); band.style.background = `linear-gradient(90deg, var(--low) 0 15%, var(--mid) 15% 40%, var(--good) 40% 100%)`;
+    band.style.backgroundSize = (100 / Math.max(b - a, 1) * 100) + '% 100%'; band.style.backgroundPosition = (a / Math.max(100 - (b - a), 1) * 100) + '% 0'; band.style.backgroundAttachment = 'scroll';
+    document.getElementById('na').textContent = a; document.getElementById('nb').textContent = b;
+  }
+  [ra, rb].forEach(r => r.addEventListener('input', drawA)); window.addEventListener('resize', drawA); drawA();
+
+  // Picker B
+  const paint = document.getElementById('paint'); let pa = 0, pb = 9, drag = null;
+  const colour = k => k < 2 ? 'var(--low)' : k < 4 ? 'var(--mid)' : 'var(--good)';
+  paint.innerHTML = [...Array(10)].map((_, k) => `<i data-k="${k}" style="--c:${colour(k)}">${k * 10}</i>`).join('');
+  function drawB() { paint.querySelectorAll('i').forEach(el => el.classList.toggle('on', +el.dataset.k >= pa && +el.dataset.k <= pb)); document.getElementById('pa').textContent = pa * 10 + ' %'; document.getElementById('pb').textContent = (pb * 10 + 10 > 100 ? 100 : pb * 10 + 10) + ' %'; }
+  paint.addEventListener('pointerdown', e => { const k = e.target.dataset.k; if (k === undefined) return; if (pa === pb && +k === pa) { pa = 0; pb = 9; drawB(); return; } drag = +k; pa = pb = +k; drawB(); paint.setPointerCapture(e.pointerId); });
+  paint.addEventListener('pointermove', e => { if (drag === null) return; const el = document.elementFromPoint(e.clientX, e.clientY); const k = el && el.dataset.k; if (k === undefined) return; pa = Math.min(drag, +k); pb = Math.max(drag, +k); drawB(); });
+  paint.addEventListener('pointerup', () => drag = null); drawB();
+
+  // Picker C
+  const st = { a: 0, b: 100 };
+  const tbs = [...document.querySelectorAll('.tb')];
+  function drawC() {
+    tbs.forEach(tb => { const k = tb.dataset.k, v = st[k]; tb.querySelector('input').value = v; tb.querySelector('.t b').firstChild.textContent = v; const c = tb.querySelector('.cell'); c.className = 'cell ' + lv(v); c.querySelector('i').style.setProperty('--p', v); });
+  }
+  tbs.forEach(tb => tb.querySelector('input').addEventListener('input', e => { const k = tb.dataset.k; st[k] = +e.target.value; if (st.a > st.b) st[k === 'a' ? 'b' : 'a'] = st[k]; drawC(); }));
+  drawC();
+</script>
