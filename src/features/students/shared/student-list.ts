@@ -32,23 +32,10 @@ export function serverListQuery(
   }
 }
 
-const pad = (value: number) => String(value).padStart(2, '0')
-
 // index.cshtml:74-75 renders {0:d} in the user's UI culture and StudentDeleteApiController.cs:339,345 parses
 // it back with CultureInfo.CurrentUICulture, so the format must follow the user, never a fixed dd/MM/yyyy.
 export function toCultureDate(date: Date): string {
   return formatShortDate(date)
-}
-
-export function toInputDate(date: Date): string {
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
-}
-
-export function fromInputDate(value: string): Date | null {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
-  if (!match) return null
-  const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
-  return Number.isNaN(date.getTime()) ? null : date
 }
 
 export function addDays(date: Date, days: number): Date {

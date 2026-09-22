@@ -49,7 +49,7 @@ const LEVEL_WORD: Record<BatteryLevel, string> = {
 }
 
 // Index.cshtml:211 row click and :74-77 Add open the device details screen.
-export const deviceDetailsHref = (id: number) => `${DEVICES_ROUTE}/${id}`
+const deviceDetailsHref = (id: number) => `${DEVICES_ROUTE}/${id}`
 export const NEW_DEVICE_HREF = `${DEVICES_ROUTE}/new`
 
 type DevicesTableProps = {

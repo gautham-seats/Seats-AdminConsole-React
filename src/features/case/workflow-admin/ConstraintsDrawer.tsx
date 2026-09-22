@@ -233,7 +233,7 @@ function dropdownPathByName(typeName: string | null): string | null {
   return null
 }
 
-export function dropdownPathFor(typeId: number, typeName: string | null): string | null {
+function dropdownPathFor(typeId: number, typeName: string | null): string | null {
   return DROPDOWN_PATH_BY_ID[typeId] ?? dropdownPathByName(typeName)
 }
 

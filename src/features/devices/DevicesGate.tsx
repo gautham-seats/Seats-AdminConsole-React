@@ -7,7 +7,7 @@ import { useProfile } from '@/shared/shell/profile'
 import { DelayedLoading, ErrorState } from '@/shared/ui'
 import { DEVICES_FALLBACK_ONLY, useDevicesText } from './index/devices-text'
 
-export const DEVICES_ACCESS = { item: PermissionItem.Devices, action: PermissionAction.Access }
+const DEVICES_ACCESS = { item: PermissionItem.Devices, action: PermissionAction.Access }
 export const ROOMS_ACCESS = { item: PermissionItem.Rooms, action: PermissionAction.Access }
 
 type DevicesGateProps = {

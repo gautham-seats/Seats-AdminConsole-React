@@ -87,11 +87,7 @@ export function validateMoveStage(stageId: number | null, noStageLabel: string):
 }
 
 // seats-admin-workflow-student.html:352-395 date pickers only ever emit a date in globalDateFormat.
-export function validateMoveDate(
-  value: string | null,
-  required: boolean,
-  invalidLabel: string,
-): string | null {
+function validateMoveDate(value: string | null, required: boolean, invalidLabel: string): string | null {
   const text = (value ?? '').trim()
   if (!text) return required ? invalidLabel : null
   return parseShortDate(text) ? null : invalidLabel

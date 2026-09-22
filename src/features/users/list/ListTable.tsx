@@ -27,7 +27,7 @@ export type RowAction =
   | { kind: 'message'; message: string }
   | null
 
-export type ListTableText = {
+type ListTableText = {
   loading: string
   error: string
   retry: string

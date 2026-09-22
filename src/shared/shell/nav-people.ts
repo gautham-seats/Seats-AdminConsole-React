@@ -3,7 +3,7 @@ import { api } from '@/shared/api'
 export type Person = { id: number; name: string; detail: string | null }
 
 export const PEOPLE_MIN_CHARS = 2
-export const PEOPLE_LIMIT = 5
+const PEOPLE_LIMIT = 5
 export const PEOPLE_DELAY_MS = 300
 
 // GET api/UserApi with the list's own paging parameters (UserApiController.GetUsers), first page only.

@@ -26,7 +26,7 @@ const COLUMNS: readonly Column[] = [
 ]
 
 // Index.cshtml:136 row click and :49-52 Add, now served by the React details screen.
-export const userDetailsRoute = (id: number) => `${USERS_ROUTE}/${id}`
+const userDetailsRoute = (id: number) => `${USERS_ROUTE}/${id}`
 export const NEW_USER_ROUTE = `${USERS_ROUTE}/new`
 
 type UsersTableProps = {

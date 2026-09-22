@@ -69,7 +69,7 @@ export function selectRoom(
   }
 }
 
-export function clampPercent(value: number): number {
+function clampPercent(value: number): number {
   return Math.min(BATTERY_CEILING, Math.max(BATTERY_FLOOR, Math.round(value)))
 }
 
@@ -82,7 +82,7 @@ export function setBatteryBound(range: BatteryRange, bound: 'min' | 'max', raw: 
     : { min: Math.min(range.min, value), max: value, touched: true }
 }
 
-export function resetBattery(filters: DeviceFilters): DeviceFilters {
+function resetBattery(filters: DeviceFilters): DeviceFilters {
   return { ...filters, battery: UNTOUCHED_BATTERY }
 }
 

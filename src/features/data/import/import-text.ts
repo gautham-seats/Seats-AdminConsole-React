@@ -3,7 +3,7 @@
 import { useCallback } from 'react'
 import { useResources } from '@/shared/resources'
 
-export const IMPORT_TEXT = {
+const IMPORT_TEXT = {
   Imports: 'Imports',
   Loading: 'Loading',
   Refresh: 'Refresh',

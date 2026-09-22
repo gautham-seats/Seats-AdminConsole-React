@@ -8,7 +8,7 @@ const SAMPLE = new Date(2001, 11, 3)
 
 type DatePart = 'day' | 'month' | 'year'
 
-export type ShortDateShape = { order: DatePart[]; separator: string; pattern: string }
+type ShortDateShape = { order: DatePart[]; separator: string; pattern: string }
 
 let uiCulture = FALLBACK_CULTURE
 let shape: ShortDateShape | null = null

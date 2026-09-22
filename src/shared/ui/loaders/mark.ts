@@ -11,7 +11,7 @@ const LEAVES: readonly Leaf[] = [
 
 const round = (value: number) => Number(value.toFixed(2))
 
-export function leafPath({ a, b, sagitta }: Leaf): string {
+function leafPath({ a, b, sagitta }: Leaf): string {
   const dx = b[0] - a[0]
   const dy = b[1] - a[1]
   const length = Math.hypot(dx, dy)

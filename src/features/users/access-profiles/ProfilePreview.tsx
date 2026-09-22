@@ -9,7 +9,7 @@ import { grantedActions, groupByArea, type StudioGroup, type StudioPermission } 
 import { useFlip } from './use-flip'
 import { useJustChanged, useTypeIn } from './use-type-in'
 
-export type ProfilePreviewText = {
+type ProfilePreviewText = {
   title: string
   hint: string
   empty: string

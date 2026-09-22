@@ -18,7 +18,7 @@ type Props = {
 }
 
 // Two letters from the full name, or the user name, like the account menu avatar.
-export function initialsOf(fullName: string, userName: string): string {
+function initialsOf(fullName: string, userName: string): string {
   const source = fullName.trim() || userName.trim()
   if (!source) return ''
   const parts = source.split(/\s+/).filter(Boolean)

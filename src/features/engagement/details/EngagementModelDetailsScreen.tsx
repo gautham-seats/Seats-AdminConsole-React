@@ -65,7 +65,7 @@ import { NODE_FIELD_TEXT, nodeInputId, NodeTree } from './NodeTree'
 import { StatusBadge } from '@/shared/ui/StatusBadge'
 
 // Save needs Engagement + Edit (Details.cshtml:26-31, EngagementApiController.cs:841).
-export const ENGAGEMENT_EDIT = { item: PermissionItem.Engagement, action: PermissionAction.Edit }
+const ENGAGEMENT_EDIT = { item: PermissionItem.Engagement, action: PermissionAction.Edit }
 
 const GLOSSY =
   'group relative inline-flex h-10 items-center gap-2 overflow-hidden rounded-lg bg-[linear-gradient(180deg,color-mix(in_srgb,var(--color-brand)_85%,white)_0%,var(--color-brand)_55%,color-mix(in_srgb,var(--color-brand)_88%,black)_100%)] px-4 text-sm font-semibold tracking-wide text-white shadow-[inset_0_1px_0_rgba(255,255,255,.35),inset_0_-1px_0_rgba(0,0,0,.12),0_4px_12px_-4px_rgba(21,102,162,.45)] transition-[transform,filter,opacity] duration-300 hover:-translate-y-px hover:brightness-[1.06] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none active:translate-y-0 active:scale-[.98] disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none'

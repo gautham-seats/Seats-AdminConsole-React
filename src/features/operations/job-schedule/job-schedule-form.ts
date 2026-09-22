@@ -125,8 +125,8 @@ const EMAIL =
 
 const TEXT_FIELDS = ['description', 'cronExpression', 'percentageAttended', 'minutes', 'recipients'] as const
 
-export type JobErrorField = (typeof TEXT_FIELDS)[number]
-export type JobErrorKind = 'special' | 'email' | 'cron' | 'required' | 'range' | 'number'
+type JobErrorField = (typeof TEXT_FIELDS)[number]
+type JobErrorKind = 'special' | 'email' | 'cron' | 'required' | 'range' | 'number'
 
 export type JobError = { field: JobErrorField; kind: JobErrorKind }
 

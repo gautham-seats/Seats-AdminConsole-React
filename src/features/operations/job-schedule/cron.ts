@@ -24,7 +24,7 @@ export const WEEK_DAYS = [
 // jobScheduleDetailsController.js:666: only plain numbers or * open the simple builder.
 const SIMPLE_CRON = /^((\d{1,2}|\*)\s){4}(\d{1,2}|\*)$/
 
-export const DEFAULT_CRON_PARTS: CronParts = {
+const DEFAULT_CRON_PARTS: CronParts = {
   period: 'day',
   minute: 0,
   hour: 0,

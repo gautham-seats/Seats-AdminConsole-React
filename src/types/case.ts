@@ -1,5 +1,3 @@
-import type { SimpleListItemDto } from './users'
-
 export type CasePageDto<T> = {
   items: T[] | null
   totalRowCount: number
@@ -47,7 +45,7 @@ export type CfcWorkflowDto = {
   globalId: string | null
 }
 
-export type CfcConstraintDto = {
+type CfcConstraintDto = {
   id: number
   cfcConstraintTypeId: number
   cfcConstraintTypeName: string | null
@@ -237,30 +235,6 @@ export type CfcWorkflowRuleDefinitionDto = {
   classType: string | null
 }
 
-export type CfcRuleDefinitionAttributeDto = {
-  id: number
-  name: string | null
-  dataType: string | null
-  cfcWorkflowRuleDefinitionId: number
-}
-
-export type CfcTriggerTypeAttributeDto = {
-  id: number
-  name: string | null
-  dataType: string | null
-  cfcTriggerTypeId: number
-}
-
-export type CaseProfileListDto = {
-  cases: SimpleListItemDto[]
-  selected: number[]
-}
-
-export type WorkflowProfileListDto = {
-  workflows: SimpleListItemDto[]
-  selected: number[]
-}
-
 export type ManualInterventionsGridDto = {
   grid: CasePageDto<CfcManualInterventionDto> | null
   hasSubscriptionAccess: boolean
@@ -295,16 +269,4 @@ export type ManualInterventionsQuery = {
   pageSize?: number
   sortCol?: string
   sortDir?: string
-}
-
-export type BreadcrumbsQuery = {
-  ruleType?: string
-  workflowId?: number
-  stageGroupId?: number
-  stageId?: number
-  ruleGroupId?: number
-  ruleId?: number
-  triggerId?: number
-  isStageGroup?: boolean
-  manualIntervention?: boolean
 }

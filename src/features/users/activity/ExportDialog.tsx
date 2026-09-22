@@ -5,7 +5,7 @@ import { useId, useState } from 'react'
 import { Button, Dialog } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
 
-export type ExportDialogLabels = {
+type ExportDialogLabels = {
   title: string
   exportAs: string
   pdf: string

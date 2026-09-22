@@ -23,7 +23,7 @@ const FUNCTIONS = { item: PermissionItem.ContactGroup, action: PermissionAction.
 
 const INITIAL_SORT = { col: 'name', dir: 'asc' } as const
 // swgrid.js:120-135 searches every text and number field except the key, whatever the columns show.
-export const SEARCH_FIELDS = [
+const SEARCH_FIELDS = [
   'name',
   'description',
   'groupEmailAddress',

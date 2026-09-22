@@ -11,7 +11,7 @@ export const SETTING_KEYS = {
   tableHeaderTextColor: 'TABLE_HEADER_TEXT_COLOR',
 } as const
 
-export type SettingField = keyof typeof SETTING_KEYS
+type SettingField = keyof typeof SETTING_KEYS
 export type BrandingField = Exclude<SettingField, 'menuCustomLogo'>
 export type BrandingValues = Record<BrandingField, string>
 export type SettingsIndex = Partial<Record<SettingField, SettingDto>>

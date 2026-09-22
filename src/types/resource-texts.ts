@@ -7,11 +7,6 @@ export type ResourceTextDto = {
   value: string | null
 }
 
-export type ResourceTextPageDto = {
-  totalRowCount: number
-  items: ResourceTextDto[]
-}
-
 export type ResourceTypeDto = {
   id: number
   description: string

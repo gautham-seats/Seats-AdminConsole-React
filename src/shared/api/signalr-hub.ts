@@ -5,7 +5,7 @@ const SIGNALR_PATH = `${LEGACY_ADMIN_BASE}/signalr`
 const CLIENT_PROTOCOL = '1.5'
 const RETRY_DELAYS = [1000, 2000, 5000, 10000, 30000]
 
-export type HubHandlers = Record<string, (...args: unknown[]) => void>
+type HubHandlers = Record<string, (...args: unknown[]) => void>
 
 export type HubOptions = {
   hub: string

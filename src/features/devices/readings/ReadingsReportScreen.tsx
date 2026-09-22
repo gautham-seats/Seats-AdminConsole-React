@@ -43,11 +43,12 @@ import {
   type ReadingsView,
 } from './readings-query'
 import { DateRangeField, TimeRangeError } from './DateRangeField'
-import { ALL_OPTION } from './ReportFilters'
 import { rangeChipValue, reportPanelLabels, reportViews } from './report-filter-panel'
 import { ReportTable, type ReportColumn } from './ReportTable'
 import { useReportList } from './use-report-list'
 import { CountUp } from '@/shared/ui/CountUp'
+
+const ALL_OPTION = 'all'
 
 export const READINGS_ACCESS = { item: PermissionItem.ReadingsReport, action: PermissionAction.Access }
 

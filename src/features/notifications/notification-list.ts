@@ -2,7 +2,7 @@ import type { SortDirection } from '@/features/settings/shared/list-model'
 import { cleanSearch } from '@/features/students/shared/student-list'
 import { formatShortDate } from '@/shared/i18n/culture'
 
-export type NotificationSort = { column: string; direction: SortDirection }
+type NotificationSort = { column: string; direction: SortDirection }
 
 export type NotificationListState = {
   pageIndex: number
@@ -12,16 +12,6 @@ export type NotificationListState = {
 }
 
 export const NOTIFICATION_PAGE_SIZE = 100
-
-export const NOTIFICATION_SORT_COLUMNS = {
-  type: 'userNotificationTypeName',
-  description: 'description',
-  status: 'userNotificationStatusName',
-  dateCreated: 'dateCreated',
-} as const
-
-export type NotificationSortColumn =
-  (typeof NOTIFICATION_SORT_COLUMNS)[keyof typeof NOTIFICATION_SORT_COLUMNS]
 
 // swgrid.js:656-668 — paging and sort params always come first.
 export function notificationListQuery(state: NotificationListState): Record<string, string> {

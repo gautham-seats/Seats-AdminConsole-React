@@ -7,7 +7,7 @@ export const startOfMonth = (date: Date) => new Date(date.getFullYear(), date.ge
 export const plusMonths = (date: Date, months: number) =>
   new Date(date.getFullYear(), date.getMonth() + months, 1)
 // Monday-first index, like the Angular picker's UK locale.
-export const mondayIndex = (date: Date) => (date.getDay() + 6) % 7
+const mondayIndex = (date: Date) => (date.getDay() + 6) % 7
 
 export function countDays(start: Date, end: Date) {
   return Math.round((dayOnly(end).getTime() - dayOnly(start).getTime()) / 86_400_000) + 1

@@ -7,7 +7,7 @@ import { useProfile } from '@/shared/shell/profile'
 import { DelayedLoading, ErrorState } from '@/shared/ui'
 import { USERS_FALLBACK_ONLY, useUsersText } from './index/users-text'
 
-export const USERS_ACCESS = { item: PermissionItem.Users, action: PermissionAction.Access }
+const USERS_ACCESS = { item: PermissionItem.Users, action: PermissionAction.Access }
 
 type AreaGateProps = {
   permissions: readonly Permission[]

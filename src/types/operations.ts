@@ -64,7 +64,7 @@ export type JobScheduleDto = {
   recipients: string | null
 }
 
-export type JobTypeDto = { id: number; name: string | null; code: string | null }
+type JobTypeDto = { id: number; name: string | null; code: string | null }
 
 export type JobOptionDto = { id: number; description: string | null }
 

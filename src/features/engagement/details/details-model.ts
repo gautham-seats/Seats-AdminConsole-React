@@ -38,8 +38,8 @@ export type EngagementModelView = {
   root: EngagementNode
 }
 
-export const DROPDOWN_CATEGORIES = ['facultyids', 'studenttypeids', 'studentyears', 'collegeyearids'] as const
-export const SEARCH_CATEGORIES = ['courseids', 'programmeids', 'schoolids'] as const
+const DROPDOWN_CATEGORIES = ['facultyids', 'studenttypeids', 'studentyears', 'collegeyearids'] as const
+const SEARCH_CATEGORIES = ['courseids', 'programmeids', 'schoolids'] as const
 export type DropdownCategory = (typeof DROPDOWN_CATEGORIES)[number]
 export type SearchCategory = (typeof SEARCH_CATEGORIES)[number]
 export type ConstraintCategory = DropdownCategory | SearchCategory

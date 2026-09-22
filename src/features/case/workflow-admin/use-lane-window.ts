@@ -3,7 +3,7 @@
 import { useCallback, useState } from 'react'
 
 // A lane taller than this many nodes is windowed: only the visible slice plus a buffer stays in the DOM.
-export const LANE_WINDOW_THRESHOLD = 24
+const LANE_WINDOW_THRESHOLD = 24
 const NODE_HEIGHT = 40
 const BUFFER = 6
 export const LANE_MAX_HEIGHT = 420

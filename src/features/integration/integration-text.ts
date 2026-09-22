@@ -4,7 +4,7 @@ import { useCallback } from 'react'
 import { useResources } from '@/shared/resources'
 
 // Keys the legacy page and component request (Integration/Index.cshtml:4, seats-admin-integration.html:90-93).
-export const INTEGRATION_TEXT = {
+const INTEGRATION_TEXT = {
   Integrations: 'Integrations',
   Zoom: 'Zoom',
   Loading: 'Loading',

@@ -4,7 +4,7 @@ import { useCallback } from 'react'
 import { useResources } from '@/shared/resources'
 
 // Resource keys of seats-admin-setting-color and Settings/Index.cshtml; values are English fallbacks.
-export const SETTINGS_TEXT = {
+const SETTINGS_TEXT = {
   Settings: 'Settings',
   OnlineHelpUrl: 'Online Help Url',
   MenuColor: 'Menu color',

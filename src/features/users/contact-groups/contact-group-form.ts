@@ -11,7 +11,7 @@ import {
 export type EntityType = (typeof ENTITY_TYPE)[keyof typeof ENTITY_TYPE]
 
 // contactGroupDetailsController.js:267-312 and Details.cshtml:101-156: the id field each entity type fills.
-export const ENTITY_FIELD = {
+const ENTITY_FIELD = {
   [ENTITY_TYPE.courses]: 'courseId',
   [ENTITY_TYPE.faculties]: 'facultyId',
   [ENTITY_TYPE.modules]: 'moduleId',

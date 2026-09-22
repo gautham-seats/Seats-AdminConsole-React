@@ -25,7 +25,7 @@ export type DateRangeLabels = {
 }
 
 // Used until callers pass the endMoved resource word.
-export const DATE_RANGE_NOTE_FALLBACK = { endMoved: 'End date moved to match the start date' }
+const DATE_RANGE_NOTE_FALLBACK = { endMoved: 'End date moved to match the start date' }
 
 const FOCUS =
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1'
