@@ -1,0 +1,142 @@
+<title>Nav Bar Variants</title>
+<style>
+:root{--brand:#1566a2;--brand-deep:#0f5288;--brand-lift:#1d78bb;--avatar:#56bdea;--ease:cubic-bezier(.22,1,.36,1);--bg:#f4f6f9;--ink:#0f172a;--muted:#64748b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font:14px/1.4 "Segoe UI",system-ui,sans-serif;color:var(--ink);padding:24px 16px 80px}
+.wrap{max-width:1280px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--muted);margin:0 0 20px}
+.card{background:#fff;border-radius:14px;box-shadow:0 1px 2px rgba(15,23,42,.06),0 8px 24px -12px rgba(15,23,42,.18);margin:0 0 28px;overflow:hidden}
+.meta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #eef1f5}
+.meta b{font-size:15px}.meta span{color:var(--muted);font-size:13px}
+.replay{border:1px solid #d9e1ea;background:#fff;border-radius:999px;padding:6px 14px;font:600 12px inherit;color:var(--brand);cursor:pointer;transition:.2s}
+.replay:hover{background:#eef5fb;border-color:#b9d3e8}
+.scroll{overflow-x:auto}
+.stage{min-width:1100px;position:relative;height:210px;background:#f4f6f9;overflow:hidden}
+.page{position:absolute;inset:50px 0 0;display:grid;grid-template-columns:200px 1fr}
+.side{background:#fff;border-right:1px solid #e5e9ef;padding:14px 10px}
+.side i{display:block;height:10px;border-radius:4px;background:#e8edf3;margin:10px 6px}
+.side i:first-child{width:50%;background:#dbe3ec}
+.main{padding:18px 22px}.main i{display:block;height:34px;border-radius:8px;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.05);margin-bottom:10px}
+
+/* shared bar layout, matches NavBar.tsx: 50px, logo | divider | menu ... search bell | avatar */
+.nav{position:absolute;top:0;left:0;right:0;height:50px;display:flex;align-items:center;padding:0 16px;color:#fff;z-index:2;isolation:isolate}
+.logo{font:700 19px/1 "Segoe UI",sans-serif;letter-spacing:.2px;display:flex;align-items:center;gap:7px;transition:transform .3s var(--ease)}
+.logo em{font-style:normal;font-weight:300;opacity:.85}
+.logo:hover{transform:scale(1.03)}
+.logo .mark{width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.16);display:grid;place-items:center;font-size:13px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.div{width:1px;height:30px;background:rgba(255,255,255,.3);margin:0 14px 0 16px}
+.menu{display:flex;gap:2px;position:relative}
+.menu a{position:relative;height:40px;display:flex;align-items:center;padding:0 12px;border-radius:6px;font-size:14px;color:#fff;text-decoration:none;cursor:pointer;z-index:1}
+.spacer{flex:1}
+.search{height:32px;width:210px;border-radius:999px;background:rgba(255,255,255,.14);display:flex;align-items:center;gap:8px;padding:0 12px;font-size:13px;color:rgba(255,255,255,.75);transition:.35s var(--ease)}
+.search:hover{background:rgba(255,255,255,.2);width:240px}
+.bell{position:relative;width:40px;height:40px;display:grid;place-items:center;border-radius:50%;margin-left:6px;transition:background .2s}
+.bell:hover{background:rgba(255,255,255,.1)}
+.bell:hover svg{animation:ring .9s var(--ease)}
+.badge{position:absolute;top:3px;right:2px;min-width:20px;height:20px;border-radius:999px;background:#ffc000;font:600 11px/20px inherit;text-align:center;color:#fff;text-shadow:0 0 2px #000}
+.sep{height:30px;border-left:1px solid rgba(255,255,255,.9);margin:0 10px 0 12px}
+.av{width:36px;height:36px;border-radius:50%;background:var(--avatar);display:grid;place-items:center;font:600 13px inherit;transition:.25s var(--ease);position:relative}
+.av:hover{transform:scale(1.05);box-shadow:0 0 0 3px rgba(255,255,255,.35)}
+svg{display:block}
+@keyframes ring{0%,100%{transform:rotate(0)}20%{transform:rotate(14deg)}40%{transform:rotate(-10deg)}60%{transform:rotate(6deg)}80%{transform:rotate(-3deg)}}
+
+/* ---------- 1 Silk Sheen ---------- */
+.v1{background:var(--brand) linear-gradient(180deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,.05) 48%,rgba(255,255,255,0) 52%,rgba(0,0,0,.07) 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.26),inset 0 -1px 0 rgba(0,0,0,.14),0 4px 18px -4px rgba(21,102,162,.45)}
+.v1::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.22) 49%,rgba(255,255,255,.05) 53%,transparent 60%) no-repeat;background-size:240% 100%;animation:silk 2.4s .35s var(--ease) both,silk 3s 9s var(--ease) infinite}
+@keyframes silk{from{background-position:140% 0}to{background-position:-40% 0}}
+.v1 .menu a{transition:background .3s var(--ease)}
+.v1 .menu a:hover{background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.07));box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+.v1 .menu a.on::after{content:"";position:absolute;left:12px;right:12px;bottom:4px;height:2px;border-radius:2px;background:#fff;box-shadow:0 0 8px rgba(255,255,255,.8)}
+
+/* ---------- 2 Aurora Drift ---------- */
+.v2{background:linear-gradient(90deg,#125e98,#1566a2 45%,#1a70ae);box-shadow:0 6px 22px -8px rgba(15,82,136,.55)}
+.v2::before{content:"";position:absolute;inset:-60px -10%;z-index:-1;background:radial-gradient(260px 90px at 20% 50%,rgba(86,189,234,.35),transparent 70%),radial-gradient(320px 100px at 70% 40%,rgba(255,255,255,.14),transparent 70%),radial-gradient(240px 80px at 95% 60%,rgba(86,189,234,.25),transparent 70%);animation:aurora 18s ease-in-out infinite alternate;filter:blur(6px)}
+@keyframes aurora{0%{transform:translateX(-6%)}50%{transform:translateX(5%) scaleY(1.15)}100%{transform:translateX(-2%)}}
+.v2::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(160,220,248,.9),transparent);animation:fadeIn 1.4s .4s both}
+.v2 .menu a{transition:color .3s,text-shadow .3s}
+.v2 .menu a:hover{text-shadow:0 0 12px rgba(160,220,248,.9)}
+.v2 .menu a.on{background:rgba(255,255,255,.12);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+.v2 .menu a{animation:up .7s var(--ease) both}
+@keyframes up{from{opacity:0;transform:translateY(6px)}}
+@keyframes fadeIn{from{opacity:0}}
+
+/* ---------- 3 Frosted Glass ---------- */
+.stage.s3 .page{inset:0;padding-top:50px}
+.stage.s3 .main{animation:scrollish 8s ease-in-out infinite alternate}
+@keyframes scrollish{to{transform:translateY(-40px)}}
+.v3{background:linear-gradient(180deg,rgba(21,102,162,.88),rgba(21,102,162,.80));backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 1px 0 rgba(255,255,255,.4),0 10px 30px -12px rgba(15,23,42,.45);animation:drop .8s var(--ease) both}
+@keyframes drop{from{transform:translateY(-100%);opacity:.4}}
+.v3::before{content:"";position:absolute;inset:0 0 50% 0;z-index:-1;background:linear-gradient(180deg,rgba(255,255,255,.18),transparent)}
+.v3 .menu .pill{position:absolute;top:0;height:40px;border-radius:10px;background:rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 4px 12px -4px rgba(0,0,0,.25);backdrop-filter:blur(6px);transition:left .45s var(--ease),width .45s var(--ease),opacity .3s;opacity:0}
+.v3 .menu:hover .pill{opacity:1}
+.v3 .search{background:rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+
+/* ---------- 4 Light Edge ---------- */
+.v4{background:var(--brand) linear-gradient(180deg,rgba(255,255,255,.1),rgba(0,0,0,.06));box-shadow:0 2px 12px rgba(21,102,162,.3)}
+.v4::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:30%;background:linear-gradient(90deg,transparent,#bfe8fb,#fff,#bfe8fb,transparent);filter:drop-shadow(0 0 4px #9fdcf7);animation:edge 6s var(--ease) infinite}
+@keyframes edge{0%{transform:translateX(-100%)}60%,100%{transform:translateX(380%)}}
+.v4 .logo .mark{position:relative;overflow:hidden}
+.v4 .logo .mark::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.8) 50%,transparent 65%);transform:translateX(-120%);animation:glint 5s 1s infinite}
+@keyframes glint{0%,70%{transform:translateX(-120%)}90%,100%{transform:translateX(120%)}}
+.v4 .menu .line{position:absolute;bottom:3px;height:2px;border-radius:2px;background:#fff;box-shadow:0 0 10px #bfe8fb;transition:left .45s var(--ease),width .45s var(--ease)}
+.v4 .menu a{opacity:.86;transition:opacity .25s}
+.v4 .menu a:hover,.v4 .menu a.on{opacity:1}
+
+/* ---------- 5 Deep Satin ---------- */
+.v5{background:radial-gradient(120% 180% at 0% 0%,#1d78bb 0%,transparent 55%),linear-gradient(90deg,#1566a2,#135f98 60%,#0f5288);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 -1px 0 rgba(0,0,0,.2),0 8px 24px -10px rgba(15,82,136,.6);clip-path:inset(0 100% 0 0);animation:reveal 1s var(--ease) .1s forwards}
+@keyframes reveal{to{clip-path:inset(0 0 0 0)}}
+.v5::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.09;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")}
+.v5 .menu a,.v5 .logo,.v5 .search,.v5 .bell,.v5 .av{animation:up .6s var(--ease) both}
+.v5 .menu a{transition:background .35s var(--ease),transform .35s var(--ease)}
+.v5 .menu a:hover{background:rgba(255,255,255,.1);transform:translateY(-1px)}
+.v5 .menu a.on{background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.06));box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 6px 14px -8px rgba(0,0,0,.5)}
+.v5 .av::before{content:"";position:absolute;inset:-3px;border-radius:50%;background:conic-gradient(from 0deg,#fff,#56bdea,transparent 60%,#fff);z-index:-1;opacity:0;transition:opacity .3s;animation:spin 3s linear infinite}
+.v5 .av:hover::before{opacity:1}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;clip-path:none!important}}
+</style>
+
+<div class="wrap">
+  <h1>Nav Bar — 5 variants</h1>
+  <p class="lead">Same brand blue #1566A2, same 50px height and layout as the real bar. Hover the menu, search, bell and avatar. Press Replay to see the load animation again.</p>
+  <div id="list"></div>
+</div>
+
+<template id="bar">
+  <div class="logo"><span class="mark">S</span>SEAtS<em>One</em></div>
+  <span class="div"></span>
+  <nav class="menu"><a class="on">Users</a><a>Resources</a><a>Settings</a><a>Operations</a><a>Students</a><a>More ▾</a></nav>
+  <div class="spacer"></div>
+  <div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Search…</div>
+  <div class="bell"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="transform-origin:50% 2px"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span class="badge">3</span></div>
+  <span class="sep"></span>
+  <div class="av">GB</div>
+</template>
+
+<script>
+const V=[
+ ['v1','1 · Silk Sheen','Refined version of today: richer glass, brighter light sweep on load that returns softly every few seconds, glowing active underline.'],
+ ['v2','2 · Aurora Drift','Soft light-blue glows drift very slowly behind the bar; menu fades up on load; glowing hairline along the bottom.'],
+ ['v3','3 · Frosted Glass','See-through frosted blue — the page blurs underneath as it scrolls; bar drops in on load; glass pill follows your cursor.'],
+ ['v4','4 · Light Edge','A thin light travels along the bottom edge; the logo glints; a glowing underline slides to whatever you hover.'],
+ ['v5','5 · Deep Satin','Satin gradient with fine grain; bar reveals left→right, items rise in one by one; spinning light ring on the avatar.'],
+];
+const tpl=document.getElementById('bar').innerHTML;
+const list=document.getElementById('list');
+function build(card,cls){
+  const stage=card.querySelector('.stage');
+  stage.innerHTML=`<header class="nav ${cls}">${tpl}</header><div class="page"><div class="side"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="main"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>`;
+  const menu=stage.querySelector('.menu'),items=[...menu.querySelectorAll('a')];
+  items.forEach((a,i)=>a.style.animationDelay=(cls==='v5'?350:150)+i*60+'ms');
+  if(cls==='v3'){const p=document.createElement('span');p.className='pill';menu.prepend(p);items.forEach(a=>a.onmouseenter=()=>{p.style.left=a.offsetLeft+'px';p.style.width=a.offsetWidth+'px'})}
+  if(cls==='v4'){const l=document.createElement('span');l.className='line';menu.prepend(l);const go=a=>{l.style.left=a.offsetLeft+12+'px';l.style.width=a.offsetWidth-24+'px'};requestAnimationFrame(()=>go(items[0]));items.forEach(a=>a.onmouseenter=()=>go(a));menu.onmouseleave=()=>go(items[0])}
+}
+V.forEach(([cls,name,desc])=>{
+  const c=document.createElement('section');c.className='card';
+  c.innerHTML=`<div class="meta"><div><b>${name}</b><br><span>${desc}</span></div><button class="replay">↻ Replay</button></div><div class="scroll"><div class="stage ${cls==='v3'?'s3':''}"></div></div>`;
+  list.append(c);build(c,cls);
+  c.querySelector('.replay').onclick=()=>build(c,cls);
+});
+</script>

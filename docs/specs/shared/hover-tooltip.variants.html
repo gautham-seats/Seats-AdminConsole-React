@@ -1,0 +1,261 @@
+<title>Hover & Tooltip Variants</title>
+<style>
+:root{--brand:#1566a2;--brand-2:#1d78bb;--sky:#56bdea;--ink:#0f172a;--muted:#64748b;--line:#e5e9ef;--page:#f5f6fa;--ease:cubic-bezier(.16,1,.3,1);--spring:cubic-bezier(.34,1.56,.64,1)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);font:14px/1.45 "Segoe UI",system-ui,sans-serif;color:var(--ink);padding:28px 16px 120px}
+.wrap{max-width:1180px;margin:0 auto}
+h1{font-size:24px;margin:0 0 6px;letter-spacing:-.2px}
+h2{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:40px 0 14px}
+.lead{color:var(--muted);margin:0 0 8px;max-width:760px}
+.card{background:#fff;border-radius:16px;box-shadow:0 1px 2px rgba(15,23,42,.05),0 10px 30px -16px rgba(15,23,42,.2);margin:0 0 22px;overflow:hidden}
+.meta{padding:14px 20px;border-bottom:1px solid #eef1f5;display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+.meta b{font-size:15px}.meta span{color:var(--muted);font-size:13px}
+.meta .tag{margin-left:auto;font-size:11px;font-weight:600;color:var(--brand);background:#eaf3fa;border-radius:999px;padding:3px 10px}
+.demo{position:relative;padding:26px 20px 30px;display:grid;grid-template-columns:200px 1fr;gap:24px;overflow:hidden}
+@media (max-width:760px){.demo{grid-template-columns:1fr}}
+
+/* ---------- sample components (match Admin React) ---------- */
+.side{display:flex;flex-direction:column;gap:4px}
+.nav-i{position:relative;display:flex;align-items:center;gap:10px;height:40px;padding:0 12px;border-radius:10px;color:#334155;cursor:pointer;font-weight:500;isolation:isolate;overflow:hidden}
+.nav-i.on{background:rgba(21,102,162,.08);color:var(--brand)}
+.nav-i svg,.btn svg,.icon svg{width:16px;height:16px;flex:none}
+.row-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+.btn{position:relative;display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 16px;border-radius:9px;font:600 14px inherit;cursor:pointer;border:1px solid var(--line);background:#fff;color:#1e293b;isolation:isolate;overflow:hidden}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.icon{position:relative;width:38px;height:38px;border-radius:9px;display:grid;place-items:center;border:1px solid var(--line);background:#fff;color:#475569;cursor:pointer;isolation:isolate;overflow:hidden}
+.chip{position:relative;display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:999px;background:#eef5fb;color:var(--brand);font-size:12px;font-weight:600;cursor:pointer;isolation:isolate;overflow:hidden}
+.chip i{width:6px;height:6px;border-radius:50%;background:#f59e0b}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+th{background:var(--brand);color:#fff;text-align:left;font-weight:600;padding:9px 12px}
+th:first-child{border-radius:8px 0 0 0}th:last-child{border-radius:0 8px 0 0}
+td{padding:10px 12px;border-bottom:1px solid #eef1f5;color:#334155}
+tr.r{position:relative;cursor:pointer}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;background:#dcfce7;color:#15803d}
+.pill.off{background:#fef3c7;color:#b45309}
+
+/* ---------- tooltip base ---------- */
+.tip{position:fixed;left:0;top:0;z-index:50;pointer-events:none;opacity:0;white-space:nowrap}
+.tip .k{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:8px;border-radius:5px;font:600 10.5px/1 "Segoe UI",sans-serif}
+
+/* T1 Frost */
+.t1{padding:7px 11px;border-radius:10px;font-size:12.5px;font-weight:500;color:#0f172a;background:rgba(255,255,255,.72);backdrop-filter:blur(14px) saturate(1.6);-webkit-backdrop-filter:blur(14px) saturate(1.6);box-shadow:inset 0 0 0 1px rgba(255,255,255,.7),0 0 0 1px rgba(15,23,42,.06),0 12px 28px -10px rgba(15,23,42,.3);transform:translateY(4px) scale(.96);transform-origin:var(--ox,50%) 100%;transition:opacity .18s ease,transform .32s var(--ease)}
+.t1.show{opacity:1;transform:none}
+.t1 .k{background:rgba(15,23,42,.06);color:#475569}
+.t1::after{content:"";position:absolute;left:var(--ax,50%);bottom:-5px;width:10px;height:10px;margin-left:-5px;background:inherit;transform:rotate(45deg);border-radius:0 0 3px 0;box-shadow:1px 1px 0 rgba(15,23,42,.06)}
+
+/* T2 Ink */
+.t2{padding:6px 10px;border-radius:8px;font-size:12px;font-weight:500;color:#f8fafc;background:#0f172a;box-shadow:0 10px 24px -8px rgba(15,23,42,.55),inset 0 1px 0 rgba(255,255,255,.08);transform:translateY(6px);filter:blur(3px);transition:opacity .16s ease,transform .28s var(--ease),filter .28s var(--ease)}
+.t2.show{opacity:1;transform:none;filter:none}
+.t2 .k{background:rgba(255,255,255,.12);color:#cbd5e1;box-shadow:inset 0 -1px 0 rgba(0,0,0,.4)}
+.t2::after{content:"";position:absolute;left:var(--ax,50%);bottom:-4px;width:8px;height:8px;margin-left:-4px;background:#0f172a;transform:rotate(45deg);border-radius:0 0 2px 0}
+
+/* T3 Brand Glow */
+.t3{padding:7px 12px;border-radius:999px;font-size:12.5px;font-weight:600;color:#fff;background:linear-gradient(90deg,#125e98,#1566a2 50%,#1a70ae);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 0 0 1px rgba(21,102,162,.25),0 10px 26px -8px rgba(21,102,162,.65);transform:translateY(8px) scale(.8);transition:opacity .15s ease,transform .45s var(--spring)}
+.t3.show{opacity:1;transform:none}
+.t3::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.35) 50%,transparent 65%) no-repeat;background-size:250% 100%;background-position:130% 0}
+.t3.show::before{transition:background-position 1s .15s var(--ease);background-position:-30% 0}
+.t3 .k{background:rgba(255,255,255,.2);color:#fff}
+
+/* T4 Rich Card */
+.t4{width:250px;white-space:normal;padding:12px 14px;border-radius:14px;background:#fff;box-shadow:0 0 0 1px rgba(15,23,42,.06),0 22px 44px -18px rgba(15,23,42,.38);transform:translateY(8px) scale(.97);clip-path:inset(0 0 100% 0 round 14px);transition:opacity .2s ease,transform .4s var(--ease),clip-path .45s var(--ease)}
+.t4.show{opacity:1;transform:none;clip-path:inset(0 0 0 0 round 14px)}
+.t4 .h{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px;color:#0f172a}
+.t4 .h s{width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,#1d78bb,#125e98);display:grid;place-items:center;color:#fff;text-decoration:none;font-size:11px;box-shadow:0 4px 10px -4px rgba(21,102,162,.7)}
+.t4 p{margin:6px 0 0;font-size:12px;color:#64748b;line-height:1.5}
+.t4 .f{margin-top:9px;padding-top:8px;border-top:1px solid #f1f5f9;font-size:11px;color:#94a3b8;display:flex;justify-content:space-between}
+.t4 .k{background:#f1f5f9;color:#475569;margin:0}
+
+/* T5 Cursor Companion */
+.t5{padding:5px 10px;border-radius:999px;font-size:12px;font-weight:600;color:var(--brand);background:#fff;box-shadow:0 0 0 1px rgba(21,102,162,.14),0 8px 20px -8px rgba(21,102,162,.45);transform:scale(.6);transition:opacity .18s ease,transform .35s var(--spring)}
+.t5.show{opacity:1;transform:scale(1)}
+.t5::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--sky);margin-right:7px;vertical-align:1px;box-shadow:0 0 0 3px rgba(86,189,234,.25)}
+
+/* ---------- hover motion sets ---------- */
+.fx{transition:transform .35s var(--ease),box-shadow .35s var(--ease),background-color .25s,color .25s,border-color .25s}
+
+/* H1 Lift & Bloom */
+.h1 .btn:hover,.h1 .icon:hover{transform:translateY(-2px);box-shadow:0 10px 22px -10px rgba(21,102,162,.5),0 2px 4px -2px rgba(15,23,42,.1)}
+.h1 .btn:active,.h1 .icon:active{transform:translateY(0) scale(.97);transition-duration:.1s}
+.h1 .btn.primary:hover{background:#1870b2}
+.h1 .icon:hover{color:var(--brand);border-color:#b9d3e8}
+.h1 .icon:hover svg{transform:rotate(-25deg)}
+.h1 .icon svg{transition:transform .45s var(--spring)}
+.h1 .nav-i:hover{background:#f1f5f9;transform:translateX(3px)}
+.h1 .nav-i svg{transition:transform .4s var(--spring)}
+.h1 .nav-i:hover svg{transform:scale(1.15)}
+.h1 .chip:hover{transform:translateY(-1px);box-shadow:0 6px 14px -6px rgba(21,102,162,.45)}
+.h1 tr.r td{transition:background-color .25s}
+.h1 tr.r:hover td{background:#f5f9fd}
+.h1 tr.r:hover td:first-child{box-shadow:inset 3px 0 0 var(--brand)}
+
+/* H2 Spotlight: light follows the cursor inside each element */
+.h2 .spot::after{content:"";position:absolute;inset:0;z-index:-1;opacity:0;transition:opacity .3s;background:radial-gradient(120px circle at var(--mx,50%) var(--my,50%),rgba(21,102,162,.14),transparent 70%)}
+.h2 .btn.primary.spot::after{background:radial-gradient(90px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.35),transparent 70%);z-index:0}
+.h2 .spot:hover::after{opacity:1}
+.h2 .spot::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;opacity:0;transition:opacity .3s;background:radial-gradient(80px circle at var(--mx,50%) var(--my,50%),rgba(21,102,162,.7),transparent 70%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.h2 .spot:hover::before{opacity:1}
+.h2 .btn.primary > *{position:relative;z-index:1}
+.h2 .demo .glow{position:absolute;width:420px;height:420px;border-radius:50%;left:0;top:0;pointer-events:none;background:radial-gradient(circle,rgba(86,189,234,.13),transparent 65%);transform:translate(-50%,-50%);opacity:0;transition:opacity .4s;z-index:0}
+.h2 .demo:hover .glow{opacity:1}
+.h2 .demo > :not(.glow){position:relative;z-index:1}
+.h2 tr.r td{transition:background-color .2s}
+.h2 tr.r:hover td{background:linear-gradient(90deg,rgba(21,102,162,.06),rgba(21,102,162,.02))}
+
+/* H3 Magnetic */
+.h3 .mag{transition:transform .5s var(--ease),box-shadow .35s var(--ease),background-color .25s,color .25s}
+.h3 .mag:hover{box-shadow:0 12px 24px -12px rgba(21,102,162,.5)}
+.h3 .mag > svg,.h3 .mag > span{transition:transform .5s var(--ease)}
+.h3 .nav-i:hover{background:#f1f5f9}
+.h3 tr.r td{transition:background-color .25s,transform .4s var(--ease)}
+.h3 tr.r:hover td{background:#f7fafd}
+
+/* H4 Silk Sheen (matches the nav bar) */
+.h4 .sheen::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(112deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%) no-repeat;background-size:250% 100%;background-position:150% 0}
+.h4 .btn:not(.primary).sheen::before,.h4 .icon.sheen::before,.h4 .nav-i.sheen::before,.h4 .chip.sheen::before{background-image:linear-gradient(112deg,transparent 30%,rgba(21,102,162,.12) 50%,transparent 70%)}
+.h4 .sheen:hover::before{transition:background-position .9s var(--ease);background-position:-50% 0}
+.h4 .sheen > *{position:relative;z-index:1}
+.h4 .btn:hover,.h4 .icon:hover{box-shadow:0 8px 18px -10px rgba(21,102,162,.45);border-color:#c7dcec}
+.h4 .btn.primary:hover{background:linear-gradient(90deg,#125e98,#1566a2 50%,#1a70ae)}
+.h4 .nav-i:hover{background:#f3f7fb;color:var(--brand)}
+.h4 tr.r td{transition:background-color .3s}
+.h4 tr.r:hover td{background:#f5f9fd}
+
+/* H5 Line Draw */
+.h5 .draw::after{content:"";position:absolute;left:12%;right:12%;bottom:0;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--sky),var(--brand));transform:scaleX(0);transition:transform .45s var(--ease)}
+.h5 .btn.primary.draw::after{background:linear-gradient(90deg,rgba(255,255,255,.4),#fff,rgba(255,255,255,.4))}
+.h5 .draw:hover::after{transform:scaleX(1)}
+.h5 .btn:hover,.h5 .icon:hover{border-color:#b9d3e8;color:var(--brand)}
+.h5 .btn.primary:hover{color:#fff;background:#176cab}
+.h5 .nav-i::after{left:0;right:auto;top:8px;bottom:8px;width:3px;height:auto;transform:scaleY(0);background:linear-gradient(180deg,var(--sky),var(--brand))}
+.h5 .nav-i:hover::after{transform:scaleY(1)}
+.h5 .nav-i:hover{background:#f6f9fc;padding-left:16px}
+.h5 .nav-i{transition:padding .35s var(--ease),background-color .25s}
+.h5 .icon svg{transition:transform .45s var(--spring)}
+.h5 .icon:hover svg{transform:scale(1.18)}
+.h5 tr.r td{background-image:linear-gradient(90deg,rgba(21,102,162,.07),rgba(21,102,162,.07));background-repeat:no-repeat;background-size:0 100%;transition:background-size .5s var(--ease)}
+.h5 tr.r:hover td{background-size:100% 100%}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <h1>Hover motion & tooltips — samples</h1>
+  <p class="lead">Every sample uses the real Admin parts: side menu, Add button, icon buttons, filter chip and a table row. Move your mouse over everything. Pick <b>one tooltip (T1–T5)</b> and <b>one hover style (H1–H5)</b> — they can be mixed.</p>
+
+  <h2>Tooltips — the short description when you point at something</h2>
+  <div id="tips"></div>
+
+  <h2>Hover motion — what happens as the mouse moves</h2>
+  <div id="hovers"></div>
+</div>
+
+<template id="parts">
+  <div class="side">
+    <div class="nav-i on fx" data-tip="Rooms in every building" data-key="G R"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h3"/></svg><span>Room</span></div>
+    <div class="nav-i fx" data-tip="Card readers and their battery" data-key="G D"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 6h6M9 18h6"/></svg><span>Device</span></div>
+    <div class="nav-i fx" data-tip="Every swipe, by date and device"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg><span>Readings Report</span></div>
+  </div>
+  <div>
+    <div class="row-top">
+      <button class="btn primary fx" data-tip="Add a new device" data-key="N" data-rich="Add device|Register a card reader and link it to one or more rooms. You can set its battery alerts later."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg><span>Add</span></button>
+      <button class="btn fx" data-tip="Download as Excel or CSV"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"/></svg><span>Export</span></button>
+      <button class="icon fx" data-tip="Reset all filters" data-key="R" data-rich="Reset filters|Puts Site, Building, Room and Battery back to their defaults. The list reloads straight away."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+      <button class="icon fx" data-tip="Delete selected" data-key="Del"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
+      <span class="chip fx" data-tip="Showing out of service devices too"><i></i><span>Include Out of Service</span></span>
+    </div>
+    <table>
+      <thead><tr><th>Description</th><th>In Service</th><th>Serial Number</th><th>Room</th><th>Battery %</th></tr></thead>
+      <tbody>
+        <tr class="r" data-tip="Open Reader 1"><td>Reader 1</td><td><span class="pill">Yes</span></td><td>SN-0041</td><td>LIB 0.12</td><td>84</td></tr>
+        <tr class="r" data-tip="Open Reader 2"><td>Reader 2</td><td><span class="pill off">No</span></td><td>SN-0042</td><td>ENG 1.04</td><td>12</td></tr>
+      </tbody>
+    </table>
+  </div>
+</template>
+
+<script>
+const parts = document.getElementById('parts').innerHTML
+const TIPS = [
+  ['t1','T1 · Frost','Frosted white glass with a soft shadow. Grows gently out of the thing you point at.','Light & calm'],
+  ['t2','T2 · Ink','Dark, crisp and fast, with keyboard shortcut keys. Comes into focus from a soft blur.','Pro / power users'],
+  ['t3','T3 · Brand Glow','Brand-blue pill that springs up and catches a light sweep — same family as the nav bar.','Matches nav bar'],
+  ['t4','T4 · Rich Card','Title + helpful sentence + shortcut, unfolding downward. Plain short tips elsewhere.','Most helpful'],
+  ['t5','T5 · Cursor Companion','A small pill that floats beside the mouse and glides after it smoothly.','Playful'],
+]
+const HOVERS = [
+  ['h1','H1 · Lift & Bloom','Buttons lift with a soft blue glow, icons tilt, menu items slide in, table rows get a blue edge.','Classic premium'],
+  ['h2','H2 · Spotlight','A soft light follows your cursor across the page and inside every button, lighting its border where you point.','Most "alive"'],
+  ['h3','H3 · Magnetic','Buttons and icons lean slightly toward the mouse and settle back smoothly when it leaves.','Playful & smart'],
+  ['h4','H4 · Silk Sheen','A light sweeps across whatever you point at — exactly the nav bar\'s shine.','Matches nav bar'],
+  ['h5','H5 · Line Draw','A blue line draws under buttons and down the menu edge; table rows fill with colour left to right.','Clean & precise'],
+]
+
+function card(host, [cls, name, desc, tag], group) {
+  const c = document.createElement('section')
+  c.className = 'card ' + (group === 'h' ? cls : '')
+  c.innerHTML = `<div class="meta"><b>${name}</b><span>${desc}</span><em class="tag">${tag}</em></div><div class="demo">${group === 'h' && cls === 'h2' ? '<span class="glow"></span>' : ''}${parts}</div>`
+  host.append(c)
+  const demo = c.querySelector('.demo')
+  const targets = demo.querySelectorAll('.btn,.icon,.nav-i,.chip')
+  if (group === 'h') {
+    if (cls === 'h2') targets.forEach(el => el.classList.add('spot'))
+    if (cls === 'h4') targets.forEach(el => el.classList.add('sheen'))
+    if (cls === 'h5') targets.forEach(el => el.classList.add('draw'))
+    if (cls === 'h3') targets.forEach(el => el.classList.add('mag'))
+    wireHover(cls, demo, targets)
+    attachTip(demo, 't1')
+  } else attachTip(demo, cls)
+}
+
+function wireHover(cls, demo, targets) {
+  if (cls === 'h2') {
+    const glow = demo.querySelector('.glow')
+    demo.addEventListener('pointermove', e => {
+      const d = demo.getBoundingClientRect()
+      glow.style.left = e.clientX - d.left + 'px'; glow.style.top = e.clientY - d.top + 'px'
+      targets.forEach(el => { const r = el.getBoundingClientRect(); el.style.setProperty('--mx', e.clientX - r.left + 'px'); el.style.setProperty('--my', e.clientY - r.top + 'px') })
+    })
+  }
+  if (cls === 'h3') targets.forEach(el => {
+    const strength = el.classList.contains('nav-i') ? 4 : 8
+    el.addEventListener('pointermove', e => {
+      const r = el.getBoundingClientRect()
+      const x = (e.clientX - r.left - r.width / 2) / (r.width / 2), y = (e.clientY - r.top - r.height / 2) / (r.height / 2)
+      el.style.transform = `translate(${x * strength}px,${y * strength * .6}px)`
+      const inner = el.querySelector('svg'); if (inner) inner.style.transform = `translate(${x * 3}px,${y * 2}px)`
+    })
+    el.addEventListener('pointerleave', () => { el.style.transform = ''; const inner = el.querySelector('svg'); if (inner) inner.style.transform = '' })
+  })
+}
+
+function attachTip(demo, kind) {
+  const tip = document.createElement('div'); tip.className = 'tip ' + kind; document.body.append(tip)
+  let timer, current, fx = 0, fy = 0, tx = 0, ty = 0, raf
+  const place = el => {
+    const r = el.getBoundingClientRect(), t = tip.getBoundingClientRect()
+    let x = r.left + r.width / 2 - t.width / 2, y = kind === 't4' ? r.bottom + 10 : r.top - t.height - 10
+    x = Math.max(8, Math.min(x, innerWidth - t.width - 8))
+    tip.style.setProperty('--ax', (r.left + r.width / 2 - x) + 'px')
+    tip.style.left = x + 'px'; tip.style.top = y + 'px'
+  }
+  const follow = () => { fx += (tx - fx) * .18; fy += (ty - fy) * .18; tip.style.left = fx + 'px'; tip.style.top = fy + 'px'; raf = requestAnimationFrame(follow) }
+  demo.querySelectorAll('[data-tip]').forEach(el => {
+    el.addEventListener('pointerenter', e => {
+      current = el; clearTimeout(timer)
+      const key = el.dataset.key ? `<span class="k">${el.dataset.key}</span>` : ''
+      if (kind === 't4' && el.dataset.rich) {
+        const [h, p] = el.dataset.rich.split('|')
+        tip.innerHTML = `<div class="h"><s>i</s>${h}</div><p>${p}</p><div class="f"><span>Shortcut</span>${key || '<span class="k">—</span>'}</div>`
+      } else tip.innerHTML = el.dataset.tip + (kind === 't5' ? '' : key)
+      if (kind === 't5') { tx = fx = e.clientX + 16; ty = fy = e.clientY + 18; cancelAnimationFrame(raf); follow() }
+      timer = setTimeout(() => { if (current !== el) return; if (kind !== 't5') place(el); tip.classList.add('show') }, kind === 't4' ? 420 : kind === 't5' ? 60 : 180)
+    })
+    el.addEventListener('pointermove', e => { tx = e.clientX + 16; ty = e.clientY + 18 })
+    el.addEventListener('pointerleave', () => { if (current === el) current = null; clearTimeout(timer); tip.classList.remove('show'); if (kind === 't5') setTimeout(() => cancelAnimationFrame(raf), 250) })
+  })
+  addEventListener('scroll', () => tip.classList.remove('show'), { passive: true })
+}
+
+TIPS.forEach(v => card(document.getElementById('tips'), v, 't'))
+HOVERS.forEach(v => card(document.getElementById('hovers'), v, 'h'))
+</script>
