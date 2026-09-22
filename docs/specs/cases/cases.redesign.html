@@ -1,0 +1,450 @@
+<title>Cases Redesign Variants</title>
+<style>
+  :root{
+    --brand:#1566a2; --brand-soft:rgba(21,102,162,.08); --page:#f5f6fa; --card:#fff;
+    --fg:#0f172a; --muted:#64748b; --line:#e2e8f0;
+    --ok:#15803d; --ok-bg:#dcfce7; --warn:#b45309; --warn-bg:#fef3c7; --slate-bg:#f1f5f9;
+    --dang:#b91c1c; --dang-bg:#fee2e2;
+    --r:8px; --shadow:0 1px 2px rgba(15,23,42,.06),0 4px 12px -6px rgba(15,23,42,.12);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --page:#0b1220; --card:#121a2b; --fg:#e8eefc; --muted:#94a3b8; --line:#243047;
+      --brand:#56bdea; --brand-soft:rgba(86,189,234,.12); --slate-bg:#1a2437;
+      --ok-bg:rgba(21,128,61,.22); --warn-bg:rgba(180,83,9,.24); --dang-bg:rgba(185,28,28,.24);
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px -6px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --page:#0b1220; --card:#121a2b; --fg:#e8eefc; --muted:#94a3b8; --line:#243047;
+    --brand:#56bdea; --brand-soft:rgba(86,189,234,.12); --slate-bg:#1a2437;
+    --ok-bg:rgba(21,128,61,.22); --warn-bg:rgba(180,83,9,.24); --dang-bg:rgba(185,28,28,.24);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px -6px rgba(0,0,0,.5);
+  }
+  *{box-sizing:border-box}
+  body{background:var(--page);color:var(--fg);font:14px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1240px;margin:0 auto;padding-block:40px;padding-left:20px;padding-right:20px}
+  h1{font-size:30px;line-height:1.2;margin:0 0 10px;letter-spacing:-.02em}
+  h2{font-size:22px;margin:0 0 6px;letter-spacing:-.015em}
+  h3{font-size:16px;margin:26px 0 8px;letter-spacing:-.01em}
+  .lede{color:var(--muted);max-width:76ch;margin:0 0 10px}
+  .rule{height:1px;background:var(--line);margin:34px 0}
+  .sec-head{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;margin-bottom:6px}
+  .tag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);background:var(--brand-soft);padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--brand);border-radius:var(--r);padding:13px 15px;margin:14px 0}
+  .callout p{margin:0 0 6px}.callout p:last-child{margin:0}
+
+  .variant{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:24px}
+  .vhead{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between}
+  .vname{font-size:17px;font-weight:650;margin:0 0 3px}
+  .videa{color:var(--muted);font-size:13px;margin:0;max-width:70ch}
+  .pick{font-size:11px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:4px 11px;color:var(--muted);white-space:nowrap;background:var(--page)}
+  .vbody{padding:18px}
+  .mock{background:var(--page);border:1px solid var(--line);border-radius:10px;padding:12px;overflow-x:auto}
+  .note{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px;margin-top:14px}
+  .note div{background:var(--page);border:1px solid var(--line);border-radius:var(--r);padding:11px 12px}
+  .note b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:3px;font-weight:700}
+  .note p{margin:0;font-size:13px}
+
+  .bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{font-size:12px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;padding:5px 11px;white-space:nowrap}
+  .btn.p{background:var(--brand);border-color:var(--brand);color:#fff}
+  .pill{font-size:11px;font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap}
+  .pill.live{background:var(--ok-bg);color:var(--ok)}
+  .pill.dis{background:var(--slate-bg);color:var(--muted)}
+  .pill.app{background:var(--brand-soft);color:var(--brand)}
+  .pill.na{background:var(--warn-bg);color:var(--warn)}
+  .fld{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:5px 10px;font-size:12px;color:var(--muted);min-width:108px}
+  .cap{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin-bottom:6px}
+
+  .cols{display:flex;gap:8px;min-width:860px}
+  .col{flex:1;min-width:134px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:8px}
+  .row{font-size:12px;padding:6px 8px;border-radius:5px;margin-bottom:3px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+  .row.on{background:var(--brand-soft);box-shadow:inset 3px 0 0 var(--brand);font-weight:650;color:var(--brand)}
+  .row .n{color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
+
+  .split{display:flex;gap:10px;min-width:780px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px}
+
+  .flow{display:flex;min-width:820px}
+  .lane{flex:1;min-width:150px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:9px;position:relative}
+  .lane+.lane{margin-left:22px}
+  .lane+.lane::before{content:"";position:absolute;left:-22px;top:50%;width:22px;height:2px;background:var(--line)}
+  .node{font-size:12px;background:var(--page);border:1px solid var(--line);border-radius:6px;padding:6px 8px;margin-bottom:5px}
+  .node.on{border-color:var(--brand);background:var(--brand-soft);color:var(--brand);font-weight:650}
+
+  .ladder{width:200px;flex:none;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px}
+  .step{font-size:12px;padding:6px 8px;border-left:2px solid var(--line);margin-left:5px}
+  .step.on{border-left-color:var(--brand);color:var(--brand);font-weight:650;background:var(--brand-soft);border-radius:0 5px 5px 0}
+  .step .s{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:700}
+
+  table.g{width:100%;border-collapse:collapse;font-size:12px;background:var(--card);border-radius:var(--r);overflow:hidden}
+  table.g th{background:var(--brand);color:#fff;text-align:left;padding:6px 9px;font-weight:650;font-size:11px;white-space:nowrap}
+  table.g td{padding:6px 9px;border-top:1px solid var(--line);white-space:nowrap}
+  .selbar{background:var(--fg);color:var(--page);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:600;display:inline-flex;gap:12px;align-items:center;margin-top:8px}
+
+  .board{display:flex;gap:8px;min-width:860px}
+  .bcol{flex:1;min-width:150px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:8px}
+  .bcol h4{margin:0 0 7px;font-size:12px;display:flex;justify-content:space-between;align-items:center}
+  .card{background:var(--page);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:11px;margin-bottom:4px}
+  .meter{height:3px;background:var(--line);border-radius:2px;overflow:hidden;margin-top:5px}
+  .meter i{display:block;height:100%;background:var(--brand)}
+
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:9px}
+  .tab{font-size:12px;font-weight:600;padding:5px 11px;border-bottom:2px solid transparent;color:var(--muted)}
+  .tab.on{color:var(--brand);border-bottom-color:var(--brand)}
+
+  .cov{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+  .cov th,.cov td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .cov th{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);background:var(--page)}
+  .cov td:first-child{font-weight:600;white-space:nowrap}
+  .tblwrap{overflow-x:auto}
+  code{background:var(--slate-bg);padding:1px 5px;border-radius:4px;font-size:12px}
+  @media (max-width:700px){ .vhead{flex-direction:column} }
+</style>
+
+<div class="wrap">
+
+<h1>Cases — redesign variants</h1>
+<p class="lede">Three directions each for <b>Workflow Admin</b> and <b>Student Workflow</b>. The option inventory below is taken from the actual Polymer components, not from the build plan — the plan turned out to be wrong in several places.</p>
+<p class="lede" style="font-size:13px">Built on existing tokens and shared parts: brand <code>#1566a2</code> for active and primary only, neutral greys otherwise, motion 150–300&nbsp;ms on <code>ease-premium</code>, reduced-motion safe. No new component families.</p>
+
+<div class="callout">
+  <p><b>Corrections found by reading the legacy source.</b> These differ from the written spec, so any redesign built on the spec alone would have been wrong:</p>
+  <p>· The <b>Add/Edit Workflow dialog has exactly one field — Name</b> (required, max 50). Not type, dates, contact group or faculty e-mail flags.<br>
+  · <b>Student Workflow's table has 8 columns</b>, not 4.<br>
+  · <b>Student search is one autocomplete</b>, not two inputs — it routes to number-or-name by whether you typed a digit.<br>
+  · The workflow stats are <b>grid columns</b> in legacy, not a summary strip.<br>
+  · Status options are <b>Live / Disabled</b>.<br>
+  · For <b>General and Engagement</b> workflow types, seven columns blank out and the Status, Approval and Constraints controls disappear entirely.</p>
+</div>
+
+<div class="rule"></div>
+
+<div class="sec-head"><h2>Page 1 — Workflow Admin</h2><span class="tag">5 levels deep</span></div>
+<p class="lede">Legacy spreads this over <b>11 pages</b>: a workflow grid, then Stage&nbsp;Groups → Stages → Rule&nbsp;Groups → Rules / Triggers → Attributes, plus Constraints and Manual&nbsp;Interventions. Each level is a full page load with a Back button, and four orphaned "Change…" modals were an abandoned attempt at moving sideways. Each variant below solves that differently.</p>
+
+<div class="variant">
+  <div class="vhead">
+    <div><p class="vname">A · Column Cascade</p><p class="videa">Every level is a column. Choosing an item slides the next one in. The whole path — and every sibling at every level — stays on screen, so the eleven page loads collapse into one view.</p></div>
+    <span class="pick">Best for deep editing</span>
+  </div>
+  <div class="vbody">
+    <div class="mock">
+      <div class="bar" style="margin-bottom:10px">
+        <span class="fld">Search workflows</span>
+        <span class="pill live">Live</span><span class="pill app">Auto Approved</span>
+        <span style="flex:1"></span>
+        <span class="btn">Constraints</span><span class="btn">Manual Interventions</span><span class="btn p">Edit</span>
+      </div>
+      <div class="cols">
+        <div class="col"><div class="cap">Workflows</div>
+          <div class="row on">Attendance <span class="n">412</span></div>
+          <div class="row">Engagement <span class="n">288</span></div>
+          <div class="row">Placement <span class="n">64</span></div>
+        </div>
+        <div class="col"><div class="cap">Stage groups</div>
+          <div class="row on">Early <span class="n">3</span></div>
+          <div class="row">Escalation <span class="n">4</span></div>
+        </div>
+        <div class="col"><div class="cap">Stages</div>
+          <div class="row">First contact</div>
+          <div class="row on">Monitoring</div>
+        </div>
+        <div class="col"><div class="cap">Rule groups</div>
+          <div class="row on">Attend &lt; 60% <span class="n">S</span></div>
+          <div class="row">No contact <span class="n">F</span></div>
+        </div>
+        <div class="col"><div class="cap">Rules · Triggers</div>
+          <div class="row on">Rule · Threshold</div>
+          <div class="row">Trigger · Email</div>
+        </div>
+        <div class="col"><div class="cap">Attributes</div>
+          <div class="row">Value 60</div>
+          <div class="row">Template W1</div>
+        </div>
+      </div>
+      <div class="bar" style="margin-top:10px">
+        <span class="btn">+ Add</span><span class="btn">Edit</span><span class="btn">Delete</span>
+        <span style="flex:1"></span><span class="pill na">Unsaved</span><span class="btn">Discard</span><span class="btn p">Save</span>
+      </div>
+    </div>
+    <div class="note">
+      <div><b>Fixes the drill-down</b><p>Sibling switching is the layout itself. No Back button, no page reload, no abandoned modals.</p></div>
+      <div><b>Motion</b><p>New column slides in 220&nbsp;ms and scrolls into view; earlier columns dim slightly. Static under reduced motion.</p></div>
+      <div><b>Strength</b><p>Depth is never hidden. Fastest for restructuring a whole workflow.</p></div>
+      <div><b>Trade-off</b><p>Needs width. Below 1280&nbsp;px it shows the last two columns with a breadcrumb back.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="variant">
+  <div class="vhead">
+    <div><p class="vname">B · Pipeline Canvas</p><p class="videa">The workflow drawn as what it is — a path students travel. Stage groups are lanes, stages are connected nodes. Click any node to open its editor beneath.</p></div>
+    <span class="pick">Best for explaining</span>
+  </div>
+  <div class="vbody">
+    <div class="mock">
+      <div class="bar" style="margin-bottom:10px">
+        <span class="fld">Attendance Monitoring</span>
+        <span class="pill live">Live</span><span class="pill app">Auto Approved</span>
+        <span class="btn p">Diagram</span><span class="btn">List</span>
+        <span style="flex:1"></span><span class="btn">Constraints</span><span class="btn">Manual Interventions</span>
+      </div>
+      <div class="flow">
+        <div class="lane"><div class="cap">Early</div>
+          <div class="node on">First contact</div><div class="node">Monitoring</div>
+          <div class="node" style="color:var(--muted)">+ stage</div>
+        </div>
+        <div class="lane"><div class="cap">Escalation</div>
+          <div class="node">Warning 1</div><div class="node">Warning 2</div><div class="node">Final warning</div>
+        </div>
+        <div class="lane"><div class="cap">Closure</div>
+          <div class="node">Resolved</div><div class="node">Withdrawn</div>
+        </div>
+      </div>
+      <div class="split" style="margin-top:10px">
+        <div class="panel" style="flex:1"><div class="cap">Inspector · First contact</div>
+          <div class="bar"><span class="fld">Name</span><span class="fld">Numeric value</span><span class="fld">Next check cron</span></div>
+          <div class="bar" style="margin-top:6px"><span class="fld">Success period</span><span class="fld">Failure period</span><span class="fld">Duration</span></div>
+          <div class="bar" style="margin-top:6px"><span class="pill app">2 rule groups</span><span class="pill app">1 trigger</span><span class="btn">Open rules</span></div>
+        </div>
+        <div class="panel" style="width:172px"><div class="cap">Workflow totals</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.8">Students <b style="color:var(--fg)">412</b><br>Emails <b style="color:var(--fg)">1,204</b><br>Stage changes <b style="color:var(--fg)">88</b><br>Final warnings <b style="color:var(--fg)">12</b><br>Next check <b style="color:var(--fg)">21/09/2026</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      <div><b>Accessibility</b><p>The <b>List</b> toggle is not decoration — a full keyboard tree carrying every node and action. The diagram is never the only way in.</p></div>
+      <div><b>Motion</b><p>Nodes fade-rise 200&nbsp;ms; connectors draw in. Inspector slides up from below.</p></div>
+      <div><b>Strength</b><p>The one to put on a screen in front of a room. Structure is understood instantly.</p></div>
+      <div><b>Trade-off</b><p>Most build effort, and deep attribute editing still happens in the inspector, not on the canvas.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="variant">
+  <div class="vhead">
+    <div><p class="vname">C · Focus Rail</p><p class="videa">Depth as a ladder, not nesting. A narrow rail holds the five levels and your current position; the rest of the screen is one large calm editor with sibling tabs on top.</p></div>
+    <span class="pick">Calmest · densest forms</span>
+  </div>
+  <div class="vbody">
+    <div class="mock">
+      <div class="split">
+        <div class="ladder">
+          <div class="cap">Path</div>
+          <div class="step on"><span class="s">Workflow</span>Attendance</div>
+          <div class="step on"><span class="s">Stage group</span>Early</div>
+          <div class="step on"><span class="s">Stage</span>Monitoring</div>
+          <div class="step"><span class="s">Rule group</span>Attendance &lt; 60%</div>
+          <div class="step" style="color:var(--muted)"><span class="s">Rule / trigger</span>—</div>
+        </div>
+        <div class="panel" style="flex:1">
+          <div class="bar" style="margin-bottom:9px">
+            <span class="btn p">Monitoring</span><span class="btn">First contact</span><span class="btn">+ stage</span>
+            <span style="flex:1"></span><span class="pill na">Unsaved</span><span class="btn p">Save</span>
+          </div>
+          <div class="bar" style="margin-bottom:6px"><span class="fld" style="min-width:190px">Name</span><span class="fld">Numeric value</span><span class="fld">Duration period</span></div>
+          <div class="bar" style="margin-bottom:6px"><span class="fld">Success period</span><span class="fld">Failure period</span><span class="fld">Success day 0–7</span><span class="fld">Failure day 0–7</span></div>
+          <div class="bar"><span class="fld" style="min-width:230px">Next check cron — schedule builder</span></div>
+          <div class="cap" style="margin-top:11px">Rule groups</div>
+          <table class="g"><tr><th>Name</th><th>Success</th><th>Must pass all</th><th>Rules</th><th>Triggers</th><th></th></tr>
+          <tr><td>Attendance &lt; 60%</td><td>Success</td><td>Yes</td><td>2</td><td>1</td><td>Edit · Delete</td></tr>
+          <tr><td>No contact 14d</td><td>Failure</td><td>No</td><td>1</td><td>2</td><td>Edit · Delete</td></tr></table>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      <div><b>Fixes the drill-down</b><p>Sibling tabs above the editor, and every rail step is a dropdown of its siblings.</p></div>
+      <div><b>Motion</b><p>Rail step fills brand as you descend; panel cross-fades 180&nbsp;ms with no layout jump.</p></div>
+      <div><b>Strength</b><p>Most room for the long forms — nine stage fields, attributes, cron — with the least visual noise.</p></div>
+      <div><b>Trade-off</b><p>One level at a time; restructuring across branches means more movement than A.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="rule"></div>
+
+<div class="sec-head"><h2>Page 2 — Student Workflow</h2><span class="tag">bulk actions</span></div>
+<p class="lede">Lighter, but the real work is <b>Move</b> and <b>Remove</b> across many students. The table carries eight columns, and two of them blank out when the date is the sentinel <code>31/12/9999</code>.</p>
+
+<div class="variant">
+  <div class="vhead">
+    <div><p class="vname">A · Stage Board</p><p class="videa">Stages become columns with live counts. Moving a student is the action that matters, so stages are the layout — select and send.</p></div>
+    <span class="pick">Most visual</span>
+  </div>
+  <div class="vbody">
+    <div class="mock">
+      <div class="bar" style="margin-bottom:10px"><span class="fld">Workflow</span><span class="fld">Stages</span><span class="fld" style="min-width:170px">Student — name or number</span><span class="btn p">Search</span><span style="flex:1"></span><span class="btn p">Board</span><span class="btn">Table</span></div>
+      <div class="board">
+        <div class="bcol"><h4>First contact <span class="n" style="color:var(--muted)">128</span></h4>
+          <div class="card">S1042 · A. Byrne · 82%<div class="meter"><i style="width:82%"></i></div></div>
+          <div class="card">S1188 · K. Osei · 61%<div class="meter"><i style="width:61%"></i></div></div>
+        </div>
+        <div class="bcol"><h4>Monitoring <span class="n" style="color:var(--muted)">96</span></h4>
+          <div class="card" style="border-color:var(--brand)">S1201 · J. Ryan · 54%<div class="meter"><i style="width:54%"></i></div></div>
+          <div class="card" style="border-color:var(--brand)">S1233 · M. Poole · 48%<div class="meter"><i style="width:48%"></i></div></div>
+        </div>
+        <div class="bcol"><h4>Warning 1 <span class="n" style="color:var(--muted)">41</span></h4>
+          <div class="card">S1310 · T. Ahmed · 37%<div class="meter"><i style="width:37%"></i></div></div>
+        </div>
+        <div class="bcol"><h4>Final warning <span class="n" style="color:var(--muted)">12</span></h4>
+          <div class="card">S1402 · R. Nolan · 19%<div class="meter"><i style="width:19%"></i></div></div>
+        </div>
+      </div>
+      <div class="selbar">2 selected <span>Move</span> <span>Remove</span> <span style="opacity:.6">Clear</span></div>
+    </div>
+    <div class="note">
+      <div><b>Move</b><p>Opens the side panel with all five fields. Drag is a shortcut only — never the sole route, and keyboard does the same job.</p></div>
+      <div><b>Strength</b><p>You see the shape of the cohort — where students are piling up — without reading a number.</p></div>
+      <div><b>Trade-off</b><p>Cards can't show all eight columns; the Table toggle stays for dense scanning and sorting.</p></div>
+      <div><b>Motion</b><p>Card lifts and settles into its new column, 240&nbsp;ms. Counts count up.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="variant">
+  <div class="vhead">
+    <div><p class="vname">B · Filter-first Table</p><p class="videa">One full-width table with all eight columns, stages as filter tabs above, and the floating selection pill used everywhere else in Admin.</p></div>
+    <span class="pick">Most consistent</span>
+  </div>
+  <div class="vbody">
+    <div class="mock">
+      <div class="bar" style="margin-bottom:8px"><span class="btn p">All stages</span><span class="btn">First contact 128</span><span class="btn">Monitoring 96</span><span class="btn">Warning 1 41</span><span class="btn">Final 12</span></div>
+      <div class="bar" style="margin-bottom:8px"><span class="fld">Workflow</span><span class="fld" style="min-width:180px">Student — name or number</span><span class="btn p">Search</span><span style="flex:1"></span><span class="pill app">Students 277</span></div>
+      <div class="tblwrap"><table class="g">
+        <tr><th></th><th>Student number</th><th>Full name</th><th>Stage</th><th>Next check</th><th>Approved</th><th>Attended</th><th>Scheduled</th><th>Percentage</th></tr>
+        <tr><td>☑</td><td>S1201</td><td>J. Ryan</td><td>Monitoring</td><td>21/09/2026</td><td>28/09/2026</td><td>14</td><td>26</td><td>54%</td></tr>
+        <tr><td>☑</td><td>S1233</td><td>M. Poole</td><td>Monitoring</td><td>23/09/2026</td><td style="color:var(--muted)">—</td><td>12</td><td>25</td><td>48%</td></tr>
+        <tr><td>☐</td><td>S1310</td><td>T. Ahmed</td><td>Warning 1</td><td>25/09/2026</td><td style="color:var(--muted)">—</td><td>9</td><td>24</td><td>37%</td></tr>
+      </table></div>
+      <div class="selbar">2 selected <span>Move</span> <span>Remove</span> <span style="opacity:.6">Clear</span></div>
+    </div>
+    <div class="note">
+      <div><b>Strength</b><p>Nothing new to learn — identical rhythm to every other list in Admin. Fastest to build, safest.</p></div>
+      <div><b>Sentinel dates</b><p>The blank cells are correct: legacy renders <code>31/12/9999</code> as empty. Shown as a muted dash so empty never looks broken.</p></div>
+      <div><b>Trade-off</b><p>Least distinctive of the three. A very good table, not a new idea.</p></div>
+      <div><b>Motion</b><p>Rows stagger in 18&nbsp;ms apart; the selection pill rises from the bottom.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="variant">
+  <div class="vhead">
+    <div><p class="vname">C · Cohort Split</p><p class="videa">Keeps a left stage rail but makes it earn its space — counts and share of cohort — and adds a peek drawer so you can check a student without leaving the list.</p></div>
+    <span class="pick">Best balance</span>
+  </div>
+  <div class="vbody">
+    <div class="mock">
+      <div class="split">
+        <div class="ladder" style="width:206px">
+          <div class="cap">Stages</div>
+          <div class="row on">All stages <span class="n">277</span></div>
+          <div class="row">First contact <span class="n">128</span></div>
+          <div class="row">Monitoring <span class="n">96</span></div>
+          <div class="row">Warning 1 <span class="n">41</span></div>
+          <div class="row">Final warning <span class="n">12</span></div>
+        </div>
+        <div class="panel" style="flex:1">
+          <div class="bar" style="margin-bottom:8px"><span class="fld">Workflow</span><span class="fld" style="min-width:150px">Name or number</span><span class="btn p">Search</span><span style="flex:1"></span><span class="pill app">277</span></div>
+          <div class="tblwrap"><table class="g">
+            <tr><th></th><th>Number</th><th>Full name</th><th>Stage</th><th>Next check</th><th>%</th></tr>
+            <tr><td>☑</td><td>S1201</td><td>J. Ryan</td><td>Monitoring</td><td>21/09/2026</td><td>54%</td></tr>
+            <tr><td>☐</td><td>S1233</td><td>M. Poole</td><td>Monitoring</td><td>23/09/2026</td><td>48%</td></tr>
+          </table></div>
+          <div class="selbar">1 selected <span>Move</span> <span>Remove</span></div>
+        </div>
+        <div class="panel" style="width:168px"><div class="cap">Peek · J. Ryan</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.8">Stage <b style="color:var(--fg)">Monitoring</b><br>On hold <b style="color:var(--fg)">No</b><br>Next check <b style="color:var(--fg)">21/09/2026</b><br>Attended <b style="color:var(--fg)">14 / 26</b><br>Percentage <b style="color:var(--fg)">54%</b></div>
+          <div class="bar" style="margin-top:8px"><span class="btn">Move</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      <div><b>Strength</b><p>The peek drawer carries the columns the narrow table drops, so nothing is lost at smaller widths.</p></div>
+      <div><b>Move</b><p>Same side panel, reachable from the peek drawer or the selection pill.</p></div>
+      <div><b>Trade-off</b><p>Three columns want ~1280&nbsp;px; the peek becomes a bottom sheet below that.</p></div>
+      <div><b>Motion</b><p>Peek slides in 200&nbsp;ms; counts animate when the stage filter changes.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="rule"></div>
+
+<h2>Complete option inventory</h2>
+<p class="lede">Read from the Polymer components. Whichever variant you pick must carry all of it — a redesign changes arrangement, never the option set.</p>
+
+<h3>Workflow Admin — grid and header</h3>
+<div class="tblwrap"><table class="cov">
+  <tr><th>Control</th><th>Detail</th></tr>
+  <tr><td>Columns</td><td>Name (sortable) · Total emails · Total stage changes · Total students (sortable) · Final warning stage change (sortable) · Next check date · Approved · Status</td></tr>
+  <tr><td>Approved</td><td>Inline select — Approved · Not Approved · Auto Approved. Saves immediately, only when the value actually changed</td></tr>
+  <tr><td>Status</td><td>Inline select — <b>Live · Disabled</b>. Saves immediately</td></tr>
+  <tr><td>Row actions</td><td>Constraints · Manual Interventions · Edit — each hidden by its own permission</td></tr>
+  <tr><td>Toolbar</td><td>Add · Delete (enabled only when rows are selected) · multi-select grid · row click opens the workflow</td></tr>
+  <tr><td>Add / Edit dialog</td><td><b>Name only</b> — required, max 50 chars, error <code>NameIsRequired</code></td></tr>
+  <tr><td>Conditional rule</td><td>For <b>General</b> and <b>Engagement</b> types: the seven stat/status fields blank out, and Status, Approval and Constraints disappear</td></tr>
+  <tr><td>Messages</td><td>Approval changed · Status changed · save succeeded / failed · delete succeeded / failed · retrieve error</td></tr>
+</table></div>
+
+<h3>Workflow Admin — the five levels</h3>
+<div class="tblwrap"><table class="cov">
+  <tr><th>Level</th><th>Fields and options</th></tr>
+  <tr><td>Stage group</td><td>Name · Description. Rule: the last group cannot be deleted</td></tr>
+  <tr><td>Stage</td><td>Name · Description · Numeric value (2 digits) · Next check success period · failure period · success day (0–7) · failure day (0–7) · attendance duration period · next check cron</td></tr>
+  <tr><td>Rule group</td><td>Success / Failure radio · Name · Description · Must pass all rules Yes / No · per-row menu into Rules or Triggers</td></tr>
+  <tr><td>Rule</td><td>Class type dropdown · Disabled checkbox · enabled indicator · route to its attributes</td></tr>
+  <tr><td>Rule attribute</td><td>Attribute type dropdown, then <b>one of three</b> value editors by data type: list dropdown · typed input with its own allowed pattern · Yes/No radio. Lesson-type attributes load their list from the Lesson Type API</td></tr>
+  <tr><td>Trigger</td><td>Trigger type dropdown</td></tr>
+  <tr><td>Trigger attribute</td><td>Trigger type dropdown, <b>locked when editing</b>, then one of the same three value editors. The list source changes per attribute: e-mail template · stage · contact group · function · manual intervention</td></tr>
+  <tr><td>Every level</td><td>Add · Edit · Delete with confirm · sortable grid · required-field validation</td></tr>
+</table></div>
+
+<h3>Workflow Admin — Constraints and Manual Interventions</h3>
+<div class="tblwrap"><table class="cov">
+  <tr><th>Area</th><th>Detail</th></tr>
+  <tr><td>Constraint types</td><td><b>13</b>: Student type · UKVI · FE student · Student year · Admin area type · Student sub type · Site · School · Course · Module · Faculty · Students · Student status</td></tr>
+  <tr><td>Constraint editor</td><td><b>One of four</b> by type: typeahead + Add · numeric input + Add · Yes / No / None radio · dropdown. Plus a selected-values grid and Delete</td></tr>
+  <tr><td>Manual interventions</td><td>Grid: Name · Description · Duration · Students can create (subscription-gated column)</td></tr>
+  <tr><td>— Case tab</td><td>Name (150) · Duration (8 digits) · Description (500) · Instance restriction: Lifetime single instance / No concurrency / No limitations · Students can create (subscription-gated)</td></tr>
+  <tr><td>— Steps tab</td><td>Add / Delete · grid of name, type, duration, description · step editor with name, type (locked when editing), duration, description · a delete-validation confirm before removing a step</td></tr>
+  <tr><td>— Stages tab</td><td>Grid of workflow stages with their association flag</td></tr>
+  <tr><td>Permissions</td><td>Manual interventions use their own permission item, not Case</td></tr>
+</table></div>
+
+<h3>Student Workflow</h3>
+<div class="tblwrap"><table class="cov">
+  <tr><th>Control</th><th>Detail</th></tr>
+  <tr><td>Filters</td><td>Workflow select (defaults to the first) · Stages select · <b>one</b> student typeahead, minimum 2 characters, routed to number if it contains a digit, otherwise name · Search</td></tr>
+  <tr><td>Columns</td><td>Student number · Full name · Stage · Next check date · Approved · Attended · Scheduled · Percentage — first five sortable</td></tr>
+  <tr><td>Date rule</td><td>Next check and Approved render <b>blank</b> when the value is the sentinel <code>31/12/9999</code></td></tr>
+  <tr><td>Counter</td><td>"Students : N", hidden when the result set is empty</td></tr>
+  <tr><td>Selection</td><td>Multi-select; Move and Remove are disabled until at least one row is selected; selection clears after every reload</td></tr>
+  <tr><td>Move panel</td><td>Is on hold toggle (disabled without the hold permission) · On-hold expiry date — <b>only shown while the toggle is on</b> · Next check date · Move stage select · Comment · Save / Cancel</td></tr>
+  <tr><td>Remove</td><td>Confirm carrying the audit-deletion warning, then Confirm / Cancel</td></tr>
+  <tr><td>Validation</td><td>No students selected · no stage selected — both must block the save and be visible</td></tr>
+</table></div>
+
+<h3>Every list, in every variant</h3>
+<p class="lede">Loading · empty · error with Retry · populated — four designed states, not one happy path. Every control defines resting, hover, pressed, focus ring, disabled, loading, transition and reduced-motion behaviour.</p>
+
+<div class="rule"></div>
+
+<h2>Legacy defects we deliberately do not copy</h2>
+<div class="tblwrap"><table class="cov">
+  <tr><th>Defect</th><th>What we do instead</th></tr>
+  <tr><td>Approved dropdown</td><td>It compares against the wrong field, so the saved approval never displays correctly. React binds the right field</td></tr>
+  <tr><td>Lost validation</td><td>The two Move validation messages are written to an element that does not exist — nobody ever sees them. React shows them on the fields</td></tr>
+  <tr><td>Hard-coded English</td><td>Three strings bypass localisation. React uses resource keys</td></tr>
+  <tr><td>Permission gaps</td><td>A bug leaves Add / Delete / Edit visible to everyone on Workflow Admin, and 10 of 11 drill-down pages have their permission check commented out. React gates the UI properly — the server already enforces</td></tr>
+  <tr><td>Duplicate ids</td><td>Two grid columns and several inputs share ids. React gives each a unique, labelled control</td></tr>
+</table></div>
+
+<div class="rule"></div>
+
+<h2>If you want a steer</h2>
+<p class="lede"><b>Workflow Admin → A (Column Cascade)</b>. The genuine pain is five levels across eleven pages, and A is the only one that never hides where you are.<br>
+<b>Student Workflow → B (Filter-first Table)</b>. Eight columns and bulk actions are exactly what that pattern is for, and it matches every other list in Admin.<br><br>
+If the presentation matters more than daily use, <b>B (Pipeline Canvas)</b> for Workflow Admin is the one people remember — it just costs the most to build.</p>
+
+</div>
