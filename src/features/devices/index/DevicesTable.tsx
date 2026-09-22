@@ -8,6 +8,7 @@ import { Button, Checkbox, DelayedLoading, ErrorState, useDelayedFlag, type Chec
 import { cn } from '@/shared/ui/cn'
 import { useRowWindow } from '@/shared/ui/use-row-window'
 import type { DeviceListItemDto, DevicesSortColumn } from '@/types/devices'
+import { BatteryGlyph } from './BatteryGlyph'
 import { batteryLevel, type BatteryLevel } from './device-query'
 import { DEVICES_FALLBACK_ONLY, type DevicesText, type DevicesTextKey } from './devices-text'
 import type { DevicesList } from './use-devices-list'
@@ -40,13 +41,6 @@ const COLUMNS: readonly Column[] = [
 const CHECK_WIDTH = 44
 // Index.cshtml:154-156 shows a dash when a device reports no battery value.
 const NO_BATTERY = '-'
-
-// Index.cshtml:199-205 deviceBatteryColor, via tokens that keep the label readable.
-const LEVEL_COLOR: Record<BatteryLevel, string> = {
-  good: 'var(--color-battery-good)',
-  medium: 'var(--color-battery-medium)',
-  low: 'var(--color-battery-low)',
-}
 
 const LEVEL_WORD: Record<BatteryLevel, string> = {
   good: DEVICES_FALLBACK_ONLY.batteryGood,
@@ -207,7 +201,8 @@ export function DevicesTable({
                     style={first ? { left: stickyLeft } : undefined}
                     className={cn(
                       HEAD,
-                      first && 'z-30',
+                      // The sticky column is exactly as wide as its heading: no spare padding on the right.
+                      first && 'z-30 pr-0',
                       first && !selectable && 'pl-4',
                       edges.top && HEAD_SHADOW,
                       first && edges.left && 'shadow-[8px_0_10px_-8px_rgba(15,23,42,.45)]',
@@ -343,14 +338,14 @@ function DeviceRow({
               rowTint,
               column.wrap ? 'min-w-40 break-words' : 'whitespace-nowrap',
               // Width 1px makes the sticky column hug its text, so spare width goes to the other columns.
-              first && 'w-px',
+              first && 'w-px pr-0',
               first &&
                 'sticky z-10 shadow-[inset_3px_0_0_transparent] group-hover:shadow-[inset_3px_0_0_var(--color-brand)]',
               first && !selectable && 'pl-4',
               first && shadowLeft && 'shadow-[8px_0_10px_-8px_rgba(15,23,42,.45)]',
             )}
           >
-            <Cell column={column} item={item} href={href} t={t} />
+            <Cell column={column} item={item} index={index} href={href} t={t} />
           </td>
         )
       })}
@@ -361,11 +356,13 @@ function DeviceRow({
 function Cell({
   column,
   item,
+  index,
   href,
   t,
 }: {
   column: Column
   item: DeviceListItemDto
+  index: number
   href: string
   t: DevicesText
 }) {
@@ -377,18 +374,16 @@ function Cell({
     if (percent === null) return <span className="text-muted-foreground">{NO_BATTERY}</span>
     const level = batteryLevel(percent)
     const percentText = `${percent}%`
-    // Index.cshtml:7-48 battery shape: 52x20 outline, end cap, fill and centred text.
+    // Index.cshtml:199-205 levels, drawn as the iPhone Glass cell (battery.designs.html, Battery A).
     return (
-      <span
-        title={percentText}
-        className="relative mr-2 inline-block h-5 w-[52px] rounded-[3px] border-2 border-battery-shell bg-battery-track align-middle after:absolute after:top-1 after:-right-1.5 after:h-2 after:w-1 after:rounded-r-[2px] after:bg-battery-shell after:content-['']"
-      >
+      <span title={LEVEL_WORD[level]} className="inline-flex items-center gap-2.5 align-middle">
+        <BatteryGlyph percent={percent} level={level} delayMs={Math.min(index, 20) * 45} />
         <span
-          aria-hidden
-          className="absolute inset-y-0 left-0 rounded-[1px] transition-[width] duration-500 ease-premium"
-          style={{ width: `${Math.min(Math.max(percent, 0), 100)}%`, backgroundColor: LEVEL_COLOR[level] }}
-        />
-        <span className="absolute inset-0 text-center text-[10px] leading-4 font-bold text-battery-label tabular-nums">
+          className={cn(
+            'min-w-8 text-[13px] font-semibold tabular-nums',
+            level === 'low' ? 'text-battery-low-deep' : 'text-foreground',
+          )}
+        >
           {percentText}
         </span>
         <span className="sr-only">{LEVEL_WORD[level]}</span>
