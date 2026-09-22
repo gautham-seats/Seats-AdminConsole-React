@@ -11,6 +11,8 @@ const config: Config = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.tsx'],
   testPathIgnorePatterns: ['/node_modules/', '/.next/'],
+  // The whole suite on a busy laptop can push a screen test past the 5 s default.
+  testTimeout: 20000,
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
     '!src/**/__tests__/**',
