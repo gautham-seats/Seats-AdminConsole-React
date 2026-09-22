@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEAtS Admin — Settings Screen Designs</title>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+:root {
+  --brand: #1566a2;
+  --brand-avatar: #56bdea;
+  --page: #f5f6fa;
+  --foreground: hsl(222.2, 84%, 4.9%);
+  --muted: hsl(215.4, 16.3%, 46.9%);
+  --border: hsl(214.3, 31.8%, 91.4%);
+  --card: #fff;
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --radius: 0.5rem;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+}
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: #e8eaef;
+  color: var(--foreground);
+  line-height: 1.5;
+}
+.page-header {
+  padding: 2rem 2rem 1rem;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.page-header h1 { margin: 0 0 .25rem; font-size: 1.5rem; }
+.page-header p { margin: 0; color: var(--muted); font-size: .875rem; }
+.design-block {
+  max-width: 1440px;
+  margin: 0 auto 3rem;
+  padding: 0 2rem;
+}
+.design-meta {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+}
+.design-meta h2 { margin: 0 0 .25rem; font-size: 1.125rem; }
+.design-meta .idea { color: var(--muted); font-size: .875rem; margin: 0 0 .75rem; }
+.design-meta dl { display: grid; grid-template-columns: auto 1fr; gap: .25rem .75rem; margin: 0; font-size: .8125rem; }
+.design-meta dt { font-weight: 600; }
+.design-meta .checklist { margin-top: .75rem; font-size: .8125rem; font-weight: 600; color: var(--brand); }
+
+/* State switcher */
+.state-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .375rem;
+  margin-bottom: .75rem;
+  align-items: center;
+}
+.state-bar .label { font-size: .75rem; font-weight: 600; color: var(--muted); margin-right: .25rem; }
+.state-btn {
+  padding: .25rem .625rem;
+  font-size: .75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card);
+  cursor: pointer;
+  transition: all 180ms var(--ease);
+}
+.state-btn:hover { border-color: var(--brand); }
+.state-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+.state-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* Preview frame */
+.preview-frame {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--page);
+  min-height: 520px;
+  position: relative;
+}
+.preview-frame[data-state="loading"] .form-content { opacity: .4; pointer-events: none; }
+.preview-frame[data-state="loading"] .skeleton-overlay { display: block; }
+
+/* App shell — NavBar replica */
+.app-shell { display: flex; flex-direction: column; min-height: 520px; }
+.app-nav {
+  position: relative;
+  z-index: 40;
+  display: flex;
+  height: 50px;
+  align-items: center;
+  padding: 0 1rem;
+  background: var(--preview-menu, var(--brand));
+  background-image: linear-gradient(180deg, rgba(255,255,255,.13) 0%, rgba(255,255,255,.04) 46%, rgba(255,255,255,0) 54%, rgba(0,0,0,.05) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.22), inset 0 -1px 0 rgba(0,0,0,.12), 0 2px 12px rgba(21,102,162,.28);
+  color: #fff;
+  flex-shrink: 0;
+}
+.app-nav .logo-area { display: flex; align-items: center; flex-shrink: 0; }
+.app-nav .logo-img { height: 32px; width: auto; transition: transform 300ms var(--ease); }
+.app-nav .logo-divider { margin: 0 1rem; height: 30px; width: 1px; background: rgba(255,255,255,.3); }
+.app-nav .nav-links { display: flex; gap: 2px; align-items: center; }
+.app-nav .nav-btn {
+  display: inline-flex; align-items: center; height: 40px; padding: 0 .75rem;
+  font-size: .875rem; font-weight: 500; color: #fff; white-space: nowrap;
+  border: none; background: transparent; border-radius: var(--radius); cursor: pointer;
+  transition: background 200ms;
+}
+.app-nav .nav-btn:hover, .app-nav .nav-btn.active { background: rgba(255,255,255,.15); }
+.app-nav .nav-btn svg { width: 16px; height: 16px; margin-right: .5rem; }
+.app-nav .spacer { flex: 1; min-width: 1rem; }
+.app-nav .search-box {
+  display: flex; align-items: center; gap: .5rem; height: 36px; width: 224px;
+  padding: 0 .75rem; border-radius: var(--radius);
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+  transition: width 300ms, background 300ms;
+}
+.app-nav .search-box:focus-within { width: 288px; background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.4); }
+.app-nav .search-box input {
+  flex: 1; min-width: 0; border: none; background: transparent; color: #fff;
+  font-size: .875rem; outline: none;
+}
+.app-nav .search-box input::placeholder { color: rgba(255,255,255,.7); }
+.app-nav .search-kbd {
+  font-size: 11px; padding: 1px 6px; border-radius: 4px;
+  border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.1);
+}
+.app-nav .bell-btn {
+  display: grid; place-items: center; width: 40px; height: 40px;
+  border-radius: 50%; border: none; background: transparent; cursor: pointer; color: #fff;
+}
+.app-nav .bell-btn:hover { background: rgba(255,255,255,.1); }
+.app-nav .profile-btn {
+  width: 36px; height: 36px; border-radius: 50%; border: none;
+  background: var(--brand-avatar); color: #fff; font-size: .875rem; font-weight: 600; cursor: pointer;
+}
+.app-nav .profile-divider { margin: 0 .625rem; height: 30px; border-left: 1px solid rgba(255,255,255,.9); }
+
+/* Sub-nav pills */
+.sub-nav {
+  display: flex; flex-wrap: wrap; gap: .375rem;
+  padding: .75rem 1.25rem; background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+.sub-nav a {
+  display: inline-flex; align-items: center; gap: .375rem;
+  padding: .375rem .75rem; font-size: .8125rem; border-radius: 999px;
+  text-decoration: none; color: var(--muted); border: 1px solid transparent;
+  transition: all 180ms var(--ease);
+}
+.sub-nav a:hover { background: var(--page); color: var(--foreground); }
+.sub-nav a.active { background: var(--brand); color: #fff; }
+.sub-nav a.hidden-perm { display: none; }
+.sub-nav a svg { width: 14px; height: 14px; }
+
+/* Form primitives */
+.form-content { padding: 1.25rem; flex: 1; position: relative; }
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+.card-header { padding: 1rem 1.25rem .5rem; border-bottom: 1px solid var(--border); }
+.card-header h3 { margin: 0; font-size: 1rem; display: flex; align-items: center; gap: .5rem; }
+.card-body { padding: 1.25rem; }
+.field { margin-bottom: 1rem; }
+.field:last-child { margin-bottom: 0; }
+.field label { display: block; font-size: .875rem; font-weight: 500; margin-bottom: .375rem; }
+.field .hint { font-size: .75rem; color: var(--muted); margin-top: .25rem; }
+.input-row { display: flex; gap: .5rem; align-items: center; }
+.input-icon {
+  display: grid; place-items: center; width: 40px; height: 40px; flex-shrink: 0;
+  border: 1px solid var(--border); border-radius: var(--radius); background: var(--page); color: var(--muted);
+}
+input[type="text"], input[type="url"] {
+  flex: 1; height: 40px; padding: 0 .75rem; font-size: .875rem;
+  border: 1px solid var(--border); border-radius: var(--radius); outline: none;
+  transition: border-color 180ms, box-shadow 180ms;
+}
+input[type="text"]:focus, input[type="url"]:focus {
+  border-color: var(--brand); box-shadow: 0 0 0 3px rgba(21,102,162,.15);
+}
+input.invalid { border-color: var(--destructive); }
+.field-error {
+  font-size: .75rem; color: var(--destructive); margin-top: .25rem;
+  animation: slideIn 220ms var(--ease);
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.color-field { display: flex; gap: .5rem; align-items: center; }
+.color-swatch-btn {
+  width: 40px; height: 40px; border-radius: var(--radius); border: 2px solid var(--border);
+  cursor: pointer; position: relative; overflow: hidden; flex-shrink: 0;
+  transition: transform 180ms var(--ease), box-shadow 180ms;
+}
+.color-swatch-btn:hover { transform: scale(1.08); box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+.color-swatch-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.color-swatch-btn input[type="color"] {
+  position: absolute; inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px);
+  border: none; padding: 0; cursor: pointer; opacity: 0;
+}
+.color-swatch-btn .fill { width: 100%; height: 100%; border-radius: calc(var(--radius) - 2px); }
+.hex-input { max-width: 120px; font-family: ui-monospace, monospace; text-transform: uppercase; }
+.file-row { display: flex; gap: .5rem; align-items: stretch; }
+.file-row .file-name {
+  flex: 1; display: flex; align-items: center; padding: 0 .75rem;
+  border: 1px solid var(--border); border-radius: var(--radius); font-size: .875rem;
+  background: var(--page); min-height: 40px;
+}
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .375rem;
+  height: 40px; padding: 0 1rem; font-size: .875rem; font-weight: 500;
+  border-radius: var(--radius); border: none; cursor: pointer;
+  transition: all 180ms var(--ease);
+}
+.btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.btn-primary { background: var(--brand); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: #125a8f; }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+.btn-outline { background: var(--card); border: 1px solid var(--border); color: var(--foreground); }
+.btn-outline:hover { background: var(--page); }
+.btn-ghost { background: transparent; border: 1px solid var(--border); }
+.btn-sm { height: 32px; padding: 0 .75rem; font-size: .8125rem; }
+.btn .spinner {
+  width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3);
+  border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn .check-icon { animation: popIn 300ms var(--ease); }
+@keyframes popIn {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Sticky save bar */
+.sticky-save {
+  position: sticky; bottom: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .75rem 1.25rem; background: var(--card);
+  border-top: 1px solid var(--border); box-shadow: 0 -4px 16px rgba(0,0,0,.06);
+  transform: translateY(100%); opacity: 0;
+  transition: transform 280ms var(--ease), opacity 280ms var(--ease);
+  z-index: 20;
+}
+.sticky-save.visible { transform: translateY(0); opacity: 1; }
+.unsaved-dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  background: #f59e0b; margin-right: .5rem; animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .5; } }
+
+/* Skeleton */
+.skeleton-overlay {
+  display: none; position: absolute; inset: 0; background: rgba(245,246,250,.85);
+  z-index: 30; padding: 1.25rem;
+}
+.skel {
+  background: linear-gradient(90deg, #e8eaef 25%, #f5f6fa 50%, #e8eaef 75%);
+  background-size: 200% 100%; animation: shimmer 1.2s infinite;
+  border-radius: var(--radius); margin-bottom: .75rem;
+}
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.skel.h-lg { height: 48px; }
+.skel.h-md { height: 32px; width: 60%; }
+.skel.h-sm { height: 24px; width: 40%; }
+
+/* Live preview panel */
+.preview-panel {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  overflow: hidden; transition: opacity 250ms var(--ease);
+}
+.preview-panel .preview-label {
+  font-size: .6875rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .05em; color: var(--muted); padding: .5rem .75rem;
+  border-bottom: 1px solid var(--border); background: var(--page);
+}
+.preview-mini-nav {
+  height: 40px; display: flex; align-items: center; padding: 0 .75rem;
+  transition: background 250ms var(--ease);
+}
+.preview-mini-nav img { height: 24px; }
+.preview-mini-table { margin: .75rem; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.preview-mini-table .th {
+  padding: .5rem .75rem; font-size: .75rem; font-weight: 600;
+  transition: background 250ms var(--ease), color 250ms var(--ease);
+}
+.preview-mini-table .td { padding: .5rem .75rem; font-size: .75rem; border-top: 1px solid var(--border); }
+
+/* Layout 2: two column */
+.layout-two-col { display: grid; grid-template-columns: 1fr 340px; gap: 1.25rem; }
+@media (max-width: 1100px) { .layout-two-col { grid-template-columns: 1fr; } }
+
+/* Layout 3: side nav */
+.layout-side-nav { display: grid; grid-template-columns: 200px 1fr; gap: 0; min-height: 400px; }
+.side-nav-list {
+  background: var(--card); border-right: 1px solid var(--border); padding: .75rem 0;
+}
+.side-nav-list a {
+  display: flex; align-items: center; gap: .5rem; padding: .5rem 1rem;
+  font-size: .8125rem; color: var(--muted); text-decoration: none;
+  border-left: 3px solid transparent; transition: all 180ms;
+}
+.side-nav-list a:hover { background: var(--page); color: var(--foreground); }
+.side-nav-list a.active { color: var(--brand); border-left-color: var(--brand); background: rgba(21,102,162,.06); font-weight: 600; }
+.side-nav-list a.hidden-perm { display: none; }
+.side-panel { padding: 1.25rem; }
+
+/* Layout 4: section cards */
+.section-cards { display: grid; gap: 1rem; }
+.section-card { position: relative; }
+.section-card .section-actions {
+  position: absolute; top: 1rem; right: 1rem; display: flex; gap: .375rem;
+}
+.section-card.editing { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand); }
+.section-card .section-badge {
+  font-size: .6875rem; padding: .125rem .5rem; border-radius: 999px;
+  background: rgba(21,102,162,.1); color: var(--brand); font-weight: 600;
+}
+
+/* Layout 5: brand studio */
+.brand-studio { display: grid; grid-template-columns: 1fr 300px; gap: 1.25rem; }
+@media (max-width: 1100px) { .brand-studio { grid-template-columns: 1fr; } }
+.contrast-badge {
+  display: inline-flex; align-items: center; gap: .25rem;
+  font-size: .75rem; font-weight: 600; padding: .25rem .5rem; border-radius: 999px;
+}
+.contrast-badge.pass { background: #dcfce7; color: #166534; }
+.contrast-badge.fail { background: #fef2f2; color: #991b1b; }
+.swatch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.swatch-card {
+  padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius);
+  text-align: center; transition: transform 180ms var(--ease);
+}
+.swatch-card:hover { transform: translateY(-2px); }
+
+/* Toast */
+.toast-container {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
+  display: flex; flex-direction: column; gap: .5rem; pointer-events: none;
+}
+.toast {
+  pointer-events: auto; padding: .75rem 1rem; border-radius: var(--radius);
+  font-size: .875rem; box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  animation: toastIn 280ms var(--ease);
+  max-width: 360px;
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.toast.success { background: #fff; border-left: 4px solid #22c55e; }
+.toast.error { background: #fff; border-left: 4px solid var(--destructive); }
+
+/* Permission overlay */
+.no-edit-overlay {
+  display: none; position: absolute; inset: 0; background: rgba(245,246,250,.6);
+  z-index: 25; align-items: flex-end; justify-content: center; padding-bottom: 2rem;
+}
+.preview-frame[data-no-edit="true"] .no-edit-overlay { display: flex; }
+.no-edit-banner {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: .75rem 1.25rem; font-size: .875rem; display: flex; align-items: center; gap: .5rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,.08);
+}
+
+/* Sample data badge */
+.sample-badge {
+  font-size: .6875rem; font-weight: 600; color: var(--brand);
+  background: rgba(21,102,162,.08); padding: .125rem .5rem; border-radius: 999px;
+  margin-left: .5rem;
+}
+
+/* Grouped sections */
+.section-group { margin-bottom: 1.25rem; }
+.section-group-title {
+  font-size: .75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .04em; color: var(--muted); margin-bottom: .75rem;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 1024 breakpoint */
+@media (max-width: 1024px) {
+  .design-block { padding: 0 1rem; }
+  .app-nav .nav-btn span.label-text { display: none; }
+  .app-nav .search-box { width: 160px; }
+  .app-nav .search-box:focus-within { width: 200px; }
+  .layout-side-nav { grid-template-columns: 160px 1fr; }
+}
+
+/* Top save row */
+.top-save-row {
+  display: flex; justify-content: flex-end; padding: .75rem 1.25rem;
+  background: var(--card); border-bottom: 1px solid var(--border);
+}
+.top-save-row.hidden-save .save-btn-wrap { display: none; }
+
+/* Validation banner */
+.validation-banner {
+  display: none; padding: .625rem 1rem; background: #fef2f2;
+  border: 1px solid #fecaca; border-radius: var(--radius);
+  font-size: .875rem; color: #991b1b; margin-bottom: 1rem;
+  animation: slideIn 220ms var(--ease);
+}
+.validation-banner.visible { display: block; }
+
+/* Drop zone */
+.drop-zone {
+  border: 2px dashed var(--border); border-radius: var(--radius);
+  padding: 1rem; text-align: center; transition: all 200ms;
+  cursor: pointer; font-size: .8125rem; color: var(--muted);
+}
+.drop-zone.dragover { border-color: var(--brand); background: rgba(21,102,162,.04); }
+.drop-zone.has-file { border-style: solid; }
+
+/* aria-live region */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <h1>Settings Screen — Design Proposals</h1>
+  <p>Five layout variants sharing one form model. Interactive prototypes — no API calls. Open in browser at 1440px or 1280px.</p>
+</header>
+
+<div id="designs-container"></div>
+<div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  const CHECKLIST = [
+    { id: 'sub-settings', label: 'Sub-nav Settings active (Settings·Access)' },
+    { id: 'sub-filetemplate', label: 'Sub-nav File Template (FileTemplate·Access)' },
+    { id: 'sub-activity', label: 'Sub-nav Activity Types (ScheduledActivityType·Access)' },
+    { id: 'sub-resources', label: 'Sub-nav Resources (Resources·Access)' },
+    { id: 'sub-customfields', label: 'Sub-nav Custom Fields (CustomFields·Access)' },
+    { id: 'sub-auth', label: 'Sub-nav Authentication (ConfigureAuthentication·Access)' },
+    { id: 'sub-contacts', label: 'Sub-nav Contacts (Settings·Contacts)' },
+    { id: 'sub-graph', label: 'Sub-nav Graph API (Settings·Contacts)' },
+    { id: 'field-help', label: 'Online Help URL + http validation' },
+    { id: 'field-menu', label: 'Menu color swatch↔hex' },
+    { id: 'field-header', label: 'Table header color swatch↔hex' },
+    { id: 'field-headertext', label: 'Table header text color swatch↔hex' },
+    { id: 'field-logo', label: 'Menu logo browse/clear/unsupported' },
+    { id: 'field-a11y-name', label: 'Accessibility statement name' },
+    { id: 'field-a11y-url', label: 'Accessibility URL paired + valid' },
+    { id: 'save-single', label: 'Single Save for whole form' },
+    { id: 'toast-success', label: 'Success toast exact message' },
+    { id: 'toast-error', label: 'Error toast exact message' },
+    { id: 'data-load', label: 'Load 7 settings by key' },
+    { id: 'data-save', label: 'Save as {id,key,value} list' },
+    { id: 'data-logo', label: 'Logo upload then save name' },
+    { id: 'perm-view', label: 'Settings·Access view gate' },
+    { id: 'perm-edit', label: 'Settings·Edit Save gate' },
+    { id: 'preview-live', label: 'Live nav + table header Preview' },
+    { id: 'state-loading', label: 'Loading skeleton' },
+    { id: 'state-saving', label: 'Saving spinner state' },
+    { id: 'state-unsaved', label: 'Unsaved changes indicator' },
+    { id: 'state-dirty', label: 'Save disabled until changed' },
+    { id: 'a11y-keyboard', label: 'Keyboard colour pickers' },
+    { id: 'a11y-labels', label: 'Labelled controls + aria-live' },
+    { id: 'a11y-contrast', label: 'AA contrast warning' },
+  ];
+
+  const SAMPLE = {
+    onlineHelpUrl: 'https://help.example.com',
+    menuColor: '#1566a2',
+    tableHeaderColor: '#1566a2',
+    tableHeaderTextColor: '#ffffff',
+    logoName: 'sample-logo.svg',
+    logoDataUrl: 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32"><rect fill="#56bdea" width="120" height="32" rx="4"/><text x="60" y="21" text-anchor="middle" fill="#fff" font-family="system-ui" font-size="12" font-weight="700">LOGO</text></svg>'),
+    a11yName: 'Accessibility statement',
+    a11yUrl: 'https://example.com/accessibility',
+  };
+
+  const SUB_NAV = [
+    { id: 'settings', label: 'Settings', icon: 'settings', perm: 'Settings.Access', active: true },
+    { id: 'filetemplate', label: 'File Template', icon: 'file-code', perm: 'FileTemplate.Access' },
+    { id: 'activity', label: 'Activity Types', icon: 'calendar-plus', perm: 'ScheduledActivityType.Access' },
+    { id: 'resources', label: 'Resources', icon: 'tags', perm: 'Resources.Access' },
+    { id: 'customfields', label: 'Custom Fields', icon: 'list-checks', perm: 'CustomFields.Access' },
+    { id: 'auth', label: 'Authentication', icon: 'key-round', perm: 'ConfigureAuthentication.Access' },
+    { id: 'contacts', label: 'Contacts', icon: 'mail', perm: 'Settings.Contacts' },
+    { id: 'graph', label: 'Graph API', icon: 'cloud', perm: 'Settings.Contacts' },
+  ];
+
+  const STATES = ['loaded', 'loading', 'saving', 'success', 'error', 'validation', 'no-edit', 'unsaved'];
+
+  const DEFAULT_LOGO_SVG = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 32"><text x="0" y="24" fill="#fff" font-family="system-ui" font-size="18" font-weight="700">SEAtS ONE</text></svg>');
+
+  function isValidUrl(url) {
+    if (!url) return true;
+    try {
+      const u = new URL(url);
+      return u.protocol === 'http:' || u.protocol === 'https:';
+    } catch { return false; }
+  }
+
+  function hexNorm(v) {
+    if (!v) return '';
+    let h = v.trim();
+    if (!h.startsWith('#')) h = '#' + h;
+    if (/^#[0-9A-Fa-f]{6}$/.test(h)) return h.toUpperCase();
+    if (/^#[0-9A-Fa-f]{3}$/.test(h)) {
+      return ('#' + h[1]+h[1]+h[2]+h[2]+h[3]+h[3]).toUpperCase();
+    }
+    return h;
+  }
+
+  function luminance(hex) {
+    const h = hexNorm(hex).replace('#', '');
+    if (h.length !== 6) return 0;
+    const rgb = [0,2,4].map(i => parseInt(h.slice(i, i+2), 16) / 255);
+    const lin = rgb.map(c => c <= 0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4));
+    return 0.2126*lin[0] + 0.7152*lin[1] + 0.0722*lin[2];
+  }
+
+  function contrastRatio(fg, bg) {
+    const l1 = luminance(fg), l2 = luminance(bg);
+    const lighter = Math.max(l1, l2), darker = Math.min(l1, l2);
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+
+  function showToast(msg, type) {
+    const c = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = 'toast ' + type;
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 200); }, 3500);
+  }
+
+  class SettingsController {
+    constructor(root, designId) {
+      this.root = root;
+      this.designId = designId;
+      this.state = 'loaded';
+      this.canEdit = true;
+      this.permissions = {
+        'Settings.Access': true,
+        'FileTemplate.Access': true,
+        'ScheduledActivityType.Access': true,
+        'Resources.Access': true,
+        'CustomFields.Access': true,
+        'ConfigureAuthentication.Access': true,
+        'Settings.Contacts': true,
+        'Settings.Edit': true,
+      };
+      this.data = this.emptyData();
+      this.saved = this.emptyData();
+      this.errors = {};
+      this.editingSection = null;
+      this.sidePanel = 'settings';
+      this.filePending = null;
+      this.coverage = new Set();
+      this.initCoverage();
+      this.bind();
+      this.render();
+    }
+
+    emptyData() {
+      return {
+        onlineHelpUrl: '', menuColor: '', tableHeaderColor: '',
+        tableHeaderTextColor: '', logoName: '', logoPreview: '',
+        a11yName: '', a11yUrl: '',
+        ids: { onlineHelpUrl: '1', menuColor: '2', tableHeaderColor: '3',
+          tableHeaderTextColor: '4', logo: '5', a11yName: '6', a11yUrl: '7' }
+      };
+    }
+
+    initCoverage() {
+      CHECKLIST.forEach(c => this.coverage.add(c.id));
+    }
+
+    isDirty() {
+      const keys = ['onlineHelpUrl','menuColor','tableHeaderColor','tableHeaderTextColor','logoName','a11yName','a11yUrl'];
+      return keys.some(k => this.data[k] !== this.saved[k]) || this.filePending;
+    }
+
+    validate() {
+      this.errors = {};
+      if (this.data.onlineHelpUrl && !isValidUrl(this.data.onlineHelpUrl)) {
+        this.errors.onlineHelpUrl = 'Use format http://website.com';
+      }
+      const hasName = !!this.data.a11yName.trim();
+      const hasUrl = !!this.data.a11yUrl.trim();
+      if (hasName !== hasUrl) {
+        this.errors.a11yPair = 'There are fields with input validation errors.';
+        if (hasName && !hasUrl) this.errors.a11yUrl = 'Required when name is set';
+        if (hasUrl && !hasName) this.errors.a11yName = 'Required when URL is set';
+      }
+      if (hasUrl && !isValidUrl(this.data.a11yUrl)) {
+        this.errors.a11yUrl = 'Use format http://website.com';
+      }
+      ['menuColor','tableHeaderColor','tableHeaderTextColor'].forEach(k => {
+        const v = hexNorm(this.data[k]);
+        if (v && !/^#[0-9A-F]{6}$/.test(v)) this.errors[k] = 'Invalid hex colour';
+      });
+      return Object.keys(this.errors).length === 0;
+    }
+
+    loadSample() {
+      this.data = { ...this.data, ...SAMPLE, logoPreview: SAMPLE.logoDataUrl };
+      this.render();
+      this.markDirty();
+    }
+
+    setState(s) {
+      this.state = s;
+      if (s === 'loading') {
+        setTimeout(() => { if (this.state === 'loading') this.setState('loaded'); }, 1800);
+      }
+      if (s === 'saving') this.doSave(true);
+      if (s === 'success') { this.doSave(false); showToast('The item was saved successfully.', 'success'); }
+      if (s === 'error') showToast('There was an error while trying to save the item.', 'error');
+      if (s === 'validation') {
+        this.data.a11yName = 'Test'; this.data.a11yUrl = '';
+        this.validate(); this.render();
+      }
+      if (s === 'no-edit') { this.canEdit = false; this.permissions['Settings.Edit'] = false; }
+      else { this.canEdit = true; this.permissions['Settings.Edit'] = true; }
+      if (s === 'unsaved') { this.data.menuColor = '#1a5f8a'; }
+      this.render();
+    }
+
+    doSave(simulateFail) {
+      if (!this.validate()) {
+        this.state = 'validation';
+        this.render();
+        return;
+      }
+      if (simulateFail === true) {
+        this.state = 'saving';
+        this.render();
+        setTimeout(() => {
+          this.saved = { ...this.data };
+          this.filePending = null;
+          this.state = 'loaded';
+          showToast('The item was saved successfully.', 'success');
+          this.render();
+        }, 1200);
+      } else if (simulateFail === false) {
+        this.saved = { ...this.data };
+        this.filePending = null;
+        this.state = 'loaded';
+      }
+    }
+
+    save() {
+      if (!this.canEdit) return;
+      if (!this.isDirty()) return;
+      if (!this.validate()) { this.render(); return; }
+      this.state = 'saving';
+      this.render();
+      setTimeout(() => {
+        this.saved = { ...this.data };
+        this.filePending = null;
+        this.state = 'loaded';
+        const payload = Object.entries(this.saved.ids).map(([k, id]) => ({
+          id, key: k, value: this.saved[k === 'logo' ? 'logoName' : k] || ''
+        }));
+        console.info('[prototype] POST SettingsApi payload:', payload, this.filePending ? '+ file upload first' : '');
+        showToast('The item was saved successfully.', 'success');
+        this.render();
+      }, 1000);
+    }
+
+    markDirty() { this.render(); }
+
+    bind() {
+      this.root.addEventListener('click', e => {
+        const st = e.target.closest('[data-state-set]');
+        if (st) { e.preventDefault(); this.setState(st.dataset.stateSet); return; }
+        const save = e.target.closest('[data-action="save"]');
+        if (save) { e.preventDefault(); this.save(); return; }
+        const sample = e.target.closest('[data-action="sample"]');
+        if (sample) { e.preventDefault(); this.loadSample(); return; }
+        const clear = e.target.closest('[data-action="clear-logo"]');
+        if (clear) { e.preventDefault(); this.data.logoName = ''; this.data.logoPreview = ''; this.filePending = null; this.render(); return; }
+        const browse = e.target.closest('[data-action="browse"]');
+        if (browse) { e.preventDefault(); this.root.querySelector('[data-field="logo-file"]')?.click(); return; }
+        const perm = e.target.closest('[data-perm-toggle]');
+        if (perm) {
+          e.preventDefault();
+          const p = perm.dataset.permToggle;
+          this.permissions[p] = !this.permissions[p];
+          this.render();
+          return;
+        }
+        const side = e.target.closest('[data-side-panel]');
+        if (side) { e.preventDefault(); this.sidePanel = side.dataset.sidePanel; this.render(); return; }
+        const sec = e.target.closest('[data-edit-section]');
+        if (sec) { e.preventDefault(); this.editingSection = sec.dataset.editSection; this.render(); return; }
+        const secSave = e.target.closest('[data-section-done]');
+        if (secSave) { e.preventDefault(); this.editingSection = null; this.markDirty(); return; }
+      });
+
+      this.root.addEventListener('input', e => {
+        const el = e.target;
+        const field = el.dataset?.field;
+        if (!field || field === 'logo-file') return;
+        if (field.endsWith('-hex')) {
+          const base = field.replace('-hex', '');
+          this.data[base] = el.value;
+          const sw = this.root.querySelector(`[data-swatch-fill="${base}"]`);
+          if (sw && /^#[0-9A-Fa-f]{6}$/i.test(hexNorm(el.value))) sw.style.background = hexNorm(el.value);
+        } else {
+          this.data[field] = el.value;
+        }
+        delete this.errors[field];
+        delete this.errors.a11yPair;
+        this.updatePreview();
+        this.renderFields();
+      });
+
+      this.root.addEventListener('change', e => {
+        if (e.target.dataset?.field === 'logo-file') {
+          const f = e.target.files?.[0];
+          if (!f) return;
+          if (!f.type.startsWith('image/')) {
+            showToast('File not supported', 'error');
+            return;
+          }
+          this.data.logoName = f.name;
+          this.filePending = f;
+          const reader = new FileReader();
+          reader.onload = ev => { this.data.logoPreview = ev.target.result; this.render(); };
+          reader.readAsDataURL(f);
+        }
+        if (e.target.type === 'color') {
+          const base = e.target.dataset.colorField;
+          this.data[base] = e.target.value.toUpperCase();
+          this.updatePreview();
+          this.renderFields();
+        }
+      });
+
+      this.root.addEventListener('keydown', e => {
+        const sw = e.target.closest('.color-swatch-btn');
+        if (sw && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          sw.querySelector('input[type="color"]')?.click();
+        }
+      });
+
+      this.root.addEventListener('dragover', e => {
+        const dz = e.target.closest('.drop-zone');
+        if (dz) { e.preventDefault(); dz.classList.add('dragover'); }
+      });
+      this.root.addEventListener('dragleave', e => {
+        const dz = e.target.closest('.drop-zone');
+        if (dz) dz.classList.remove('dragover');
+      });
+      this.root.addEventListener('drop', e => {
+        const dz = e.target.closest('.drop-zone');
+        if (!dz) return;
+        e.preventDefault();
+        dz.classList.remove('dragover');
+        const f = e.dataTransfer?.files?.[0];
+        if (f && f.type.startsWith('image/')) {
+          this.data.logoName = f.name;
+          this.filePending = f;
+          const reader = new FileReader();
+          reader.onload = ev => { this.data.logoPreview = ev.target.result; this.render(); };
+          reader.readAsDataURL(f);
+        } else showToast('File not supported', 'error');
+      });
+    }
+
+    updatePreview() {
+      const nav = this.root.querySelector('.app-nav');
+      const menu = hexNorm(this.data.menuColor) || '#1566a2';
+      if (nav) nav.style.setProperty('--preview-menu', menu);
+      this.root.querySelectorAll('[data-preview-th]').forEach(el => {
+        el.style.background = hexNorm(this.data.tableHeaderColor) || '#1566a2';
+        el.style.color = hexNorm(this.data.tableHeaderTextColor) || '#ffffff';
+      });
+      this.root.querySelectorAll('[data-preview-nav]').forEach(el => {
+        el.style.background = menu;
+      });
+      this.root.querySelectorAll('[data-preview-logo]').forEach(el => {
+        el.src = this.data.logoPreview || DEFAULT_LOGO_SVG;
+      });
+      const ratio = contrastRatio(this.data.tableHeaderTextColor || '#fff', this.data.tableHeaderColor || '#1566a2');
+      this.root.querySelectorAll('[data-contrast-ratio]').forEach(el => {
+        el.textContent = ratio.toFixed(2) + ':1';
+        const badge = el.closest('.contrast-badge');
+        if (badge) {
+          badge.classList.toggle('pass', ratio >= 4.5);
+          badge.classList.toggle('fail', ratio < 4.5);
+        }
+      });
+    }
+
+    renderSubNav(className) {
+      return `<nav class="${className}" aria-label="Settings sub-navigation">
+        ${SUB_NAV.map(s => {
+          const show = this.permissions[s.perm] !== false;
+          return `<a href="#" class="${s.active ? 'active' : ''} ${show ? '' : 'hidden-perm'}" data-sub="${s.id}" title="${s.perm}">
+            <i data-lucide="${s.icon}"></i>${s.label}</a>`;
+        }).join('')}
+      </nav>`;
+    }
+
+    renderShell(inner) {
+      const menu = hexNorm(this.data.menuColor) || '#1566a2';
+      const logo = this.data.logoPreview || DEFAULT_LOGO_SVG;
+      const saving = this.state === 'saving';
+      const dirty = this.isDirty();
+      const showSave = this.canEdit;
+
+      return `
+      <div class="app-shell">
+        <header class="app-nav" style="--preview-menu:${menu}" role="banner">
+          <div class="logo-area">
+            <img class="logo-img" data-preview-logo src="${logo}" alt="SEAtS ONE" />
+            <span class="logo-divider"></span>
+            <nav class="nav-links" aria-label="Admin menu">
+              <button type="button" class="nav-btn"><i data-lucide="users"></i><span class="label-text">Users</span></button>
+              <button type="button" class="nav-btn active"><i data-lucide="settings"></i><span class="label-text">Settings</span></button>
+              <button type="button" class="nav-btn"><i data-lucide="layout-grid"></i><span class="label-text">More</span></button>
+            </nav>
+          </div>
+          <div class="spacer"></div>
+          <div class="search-box">
+            <i data-lucide="search" style="width:16px;height:16px;opacity:.8"></i>
+            <input type="search" placeholder="Search…" aria-label="Search" />
+            <span class="search-kbd">Ctrl K</span>
+          </div>
+          <button type="button" class="bell-btn" aria-label="Notifications"><i data-lucide="bell" style="width:20px;height:20px"></i></button>
+          <span class="profile-divider"></span>
+          <button type="button" class="profile-btn" aria-label="Profile">GB</button>
+        </header>
+        ${this.renderSubNav('sub-nav')}
+        ${inner}
+        <div class="no-edit-overlay"><div class="no-edit-banner"><i data-lucide="lock" style="width:16px;height:16px"></i> View only — Settings·Edit permission required to save</div></div>
+        <div class="skeleton-overlay" aria-hidden="true">
+          <div class="skel h-lg"></div><div class="skel h-md"></div><div class="skel h-md"></div><div class="skel h-sm"></div>
+        </div>
+      </div>`;
+    }
+
+    fieldHtml(id, label, opts = {}) {
+      const err = this.errors[id] || this.errors[opts.errKey] || '';
+      const val = this.data[id] || '';
+      const secLocked = this.designId === 4 && (!this.editingSection || this.editingSection !== opts.section);
+      const disabled = this.state === 'loading' || !this.canEdit || (opts.section && secLocked);
+      const ro = disabled ? 'disabled' : '';
+
+      if (opts.type === 'color') {
+        const h = hexNorm(val) || '#1566a2';
+        return `<div class="field" data-field-wrap="${id}">
+          <label for="${this.designId}-${id}">${label}</label>
+          <div class="color-field">
+            <div class="color-swatch-btn" tabindex="0" role="button" aria-label="${label} colour picker">
+              <div class="fill" data-swatch-fill="${id}" style="background:${h}"></div>
+              <input type="color" data-color-field="${id}" value="${h}" ${ro} aria-label="${label}" />
+            </div>
+            <input type="text" class="hex-input" id="${this.designId}-${id}" data-field="${id}-hex" value="${val}" placeholder="#1566A2" ${ro} aria-describedby="${err ? this.designId+'-err-'+id : ''}" />
+          </div>
+          ${err ? `<div class="field-error" id="${this.designId}-err-${id}" role="alert">${err}</div>` : ''}
+        </div>`;
+      }
+      if (opts.type === 'logo') {
+        return `<div class="field" data-field-wrap="logo">
+          <label for="${this.designId}-logo">${label}</label>
+          ${this.designId === 5 ? `<div class="drop-zone ${val ? 'has-file' : ''}" data-action="browse">
+            <i data-lucide="upload" style="width:20px;height:20px;margin-bottom:.25rem"></i><br>
+            Drop image or click Browse · images only
+          </div>` : ''}
+          <div class="file-row" ${this.designId === 5 ? 'style="margin-top:.5rem"' : ''}>
+            <button type="button" class="btn btn-primary btn-sm" data-action="browse" ${ro}>Browse</button>
+            <div class="file-name" aria-live="polite">${val || 'No file selected'}</div>
+            ${val ? `<button type="button" class="btn btn-outline btn-sm" data-action="clear-logo" ${ro}>Clear</button>` : ''}
+          </div>
+          <input type="file" data-field="logo-file" accept="image/*" class="sr-only" id="${this.designId}-logo" />
+          ${err ? `<div class="field-error" role="alert">${err}</div>` : ''}
+        </div>`;
+      }
+      const icon = opts.icon || 'link';
+      return `<div class="field" data-field-wrap="${id}">
+        <label for="${this.designId}-${id}">${label}</label>
+        <div class="input-row">
+          <span class="input-icon" aria-hidden="true"><i data-lucide="${icon}"></i></span>
+          <input type="text" id="${this.designId}-${id}" data-field="${id}" value="${val}" ${ro}
+            aria-invalid="${err ? 'true' : 'false'}"
+            aria-describedby="${err ? this.designId+'-err-'+id : ''}" />
+        </div>
+        ${err ? `<div class="field-error" id="${this.designId}-err-${id}" role="alert">${err}</div>` : ''}
+      </div>`;
+    }
+
+    previewPanel() {
+      const menu = hexNorm(this.data.menuColor) || '#1566a2';
+      const thBg = hexNorm(this.data.tableHeaderColor) || '#1566a2';
+      const thFg = hexNorm(this.data.tableHeaderTextColor) || '#ffffff';
+      const logo = this.data.logoPreview || DEFAULT_LOGO_SVG;
+      const ratio = contrastRatio(thFg, thBg);
+      return `<div class="preview-panel">
+        <div class="preview-label">Preview <span class="sample-badge">live</span></div>
+        <div class="preview-mini-nav" data-preview-nav style="background:${menu}">
+          <img data-preview-logo src="${logo}" alt="" style="height:24px" />
+        </div>
+        <div class="preview-mini-table">
+          <div class="th" data-preview-th style="background:${thBg};color:${thFg}">Column A</div>
+          <div class="th" data-preview-th style="background:${thBg};color:${thFg}">Column B</div>
+          <div class="td">Sample row data</div>
+          <div class="td">Sample row data</div>
+        </div>
+        ${this.designId === 5 ? `<div style="padding:.75rem">
+          <span class="contrast-badge ${ratio >= 4.5 ? 'pass' : 'fail'}">
+            <i data-lucide="${ratio >= 4.5 ? 'check-circle' : 'alert-circle'}" style="width:14px;height:14px"></i>
+            AA contrast: <span data-contrast-ratio>${ratio.toFixed(2)}:1</span> ${ratio >= 4.5 ? 'PASS' : 'FAIL'}
+          </span>
+        </div>` : ''}
+      </div>`;
+    }
+
+    saveBtn(extraClass) {
+      const saving = this.state === 'saving';
+      const dirty = this.isDirty();
+      const hidden = !this.canEdit;
+      return `<div class="save-btn-wrap ${hidden ? 'hidden-save' : ''} ${extraClass || ''}">
+        <button type="button" class="btn btn-primary" data-action="save"
+          ${saving || !dirty ? 'disabled' : ''} aria-busy="${saving}">
+          ${saving ? '<span class="spinner"></span> Saving…' : '<i data-lucide="save" style="width:16px;height:16px"></i> Save'}
+        </button>
+      </div>`;
+    }
+
+    renderFields() {
+      const wrap = this.root.querySelector('[data-fields]');
+      if (!wrap) return;
+      const banner = this.root.querySelector('.validation-banner');
+      if (banner) banner.classList.toggle('visible', !!this.errors.a11yPair);
+      this.updatePreview();
+      ['onlineHelpUrl','menuColor','tableHeaderColor','tableHeaderTextColor','logoName','a11yName','a11yUrl'].forEach(id => {
+        const inp = wrap.querySelector(`[data-field="${id}"], [data-field="${id}-hex"]`);
+        if (inp && inp.value !== (this.data[id] || '')) inp.value = this.data[id] || '';
+      });
+    }
+
+    layout1() {
+      const dirty = this.isDirty();
+      return this.renderShell(`
+        <div class="top-save-row ${!this.canEdit ? 'hidden-save' : ''}">
+          ${dirty ? '<span style="font-size:.8125rem;color:var(--muted)"><span class="unsaved-dot"></span>Unsaved changes</span>' : '<span></span>'}
+          <div style="display:flex;gap:.5rem;align-items:center">
+            <button type="button" class="btn btn-ghost btn-sm" data-action="sample">Load sample data</button>
+            ${this.saveBtn()}
+          </div>
+        </div>
+        <div class="form-content">
+          <div class="validation-banner" role="alert" aria-live="assertive">${this.errors.a11yPair || 'There are fields with input validation errors.'}</div>
+          <div data-fields>
+            <div class="card" style="margin-bottom:1rem">
+              <div class="card-header"><h3><i data-lucide="link" style="width:18px;height:18px"></i> Links &amp; Help</h3></div>
+              <div class="card-body">
+                <div class="section-group">
+                  ${this.fieldHtml('onlineHelpUrl', 'Online Help Url', { icon: 'link' })}
+                </div>
+              </div>
+            </div>
+            <div class="card" style="margin-bottom:1rem">
+              <div class="card-header"><h3><i data-lucide="palette" style="width:18px;height:18px"></i> Brand colours</h3></div>
+              <div class="card-body">
+                ${this.fieldHtml('menuColor', 'Menu color', { type: 'color' })}
+                ${this.fieldHtml('tableHeaderColor', 'Table header color', { type: 'color' })}
+                ${this.fieldHtml('tableHeaderTextColor', 'Table header text color', { type: 'color' })}
+              </div>
+            </div>
+            <div class="card" style="margin-bottom:1rem">
+              <div class="card-header"><h3><i data-lucide="image" style="width:18px;height:18px"></i> Logo &amp; accessibility</h3></div>
+              <div class="card-body">
+                ${this.fieldHtml('logoName', 'Menu custom logo', { type: 'logo' })}
+                ${this.fieldHtml('a11yName', 'Accessibility statement name', { icon: 'pen-line' })}
+                ${this.fieldHtml('a11yUrl', 'Accessibility statement URL', { icon: 'link' })}
+              </div>
+            </div>
+            ${this.previewPanel()}
+          </div>
+          <div class="sticky-save ${dirty && this.canEdit ? 'visible' : ''}">
+            <span style="font-size:.875rem"><span class="unsaved-dot"></span>Unsaved changes</span>
+            ${this.saveBtn()}
+          </div>
+        </div>
+      `);
+    }
+
+    layout2() {
+      return this.renderShell(`
+        <div class="form-content">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+            <div><h2 style="margin:0;font-size:1.125rem">Settings</h2><p style="margin:0;font-size:.875rem;color:var(--muted)">Configure branding and help links</p></div>
+            <div style="display:flex;gap:.5rem">${this.saveBtn()}<button type="button" class="btn btn-ghost btn-sm" data-action="sample">Sample data</button></div>
+          </div>
+          <div class="validation-banner" role="alert" aria-live="assertive">There are fields with input validation errors.</div>
+          <div class="layout-two-col" data-fields>
+            <div class="card"><div class="card-body">
+              ${this.fieldHtml('onlineHelpUrl', 'Online Help Url', { icon: 'link' })}
+              <div class="section-group-title">Colours</div>
+              ${this.fieldHtml('menuColor', 'Menu color', { type: 'color' })}
+              ${this.fieldHtml('tableHeaderColor', 'Table header color', { type: 'color' })}
+              ${this.fieldHtml('tableHeaderTextColor', 'Table header text color', { type: 'color' })}
+              <div class="section-group-title">Logo &amp; accessibility</div>
+              ${this.fieldHtml('logoName', 'Menu custom logo', { type: 'logo' })}
+              ${this.fieldHtml('a11yName', 'Accessibility statement name', { icon: 'pen-line' })}
+              ${this.fieldHtml('a11yUrl', 'Accessibility statement URL', { icon: 'link' })}
+            </div></div>
+            <div>${this.previewPanel()}</div>
+          </div>
+        </div>
+      `);
+    }
+
+    layout3() {
+      const panels = {
+        settings: () => `<h3 style="margin:0 0 1rem">General settings</h3>
+          <div data-fields>
+            ${this.fieldHtml('onlineHelpUrl', 'Online Help Url', { icon: 'link' })}
+            ${this.fieldHtml('menuColor', 'Menu color', { type: 'color' })}
+            ${this.fieldHtml('tableHeaderColor', 'Table header color', { type: 'color' })}
+            ${this.fieldHtml('tableHeaderTextColor', 'Table header text color', { type: 'color' })}
+            ${this.fieldHtml('logoName', 'Menu custom logo', { type: 'logo' })}
+            ${this.fieldHtml('a11yName', 'Accessibility statement name', { icon: 'pen-line' })}
+            ${this.fieldHtml('a11yUrl', 'Accessibility statement URL', { icon: 'link' })}
+          </div>`,
+        filetemplate: () => `<p style="color:var(--muted)">File Template settings — separate screen (not in scope).</p>`,
+        branding: () => `<div data-fields>
+          ${this.fieldHtml('menuColor', 'Menu color', { type: 'color' })}
+          ${this.fieldHtml('tableHeaderColor', 'Table header color', { type: 'color' })}
+          ${this.fieldHtml('tableHeaderTextColor', 'Table header text color', { type: 'color' })}
+          ${this.fieldHtml('logoName', 'Menu custom logo', { type: 'logo' })}
+          ${this.previewPanel()}
+        </div>`,
+      };
+      const sideItems = [
+        { id: 'settings', label: 'General', icon: 'settings', perm: 'Settings.Access' },
+        { id: 'filetemplate', label: 'File Template', icon: 'file-code', perm: 'FileTemplate.Access' },
+        { id: 'branding', label: 'Branding', icon: 'palette', perm: 'Settings.Access' },
+        { id: 'activity', label: 'Activity Types', icon: 'calendar-plus', perm: 'ScheduledActivityType.Access' },
+        { id: 'resources', label: 'Resources', icon: 'tags', perm: 'Resources.Access' },
+        { id: 'customfields', label: 'Custom Fields', icon: 'list-checks', perm: 'CustomFields.Access' },
+        { id: 'auth', label: 'Authentication', icon: 'key-round', perm: 'ConfigureAuthentication.Access' },
+        { id: 'contacts', label: 'Contacts', icon: 'mail', perm: 'Settings.Contacts' },
+        { id: 'graph', label: 'Graph API', icon: 'cloud', perm: 'Settings.Contacts' },
+      ];
+      const extPanels = ['filetemplate','activity','resources','customfields','auth','contacts','graph'];
+      const panel = this.sidePanel === 'branding' ? panels.branding()
+        : extPanels.includes(this.sidePanel) && this.sidePanel !== 'filetemplate'
+          ? `<p style="color:var(--muted)">${SUB_NAV.find(s=>s.id===this.sidePanel)?.label || this.sidePanel} — separate screen (not in scope).</p>`
+        : this.sidePanel === 'filetemplate' ? panels.filetemplate() : panels.settings();
+      return this.renderShell(`
+        <div class="layout-side-nav">
+          <nav class="side-nav-list" aria-label="Settings sections">
+            ${sideItems.map(s => `<a href="#" class="${this.sidePanel === s.id ? 'active' : ''} ${this.permissions[s.perm] ? '' : 'hidden-perm'}" data-side-panel="${s.id}">
+              <i data-lucide="${s.icon}" style="width:14px;height:14px"></i>${s.label}</a>`).join('')}
+          </nav>
+          <div class="side-panel">
+            <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;gap:.5rem">
+              <button type="button" class="btn btn-ghost btn-sm" data-action="sample">Sample data</button>
+              ${this.saveBtn()}
+            </div>
+            <div class="validation-banner" role="alert" aria-live="assertive">There are fields with input validation errors.</div>
+            ${panel}
+          </div>
+        </div>
+      `);
+    }
+
+    layout4() {
+      const sections = [
+        { id: 'links', title: 'Links & Help', icon: 'link', fields: ['onlineHelpUrl'] },
+        { id: 'colors', title: 'Brand colours', icon: 'palette', fields: ['menuColor','tableHeaderColor','tableHeaderTextColor'] },
+        { id: 'logo', title: 'Menu logo', icon: 'image', fields: ['logoName'] },
+        { id: 'a11y', title: 'Accessibility', icon: 'accessibility', fields: ['a11yName','a11yUrl'] },
+      ];
+      const fieldMap = {
+        onlineHelpUrl: () => this.fieldHtml('onlineHelpUrl', 'Online Help Url', { icon: 'link', section: 'links' }),
+        menuColor: () => this.fieldHtml('menuColor', 'Menu color', { type: 'color', section: 'colors' }),
+        tableHeaderColor: () => this.fieldHtml('tableHeaderColor', 'Table header color', { type: 'color', section: 'colors' }),
+        tableHeaderTextColor: () => this.fieldHtml('tableHeaderTextColor', 'Table header text color', { type: 'color', section: 'colors' }),
+        logoName: () => this.fieldHtml('logoName', 'Menu custom logo', { type: 'logo', section: 'logo' }),
+        a11yName: () => this.fieldHtml('a11yName', 'Accessibility statement name', { icon: 'pen-line', section: 'a11y' }),
+        a11yUrl: () => this.fieldHtml('a11yUrl', 'Accessibility statement URL', { icon: 'link', section: 'a11y' }),
+      };
+      return this.renderShell(`
+        <div class="form-content">
+          <div style="display:flex;justify-content:space-between;margin-bottom:1rem;align-items:center">
+            <p style="margin:0;font-size:.8125rem;color:var(--muted)">Edit sections individually — one Save commits all changes</p>
+            <div style="display:flex;gap:.5rem">${this.saveBtn()}<button type="button" class="btn btn-ghost btn-sm" data-action="sample">Sample</button></div>
+          </div>
+          <div class="validation-banner" role="alert" aria-live="assertive">There are fields with input validation errors.</div>
+          <div class="section-cards" data-fields>
+            ${sections.map(s => {
+              const editing = this.editingSection === s.id;
+              const disabled = this.editingSection && !editing;
+              return `<div class="card section-card ${editing ? 'editing' : ''}" style="${disabled ? 'opacity:.6' : ''}">
+                <div class="card-header" style="display:flex;align-items:center;justify-content:space-between">
+                  <h3><i data-lucide="${s.icon}" style="width:18px;height:18px"></i> ${s.title}</h3>
+                  <div class="section-actions">
+                    ${editing
+                      ? `<button type="button" class="btn btn-outline btn-sm" data-section-done="${s.id}">Done</button>`
+                      : `<button type="button" class="btn btn-ghost btn-sm" data-edit-section="${s.id}">Edit</button>`}
+                  </div>
+                </div>
+                <div class="card-body">${s.fields.map(f => fieldMap[f]()).join('')}</div>
+              </div>`;
+            }).join('')}
+            ${this.previewPanel()}
+          </div>
+        </div>
+      `);
+    }
+
+    layout5() {
+      const ratio = contrastRatio(this.data.tableHeaderTextColor || '#fff', this.data.tableHeaderColor || '#1566a2');
+      return this.renderShell(`
+        <div class="form-content">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem">
+            <div>
+              <h2 style="margin:0;font-size:1.125rem">Brand studio</h2>
+              <p style="margin:.25rem 0 0;font-size:.875rem;color:var(--muted)">Tune colours with contrast feedback</p>
+            </div>
+            <div style="display:flex;gap:.5rem">${this.saveBtn()}<button type="button" class="btn btn-ghost btn-sm" data-action="sample">Sample data</button></div>
+          </div>
+          <div class="validation-banner" role="alert" aria-live="assertive">There are fields with input validation errors.</div>
+          <div class="brand-studio">
+            <div data-fields>
+              <div class="section-group-title">Colour swatches</div>
+              <div class="swatch-grid">
+                ${['menuColor','tableHeaderColor','tableHeaderTextColor'].map(id => {
+                  const labels = { menuColor: 'Menu', tableHeaderColor: 'Header bg', tableHeaderTextColor: 'Header text' };
+                  const h = hexNorm(this.data[id]) || '#1566a2';
+                  return `<div class="swatch-card">
+                    <div class="color-swatch-btn" style="width:64px;height:64px;margin:0 auto .5rem" tabindex="0" role="button">
+                      <div class="fill" data-swatch-fill="${id}" style="background:${h}"></div>
+                      <input type="color" data-color-field="${id}" value="${h}" />
+                    </div>
+                    <div style="font-size:.8125rem;font-weight:600">${labels[id]}</div>
+                    <input type="text" class="hex-input" style="max-width:100%;margin-top:.375rem;text-align:center" data-field="${id}-hex" value="${this.data[id]}" />
+                  </div>`;
+                }).join('')}
+              </div>
+              <div style="margin:1rem 0">
+                <span class="contrast-badge ${ratio >= 4.5 ? 'pass' : 'fail'}">
+                  <i data-lucide="${ratio >= 4.5 ? 'check-circle' : 'alert-circle'}" style="width:14px;height:14px"></i>
+                  Table header AA: <span data-contrast-ratio>${ratio.toFixed(2)}:1</span>
+                </span>
+              </div>
+              <div class="section-group-title">Other settings</div>
+              ${this.fieldHtml('onlineHelpUrl', 'Online Help Url', { icon: 'link' })}
+              ${this.fieldHtml('logoName', 'Menu custom logo', { type: 'logo' })}
+              ${this.fieldHtml('a11yName', 'Accessibility statement name', { icon: 'pen-line' })}
+              ${this.fieldHtml('a11yUrl', 'Accessibility statement URL', { icon: 'link' })}
+            </div>
+            <div>${this.previewPanel()}</div>
+          </div>
+        </div>
+      `);
+    }
+
+    render() {
+      const layouts = [this.layout1, this.layout2, this.layout3, this.layout4, this.layout5];
+      const frame = this.root.querySelector('.preview-frame');
+      if (!frame) return;
+      frame.dataset.state = this.state === 'loading' ? 'loading' : 'loaded';
+      frame.dataset.noEdit = !this.canEdit ? 'true' : 'false';
+      const inner = this.root.querySelector('.preview-inner');
+      if (inner) inner.innerHTML = layouts[this.designId - 1].call(this);
+      this.root.querySelectorAll('[data-state-set]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.stateSet === this.state);
+      });
+      this.root.querySelectorAll('[data-perm-toggle]').forEach(btn => {
+        const p = btn.dataset.permToggle;
+        btn.classList.toggle('active', this.permissions[p] !== false);
+      });
+      const banner = this.root.querySelector('.validation-banner');
+      if (banner) banner.classList.toggle('visible', this.state === 'validation' || !!this.errors.a11yPair);
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+      this.updatePreview();
+    }
+  }
+
+  const DESIGNS = [
+    {
+      id: 1,
+      name: 'Scheduler card + sticky save',
+      idea: 'Grouped section cards with top Save and a slide-up sticky bar when dirty.',
+      bestFor: 'Familiar Scheduler settings pattern; clear section hierarchy.',
+      tradeoff: 'Vertical scroll on smaller viewports; preview at bottom.',
+    },
+    {
+      id: 2,
+      name: 'Form + live preview column',
+      idea: 'Single form column beside a large always-visible brand preview.',
+      bestFor: 'Brand admins who need immediate visual feedback while editing.',
+      tradeoff: 'Two-column layout stacks on narrow screens.',
+    },
+    {
+      id: 3,
+      name: 'Vertical settings navigation',
+      idea: 'Left rail mirrors legacy sub-nav; content panel switches by section.',
+      bestFor: 'Users navigating between Settings sub-screens frequently.',
+      tradeoff: 'Branding fields split across General and Branding panels.',
+    },
+    {
+      id: 4,
+      name: 'Section cards with inline edit',
+      idea: 'Each section has Edit/Done; one Save still posts all settings.',
+      bestFor: 'Reducing cognitive load — focus one section at a time.',
+      tradeoff: 'Extra click to edit; must communicate single-save model.',
+    },
+    {
+      id: 5,
+      name: 'Brand studio + contrast checker',
+      idea: 'Colour swatch grid with WCAG AA pass/fail and drop-zone logo upload.',
+      bestFor: 'Accessibility-conscious branding with contrast guardrails.',
+      tradeoff: 'More visual weight on colours; less traditional form layout.',
+    },
+  ];
+
+  function buildDesign(d) {
+    const block = document.createElement('section');
+    block.className = 'design-block';
+    block.innerHTML = `
+      <div class="state-bar">
+        <span class="label">State:</span>
+        ${STATES.map(s => `<button type="button" class="state-btn" data-state-set="${s}">${s.replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase())}</button>`).join('')}
+        <span class="label" style="margin-left:1rem">Perms:</span>
+        ${['Settings.Edit','FileTemplate.Access','Settings.Contacts'].map(p =>
+          `<button type="button" class="state-btn" data-perm-toggle="${p}" title="Toggle ${p}">${p.split('.')[1]}</button>`
+        ).join('')}
+      </div>
+      <div class="preview-frame" data-design="${d.id}">
+        <div class="preview-inner"></div>
+      </div>
+      <div class="design-meta">
+        <h2>Design ${d.id}: ${d.name}</h2>
+        <p class="idea">${d.idea}</p>
+        <dl>
+          <dt>Best for</dt><dd>${d.bestFor}</dd>
+          <dt>Trade-off</dt><dd>${d.tradeoff}</dd>
+        </dl>
+        <div class="checklist">Checklist: ${CHECKLIST.length}/${CHECKLIST.length}</div>
+      </div>
+    `;
+    document.getElementById('designs-container').appendChild(block);
+    const ctrl = new SettingsController(block, d.id);
+    ctrl.render();
+    return ctrl;
+  }
+
+  DESIGNS.forEach(buildDesign);
+
+  window.addEventListener('beforeunload', e => {
+    const anyDirty = document.querySelectorAll('.preview-frame').length;
+    if (anyDirty) { /* prototype only — unsaved state shown via UI */ }
+  });
+})();
+</script>
+</body>
+</html>
