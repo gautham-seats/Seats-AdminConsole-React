@@ -122,6 +122,7 @@ export function DevicesTable({
     body = (
       <StateRow span={span}>
         <EmptyState
+          surface="table"
           title={DEVICES_FALLBACK_ONLY.noItems}
           action={
             hasFilters ? (

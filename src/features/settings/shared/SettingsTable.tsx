@@ -142,6 +142,7 @@ export function SettingsTable<T extends { id: RowKey }>({
       <tr>
         <td colSpan={span} className="h-full p-0">
           <EmptyState
+            surface="table"
             title={emptyText}
             kind={onClearSearch ? 'results' : 'empty'}
             className="min-h-64"

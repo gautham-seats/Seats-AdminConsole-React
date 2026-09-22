@@ -99,6 +99,7 @@ export function ListTable<T extends { id: number }, K extends string>({
       <tr>
         <td colSpan={span} className="h-full p-0">
           <EmptyState
+            surface="table"
             title={text.empty}
             kind={list.search ? 'results' : 'empty'}
             action={

@@ -84,6 +84,7 @@ export function UsersTable({ list, t }: UsersTableProps) {
       <tr>
         <td colSpan={span} className="h-full p-0">
           <EmptyState
+            surface="table"
             title={USERS_FALLBACK_ONLY.noItems}
             kind={query.search ? 'results' : 'empty'}
             action={
