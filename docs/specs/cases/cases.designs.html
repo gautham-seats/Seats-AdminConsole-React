@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEAtS Admin — Cases Area Design Prototypes</title>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+:root {
+  --brand: #1566a2;
+  --brand-avatar: #56bdea;
+  --page: #f5f6fa;
+  --card: #fff;
+  --foreground: hsl(222.2, 84%, 4.9%);
+  --muted: hsl(215.4, 16.3%, 46.9%);
+  --border: hsl(214.3, 31.8%, 91.4%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --radius: 0.5rem;
+  --shadow: 0 2px 12px rgba(21,102,162,.12);
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: var(--font); background: #e8eaef; color: var(--foreground); line-height: 1.5; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+
+/* Page chrome */
+.page-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 1.25rem 2rem; position: sticky; top: 0; z-index: 100; }
+.page-header h1 { margin: 0 0 .25rem; font-size: 1.35rem; }
+.page-header p { margin: 0; color: var(--muted); font-size: .875rem; }
+.design-nav { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .75rem; }
+.design-nav a { padding: .35rem .75rem; border-radius: var(--radius); background: var(--page); text-decoration: none; color: var(--foreground); font-size: .8rem; border: 1px solid var(--border); }
+.design-nav a:hover, .design-nav a:focus-visible { border-color: var(--brand); outline: none; }
+
+/* Design section */
+.design-section { margin: 2rem auto; max-width: 1440px; padding: 0 1rem; }
+.design-meta-top { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-bottom: .75rem; }
+.design-meta-top h2 { margin: 0; font-size: 1.15rem; flex: 1; }
+.state-switcher { display: flex; flex-wrap: wrap; gap: .35rem; }
+.state-btn { padding: .25rem .55rem; font-size: .7rem; border: 1px solid var(--border); background: var(--card); border-radius: calc(var(--radius) - 2px); cursor: pointer; }
+.state-btn[aria-pressed="true"] { background: var(--brand); color: #fff; border-color: var(--brand); }
+.state-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
+.sample-badge { font-size: .7rem; background: #fff3cd; color: #856404; padding: .15rem .5rem; border-radius: 999px; }
+
+/* Preview frame */
+.preview-frame { background: var(--page); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); min-height: 520px; }
+.preview-inner { min-width: 0; }
+
+/* NavBar shell (NavBar.tsx) */
+.app-shell { display: flex; flex-direction: column; min-height: 520px; }
+.navbar { position: relative; z-index: 40; display: flex; height: 50px; width: 100%; align-items: center; background: var(--brand); background-image: linear-gradient(180deg,rgba(255,255,255,.13) 0%,rgba(255,255,255,.04) 46%,rgba(255,255,255,0) 54%,rgba(0,0,0,.05) 100%); padding: 0 1rem; box-shadow: inset 0 1px 0 rgba(255,255,255,.22), inset 0 -1px 0 rgba(0,0,0,.12), 0 2px 12px rgba(21,102,162,.28); flex-shrink: 0; }
+.navbar-logo { font-weight: 700; color: #fff; font-size: .95rem; letter-spacing: .02em; }
+.navbar-divider { margin: 0 .875rem; height: 30px; width: 1px; background: rgba(255,255,255,.3); }
+.navbar-nav { display: flex; gap: 2px; align-items: center; }
+.nav-btn { display: inline-flex; height: 40px; align-items: center; padding: 0 .75rem; font-size: .875rem; font-weight: 500; color: #fff; border: none; background: transparent; border-radius: calc(var(--radius) - 2px); cursor: default; white-space: nowrap; }
+.nav-btn svg { width: 1rem; height: 1rem; margin-right: .5rem; }
+.nav-btn.current { background: rgba(255,255,255,.15); }
+.navbar-right { margin-left: auto; display: flex; align-items: center; gap: .5rem; }
+.nav-search { display: flex; height: 36px; width: 200px; align-items: center; gap: .5rem; border-radius: calc(var(--radius) - 2px); background: rgba(255,255,255,.1); padding: 0 .75rem; color: #fff; font-size: .8rem; border: 1px solid rgba(255,255,255,.15); }
+.nav-search input { background: transparent; border: none; color: #fff; flex: 1; font-size: .8rem; outline: none; }
+.nav-search input::placeholder { color: rgba(255,255,255,.7); }
+.nav-bell { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; color: #fff; }
+.nav-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--brand-avatar); color: #fff; display: grid; place-items: center; font-size: .8rem; font-weight: 600; }
+
+/* Main content area */
+.main-content { flex: 1; padding: 1rem; overflow: auto; }
+
+/* Shared components */
+.cases-tabs { display: flex; gap: .25rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+.cases-tab { padding: .5rem 1rem; font-size: .875rem; font-weight: 500; border: none; background: transparent; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; display: inline-flex; align-items: center; gap: .4rem; }
+.cases-tab[aria-selected="true"] { color: var(--brand); border-bottom-color: var(--brand); }
+.cases-tab:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.view-tabs { display: flex; gap: .35rem; margin-bottom: .75rem; }
+.view-tab { padding: .3rem .65rem; font-size: .75rem; border: 1px solid var(--border); background: var(--card); border-radius: calc(var(--radius) - 2px); cursor: pointer; }
+.view-tab[aria-selected="true"] { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: .75rem; }
+.btn { display: inline-flex; align-items: center; gap: .35rem; padding: .4rem .75rem; font-size: .8rem; font-weight: 500; border-radius: calc(var(--radius) - 2px); border: 1px solid var(--border); background: var(--card); cursor: pointer; transition: background .15s, box-shadow .15s; }
+.btn:hover:not(:disabled) { background: var(--page); }
+.btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+.btn-primary:hover:not(:disabled) { background: #125a8f; }
+.btn-destructive { background: var(--destructive); color: #fff; border-color: var(--destructive); }
+.btn-ghost { background: transparent; border-color: transparent; }
+.btn-sm { padding: .25rem .5rem; font-size: .75rem; }
+.btn svg { width: .9rem; height: .9rem; }
+
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); }
+.card-pad { padding: 1rem; }
+
+.data-grid { width: 100%; border-collapse: collapse; font-size: .8rem; background: var(--card); border-radius: var(--radius); overflow: hidden; }
+.data-grid th, .data-grid td { padding: .5rem .6rem; text-align: left; border-bottom: 1px solid var(--border); }
+.data-grid th { background: var(--page); font-weight: 600; font-size: .75rem; white-space: nowrap; }
+.data-grid th.sortable { cursor: pointer; }
+.data-grid th.sortable:hover { color: var(--brand); }
+.data-grid tr:hover td { background: rgba(21,102,162,.04); }
+.data-grid tr.clickable { cursor: pointer; }
+.data-grid tr.selected td { background: rgba(21,102,162,.08); }
+.data-grid .col-check { width: 36px; }
+.inline-select { font-size: .75rem; padding: .2rem .35rem; border: 1px solid var(--border); border-radius: calc(var(--radius) - 4px); max-width: 110px; }
+.inline-select:focus-visible { outline: 2px solid var(--brand); }
+
+.badge { display: inline-flex; align-items: center; padding: .1rem .45rem; font-size: .7rem; font-weight: 600; border-radius: 999px; }
+.badge-live { background: #d1fae5; color: #065f46; }
+.badge-disabled { background: #f3f4f6; color: #6b7280; }
+.badge-approved { background: #dbeafe; color: #1e40af; }
+.badge-not-approved { background: #fee2e2; color: #991b1b; }
+.badge-auto { background: #e0e7ff; color: #3730a3; }
+
+.breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; font-size: .8rem; margin-bottom: .75rem; }
+.breadcrumb a, .breadcrumb button.bc-link { color: var(--brand); background: none; border: none; cursor: pointer; padding: 0; font-size: inherit; text-decoration: underline; }
+.breadcrumb .sep { color: var(--muted); }
+.breadcrumb .current { font-weight: 600; }
+
+.filter-bar { display: flex; flex-wrap: wrap; gap: .75rem; align-items: flex-end; margin-bottom: .75rem; }
+.filter-group label { display: block; font-size: .7rem; font-weight: 600; color: var(--muted); margin-bottom: .2rem; }
+.filter-group select, .filter-group input { padding: .35rem .5rem; border: 1px solid var(--border); border-radius: calc(var(--radius) - 2px); font-size: .8rem; min-width: 140px; }
+.filter-group input:focus-visible, .filter-group select:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
+
+.student-count { font-size: .8rem; font-weight: 600; margin-left: auto; }
+.pagination { display: flex; align-items: center; gap: .5rem; padding: .5rem 0; font-size: .75rem; color: var(--muted); }
+.pagination button { padding: .2rem .5rem; border: 1px solid var(--border); background: var(--card); border-radius: calc(var(--radius) - 4px); cursor: pointer; }
+.pagination button:disabled { opacity: .4; cursor: not-allowed; }
+
+/* States */
+.state-panel { padding: 2rem; text-align: center; color: var(--muted); }
+.state-panel.error { color: var(--destructive); }
+.skeleton { background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); background-size: 200% 100%; animation: shimmer 1.2s infinite; border-radius: 4px; height: 1rem; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.empty-icon { width: 48px; height: 48px; margin: 0 auto .75rem; color: var(--muted); opacity: .5; }
+
+/* Modals */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 200; display: none; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--card); border-radius: var(--radius); width: min(420px, 92vw); box-shadow: 0 20px 40px rgba(0,0,0,.2); animation: zoomIn .2s ease; }
+@keyframes zoomIn { from { opacity: 0; transform: scale(.95); } }
+.modal-header { padding: 1rem 1rem .5rem; font-weight: 600; font-size: 1rem; border-bottom: 1px solid var(--border); }
+.modal-body { padding: 1rem; }
+.modal-footer { padding: .75rem 1rem; display: flex; gap: .5rem; justify-content: flex-end; border-top: 1px solid var(--border); }
+.form-group { margin-bottom: .75rem; }
+.form-group label { display: block; font-size: .8rem; font-weight: 500; margin-bottom: .25rem; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: .4rem .5rem; border: 1px solid var(--border); border-radius: calc(var(--radius) - 2px); font-size: .85rem; }
+.form-group .error-msg { color: var(--destructive); font-size: .75rem; margin-top: .25rem; }
+.toggle-row { display: flex; align-items: center; gap: .5rem; }
+
+/* Toasts */
+.toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 300; display: flex; flex-direction: column; gap: .5rem; }
+.toast { padding: .65rem 1rem; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); font-size: .8rem; animation: slideIn .2s ease; max-width: 320px; }
+.toast.success { border-left: 3px solid #10b981; }
+.toast.error { border-left: 3px solid var(--destructive); }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } }
+
+/* Design-specific layouts */
+/* D1: Scheduler-native */
+.d1 .content-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; }
+
+/* D2: Split list + tree */
+.d2 .split-layout { display: grid; grid-template-columns: 280px 1fr; gap: 1rem; min-height: 380px; }
+.d2 .workflow-list { border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); overflow: auto; max-height: 400px; }
+.d2 .workflow-item { padding: .6rem .75rem; border-bottom: 1px solid var(--border); cursor: pointer; font-size: .8rem; }
+.d2 .workflow-item:hover, .d2 .workflow-item.active { background: rgba(21,102,162,.08); }
+.d2 .workflow-item.active { border-left: 3px solid var(--brand); }
+.d2 .tree-panel { border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); padding: .75rem; }
+.d2 .tree-node { padding: .35rem .5rem; font-size: .8rem; cursor: pointer; border-radius: calc(var(--radius) - 4px); display: flex; align-items: center; gap: .35rem; }
+.d2 .tree-node:hover { background: var(--page); }
+.d2 .tree-node.active { background: rgba(21,102,162,.1); font-weight: 600; }
+.d2 .tree-children { margin-left: 1.25rem; border-left: 1px dashed var(--border); padding-left: .5rem; }
+
+/* D3: Row expansion */
+.d3 .expand-row td { background: var(--page); }
+.d3 .expand-content { padding: .75rem 1rem; font-size: .8rem; }
+.d3 .filter-first { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin-bottom: .75rem; }
+
+/* D4: Cards + action panel */
+.d4 .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: .75rem; margin-bottom: .75rem; }
+.d4 .wf-card { border: 1px solid var(--border); border-radius: var(--radius); padding: .75rem; cursor: pointer; transition: box-shadow .15s; background: var(--card); }
+.d4 .wf-card:hover, .d4 .wf-card.selected { box-shadow: 0 0 0 2px var(--brand); }
+.d4 .wf-card h4 { margin: 0 0 .35rem; font-size: .85rem; }
+.d4 .wf-card .stats { font-size: .7rem; color: var(--muted); }
+.d4 .action-panel { border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); padding: .75rem; min-width: 200px; }
+.d4 .split-student { display: grid; grid-template-columns: 1fr 220px; gap: .75rem; }
+
+/* D5: Command bar + drawers */
+.d5 .command-bar { position: sticky; top: 0; z-index: 10; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: .5rem .75rem; display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: .75rem; }
+.d5 .selection-bar { background: var(--brand); color: #fff; padding: .5rem .75rem; border-radius: var(--radius); display: none; align-items: center; gap: .75rem; margin-bottom: .75rem; animation: slideDown .2s ease; }
+.d5 .selection-bar.visible { display: flex; }
+@keyframes slideDown { from { transform: translateY(-8px); opacity: 0; } }
+.d5 .drawer { position: fixed; top: 0; right: 0; width: min(380px, 90vw); height: 100%; background: var(--card); box-shadow: -4px 0 24px rgba(0,0,0,.15); z-index: 250; transform: translateX(100%); transition: transform .25s ease; display: flex; flex-direction: column; }
+.d5 .drawer.open { transform: translateX(0); }
+.d5 .drawer-header { padding: 1rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+.d5 .drawer-body { padding: 1rem; flex: 1; overflow: auto; }
+.d5 .drawer-footer { padding: .75rem 1rem; border-top: 1px solid var(--border); display: flex; gap: .5rem; justify-content: flex-end; }
+
+/* Design footer meta */
+.design-footer { margin-top: 1rem; padding: 1rem; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); font-size: .85rem; }
+.design-footer dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: .25rem .75rem; }
+.design-footer dt { font-weight: 600; color: var(--muted); }
+.design-footer .checklist { margin-top: .5rem; font-size: .8rem; color: var(--brand); font-weight: 600; }
+
+/* Responsive */
+@media (max-width: 1280px) { .d2 .split-layout { grid-template-columns: 220px 1fr; } .d4 .split-student { grid-template-columns: 1fr; } }
+@media (max-width: 1024px) {
+  .d2 .split-layout { grid-template-columns: 1fr; }
+  .data-grid { font-size: .75rem; }
+  .data-grid th, .data-grid td { padding: .35rem .4rem; }
+  .navbar-nav .nav-btn span.label { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <h1>SEAtS Admin React — Cases Area Design Prototypes</h1>
+  <p>5 structural alternatives · Scheduler tokens · Sample data only · Tabs: Workflow Admin · Student Workflow</p>
+  <nav class="design-nav" aria-label="Jump to design">
+    <a href="#design-1">1 Scheduler-native</a>
+    <a href="#design-2">2 List + Tree</a>
+    <a href="#design-3">3 Expandable Grid</a>
+    <a href="#design-4">4 Cards + Panel</a>
+    <a href="#design-5">5 Command Bar + Drawers</a>
+  </nav>
+</header>
+
+<div id="designs-container"></div>
+
+<!-- Shared modals -->
+<div class="modal-overlay" id="modal-workflow" role="dialog" aria-modal="true" aria-labelledby="modal-wf-title">
+  <div class="modal">
+    <div class="modal-header" id="modal-wf-title">Workflows</div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="wf-name">Name <span aria-hidden="true">*</span></label>
+        <input id="wf-name" type="text" maxlength="50" aria-required="true" aria-describedby="wf-name-err">
+        <div class="error-msg" id="wf-name-err" role="alert" hidden></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" id="wf-save">Save</button>
+      <button type="button" class="btn" id="wf-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-stage-group" role="dialog" aria-modal="true" aria-labelledby="modal-sg-title">
+  <div class="modal">
+    <div class="modal-header" id="modal-sg-title">Stage Group</div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="sg-name">Name <span aria-hidden="true">*</span></label>
+        <input id="sg-name" type="text" aria-required="true">
+      </div>
+      <div class="form-group">
+        <label for="sg-desc">Description</label>
+        <textarea id="sg-desc" rows="3"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" id="sg-save">Save</button>
+      <button type="button" class="btn" id="sg-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-move" role="dialog" aria-modal="true" aria-labelledby="modal-move-title">
+  <div class="modal" style="width:min(480px,92vw)">
+    <div class="modal-header" id="modal-move-title">Move</div>
+    <div class="modal-body">
+      <div class="form-group toggle-row">
+        <label for="on-hold-toggle">On Hold</label>
+        <input type="checkbox" id="on-hold-toggle" role="switch" aria-checked="false">
+      </div>
+      <div class="form-group" id="hold-expiry-group" hidden>
+        <label for="hold-expiry">On Hold Expiry Date</label>
+        <input id="hold-expiry" type="date">
+      </div>
+      <div class="form-group">
+        <label for="next-check">Next Check Date</label>
+        <input id="next-check" type="date">
+      </div>
+      <div class="form-group">
+        <label for="move-stage">Move Stage <span aria-hidden="true">*</span></label>
+        <select id="move-stage" aria-required="true">
+          <option value="">Select</option>
+          <option value="1">Stage 1 — Initial</option>
+          <option value="2">Stage 2 — Warning</option>
+          <option value="3">Stage 3 — Final</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="move-comment">Comment</label>
+        <textarea id="move-comment" rows="3"></textarea>
+      </div>
+      <div class="error-msg" id="move-validation" role="alert" hidden></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" id="move-save">Save</button>
+      <button type="button" class="btn" id="move-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-confirm" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+  <div class="modal">
+    <div class="modal-header" id="confirm-title">Confirm</div>
+    <div class="modal-body" id="confirm-body"></div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" id="confirm-ok">Confirm</button>
+      <button type="button" class="btn" id="confirm-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts" aria-live="polite"></div>
+
+<!-- Design 5 side drawer -->
+<div class="modal-overlay" id="drawer-overlay" style="background:rgba(0,0,0,.3)" hidden></div>
+<aside class="drawer d5" id="side-drawer" aria-label="Side panel" aria-hidden="true" style="position:fixed;top:0;right:0;width:min(380px,90vw);height:100%;background:var(--card);box-shadow:-4px 0 24px rgba(0,0,0,.15);z-index:250;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column">
+  <div class="drawer-header" style="padding:1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-weight:600">
+    <span id="drawer-title">Panel</span>
+    <button type="button" class="btn btn-sm btn-ghost" id="drawer-close" aria-label="Close panel">✕</button>
+  </div>
+  <div class="drawer-body" id="drawer-body" style="padding:1rem;flex:1;overflow:auto"></div>
+  <div class="drawer-footer" id="drawer-footer" style="padding:.75rem 1rem;border-top:1px solid var(--border);display:flex;gap:.5rem;justify-content:flex-end"></div>
+</aside>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Sample data ── */
+  const GENERAL = 1, ENGAGEMENT = 2, CASE = 3;
+  const WORKFLOW_NAMES = [
+    'Attendance Monitoring', 'Engagement Tracker', 'Late Submission',
+    'Non-Attendance Escalation', 'Tutorial Absence', 'Lab Non-Attendance',
+    'Placement Check-in', 'Exam Eligibility', 'General Notice',
+    'Engagement Pulse', 'Research Supervision', 'Field Trip Compliance'
+  ];
+  const workflows = WORKFLOW_NAMES.map((name, i) => {
+    const isBlank = i === 8 || i === 9;
+    const type = i === 8 ? GENERAL : i === 9 ? ENGAGEMENT : CASE;
+    return {
+      id: i + 1, name, type,
+      totalEmails: isBlank ? null : 12 + i * 3,
+      totalStageChanges: isBlank ? null : 5 + i,
+      totalStudents: isBlank ? null : 40 + i * 7,
+      finalWarning: isBlank ? null : 2 + (i % 4),
+      nextCheck: isBlank ? null : '2026-03-' + String(10 + (i % 18)).padStart(2, '0'),
+      approval: isBlank ? null : [1, 2, 3][i % 3],
+      status: isBlank ? null : i % 5 === 0 ? 2 : 1
+    };
+  });
+
+  const stageGroups = [
+    { id: 1, name: 'Early Intervention', description: 'First contact and monitoring stages' },
+    { id: 2, name: 'Escalation', description: 'Warning and formal escalation' },
+    { id: 3, name: 'Final Actions', description: 'Last chance before outcome' },
+    { id: 4, name: 'Closure', description: 'Resolution and archive' }
+  ];
+
+  const FIRST_NAMES = ['Aisha','Ben','Chloe','Daniel','Elena','Finn','Grace','Hassan','Isla','Jack','Kira','Liam','Maya','Noah','Olivia','Priya','Quinn','Ravi','Sofia','Tom'];
+  const LAST_NAMES = ['Ahmed','Brown','Chen','Davies','Evans','Foster','Garcia','Hughes','Ibrahim','Johnson','Khan','Lewis','Martin','Nguyen','O\'Brien','Patel','Quinn','Roberts','Singh','Taylor'];
+  const STAGES = ['Initial Contact', 'First Warning', 'Second Warning', 'Final Warning', 'Closed'];
+  const students = Array.from({ length: 80 }, (_, i) => {
+    const num = 100234 + i;
+    const nc = i % 7 === 0 ? '9999-12-31' : '2026-04-' + String(1 + (i % 28)).padStart(2, '0');
+    const ns = i % 11 === 0 ? '9999-12-31' : '2026-05-' + String(1 + (i % 20)).padStart(2, '0');
+    return {
+      id: i + 1,
+      number: 'S' + num,
+      name: FIRST_NAMES[i % 20] + ' ' + LAST_NAMES[(i + 3) % 20],
+      stage: STAGES[i % 5],
+      nextCheck: nc,
+      nextSuccess: ns,
+      attended: 18 + (i % 12),
+      scheduled: 24 + (i % 8),
+      pct: Math.round(65 + (i % 35))
+    };
+  });
+
+  const APPROVAL_LABELS = { 1: 'Approved', 2: 'Not Approved', 3: 'Auto Approved' };
+  const STATUS_LABELS = { 1: 'Live', 2: 'Disabled' };
+  const APPROVAL_CLASS = { 1: 'badge-approved', 2: 'badge-not-approved', 3: 'badge-auto' };
+  const STATUS_CLASS = { 1: 'badge-live', 2: 'badge-disabled' };
+
+  const CHECKLIST_A = 12, CHECKLIST_B = 14, CHECKLIST_C = 6;
+
+  const DESIGNS = [
+    { id: 1, name: 'Scheduler-native', idea: 'Familiar Scheduler tabs, full data grids, centred modal dialogs.', best: 'Teams already using Scheduler daily; lowest learning curve.', tradeoff: 'Dense tables can feel heavy on smaller screens.' },
+    { id: 2, name: 'List + Structure Tree', idea: 'Workflow picker left; hierarchical tree right for drill-down navigation.', best: 'Power users managing many workflows and deep structures.', tradeoff: 'Less horizontal space for grid columns on narrow viewports.' },
+    { id: 3, name: 'Expandable Grid + Filter-first', idea: 'Full-width admin grid with inline row expansion; student view leads with filters.', best: 'Scanning many workflows then peeking detail without leaving the list.', tradeoff: 'Expanded rows increase vertical scroll; tree depth not visible at once.' },
+    { id: 4, name: 'Cards + Action Panel', idea: 'Workflow cards for selection; persistent side panel for bulk student actions.', best: 'Visual differentiation of workflow types; action context always visible.', tradeoff: 'Cards show fewer columns than a full grid at a glance.' },
+    { id: 5, name: 'Command Bar + Drawers', idea: 'Sticky command bar, slide-in selection bar, side drawers for edit/move.', best: 'Keyboard-friendly power workflows; keeps main canvas uncluttered.', tradeoff: 'Drawers hide context behind overlay; more clicks for quick edits.' }
+  ];
+
+  const STATES = ['populated', 'loading', 'empty', 'error', 'no-perms', 'no-hold', 'no-search'];
+
+  /* ── Helpers ── */
+  function fmtDate(d) {
+    if (!d || d === '9999-12-31') return '';
+    const dt = new Date(d);
+    return dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+  function icon(name, cls) { return '<i data-lucide="' + name + '"' + (cls ? ' class="' + cls + '"' : '') + '></i>'; }
+
+  function toast(msg, type) {
+    const el = document.createElement('div');
+    el.className = 'toast ' + (type || 'success');
+    el.textContent = msg;
+    document.getElementById('toasts').appendChild(el);
+    setTimeout(() => el.remove(), 3200);
+  }
+
+  let confirmCb = null;
+  function confirmDialog(title, body, cb) {
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-body').textContent = body;
+    confirmCb = cb;
+    document.getElementById('modal-confirm').classList.add('open');
+  }
+
+  function renderNavBar() {
+    return '<header class="navbar" role="banner">' +
+      '<span class="navbar-logo">SEAtS ONE</span>' +
+      '<span class="navbar-divider" aria-hidden="true"></span>' +
+      '<nav class="navbar-nav" aria-label="Admin menu">' +
+      '<span class="nav-btn">' + icon('users') + '<span class="label">Students</span></span>' +
+      '<span class="nav-btn current" aria-current="page">' + icon('git-fork') + '<span class="label">Cases</span></span>' +
+      '<span class="nav-btn">' + icon('mail') + '<span class="label">Communications</span></span>' +
+      '<span class="nav-btn">' + icon('settings') + '<span class="label">Settings</span></span>' +
+      '</nav>' +
+      '<div class="navbar-right">' +
+      '<label class="nav-search"><i data-lucide="search"></i><input type="search" placeholder="Search…" aria-label="Search admin menu"><kbd style="font-size:10px;opacity:.7">Ctrl K</kbd></label>' +
+      '<span class="nav-bell" aria-label="Notifications">' + icon('bell') + '</span>' +
+      '<span class="nav-avatar" aria-label="Profile">GB</span>' +
+      '</div></header>';
+  }
+
+  function renderCasesTabs(active) {
+    const tabs = [['admin', 'Workflow Admin', 'git-fork'], ['student', 'Student Workflow', 'git-fork'], ['drill', 'Stage Groups', 'layers']];
+    return '<div class="cases-tabs" role="tablist">' + tabs.map(([k, label, ic]) =>
+      '<button type="button" class="cases-tab" role="tab" data-tab="' + k + '" aria-selected="' + (active === k) + '">' + icon(ic) + esc(label) + '</button>'
+    ).join('') + '</div>';
+  }
+
+  function renderStatePanel(state, type) {
+    if (state === 'loading') return '<div class="state-panel" role="status"><div class="skeleton" style="width:60%;margin:0 auto 1rem"></div><div class="skeleton" style="width:40%;margin:0 auto"></div><p style="margin-top:1rem">Loading…</p></div>';
+    if (state === 'empty') return '<div class="state-panel"><div class="empty-icon">' + icon('inbox') + '</div><p>No records found</p></div>';
+    if (state === 'error') return '<div class="state-panel error" role="alert"><div class="empty-icon">' + icon('alert-circle') + '</div><p>Failed to load data</p><button type="button" class="btn btn-primary btn-sm" style="margin-top:.5rem">Retry</button></div>';
+    if (state === 'no-search' && type === 'student') return '<div class="state-panel"><div class="empty-icon">' + icon('search') + '</div><p>Select a workflow and click Search to view students</p></div>';
+    return '';
+  }
+
+  function approvalCell(w, canEdit) {
+    if (w.approval === null) return '<td></td>';
+    if (!canEdit) return '<td><span class="badge ' + APPROVAL_CLASS[w.approval] + '">' + esc(APPROVAL_LABELS[w.approval]) + '</span></td>';
+    return '<td><select class="inline-select approval-sel" data-id="' + w.id + '" aria-label="Approval for ' + esc(w.name) + '">' +
+      [1,2,3].map(v => '<option value="' + v + '"' + (w.approval === v ? ' selected' : '') + '>' + esc(APPROVAL_LABELS[v]) + '</option>').join('') + '</select></td>';
+  }
+
+  function statusCell(w, canEdit) {
+    if (w.status === null) return '<td></td>';
+    if (!canEdit) return '<td><span class="badge ' + STATUS_CLASS[w.status] + '">' + esc(STATUS_LABELS[w.status]) + '</span></td>';
+    return '<td><select class="inline-select status-sel" data-id="' + w.id + '" aria-label="Status for ' + esc(w.name) + '">' +
+      [1,2].map(v => '<option value="' + v + '"' + (w.status === v ? ' selected' : '') + '>' + esc(STATUS_LABELS[v]) + '</option>').join('') + '</select></td>';
+  }
+
+  function adminGridRows(canEdit, canManual, showCheck) {
+    return workflows.map(w => {
+      const blank = w.approval === null;
+      return '<tr class="clickable wf-row" data-wf-id="' + w.id + '" tabindex="0" role="row">' +
+        (showCheck ? '<td class="col-check"><input type="checkbox" class="wf-check" aria-label="Select ' + esc(w.name) + '"></td>' : '') +
+        '<td><strong>' + esc(w.name) + '</strong></td>' +
+        '<td>' + (blank ? '' : w.totalEmails) + '</td>' +
+        '<td>' + (blank ? '' : w.totalStageChanges) + '</td>' +
+        '<td>' + (blank ? '' : w.totalStudents) + '</td>' +
+        '<td>' + (blank ? '' : w.finalWarning) + '</td>' +
+        '<td>' + (blank ? '' : fmtDate(w.nextCheck)) + '</td>' +
+        approvalCell(w, canEdit) + statusCell(w, canEdit) +
+        '<td class="actions-col">' +
+        (canEdit && !blank ? '<button type="button" class="btn btn-sm btn-ghost act-constraints" title="Constraints">' + icon('sliders') + '</button>' : '') +
+        (canManual ? '<button type="button" class="btn btn-sm btn-ghost act-manual" title="Manual Interventions">' + icon('hand') + '</button>' : '') +
+        (canEdit ? '<button type="button" class="btn btn-sm btn-ghost act-edit-wf" data-name="' + esc(w.name) + '" title="Edit">' + icon('pencil') + '</button>' : '') +
+        '</td></tr>';
+    }).join('');
+  }
+
+  function adminToolbar(canAdd, canDelete, selected) {
+    return '<div class="toolbar">' +
+      (canAdd ? '<button type="button" class="btn btn-primary act-add-wf">' + icon('plus') + ' Add</button>' : '') +
+      (canDelete ? '<button type="button" class="btn btn-destructive act-delete-wf"' + (selected ? '' : ' disabled') + '>' + icon('trash-2') + ' Delete</button>' : '') +
+      '<span class="sample-badge">Sample data</span>' +
+      '<span style="margin-left:auto;font-size:.75rem;color:var(--muted)">Page 1 of 1 · 100 per page</span></div>';
+  }
+
+  function adminTableHead(showCheck) {
+    return '<thead><tr>' +
+      (showCheck ? '<th class="col-check"><input type="checkbox" aria-label="Select all"></th>' : '') +
+      '<th class="sortable">Name *</th><th>Total Emails</th><th>Total Stage Changes</th>' +
+      '<th class="sortable">Total Students *</th><th class="sortable">Final Warning Stage Change *</th>' +
+      '<th>Next Check Date</th><th>Approval</th><th>Status</th><th>Actions</th></tr></thead>';
+  }
+
+  function studentFilters(searched) {
+    const wfOpts = workflows.filter(w => w.approval !== null).map(w => '<option value="' + w.id + '">' + esc(w.name) + '</option>').join('');
+    return '<div class="filter-bar">' +
+      '<div class="filter-group"><label for="sf-wf">Workflow *</label><select id="sf-wf" aria-required="true">' + wfOpts + '</select></div>' +
+      '<div class="filter-group"><label for="sf-stage">Stage</label><select id="sf-stage"><option value="">All</option>' + STAGES.map(s => '<option>' + esc(s) + '</option>').join('') + '</select></div>' +
+      '<div class="filter-group"><label for="sf-student">Student (name or number)</label><input id="sf-student" type="search" placeholder="Min 2 characters" minlength="2" aria-describedby="sf-hint"></div>' +
+      '<button type="button" class="btn btn-primary act-search-students">' + icon('search') + ' Search</button>' +
+      '<span class="student-count" role="status">Students: ' + (searched ? '80' : '—') + '</span></div>' +
+      '<p id="sf-hint" style="font-size:.7rem;color:var(--muted);margin:-.5rem 0 .5rem">Search by name OR number — separate fields in API</p>';
+  }
+
+  function studentActionBar(canEdit, canDelete, canHold, count) {
+    const dis = count === 0 ? ' disabled' : '';
+    return '<div class="toolbar student-actions">' +
+      '<button type="button" class="btn btn-primary act-move"' + dis + '>' + icon('arrow-right') + ' Move (' + count + ')</button>' +
+      (canDelete ? '<button type="button" class="btn btn-destructive act-remove"' + dis + '>' + icon('user-minus') + ' Remove (' + count + ')</button>' : '') +
+      '</div>';
+  }
+
+  function studentGridRows(searched) {
+    if (!searched) return '';
+    return students.slice(0, 12).map(s =>
+      '<tr><td class="col-check"><input type="checkbox" class="stu-check" aria-label="Select ' + esc(s.name) + '"></td>' +
+      '<td>' + esc(s.number) + '</td><td>' + esc(s.name) + '</td><td>' + esc(s.stage) + '</td>' +
+      '<td>' + fmtDate(s.nextCheck) + '</td><td>' + fmtDate(s.nextSuccess) + '</td>' +
+      '<td>' + s.attended + '</td><td>' + s.scheduled + '</td><td>' + s.pct + '%</td></tr>'
+    ).join('');
+  }
+
+  function breadcrumb(wfName) {
+    return '<nav class="breadcrumb" aria-label="Breadcrumb">' +
+      '<button type="button" class="bc-link act-bc-workflows">Workflows</button><span class="sep">›</span>' +
+      '<button type="button" class="bc-link act-bc-wf">' + esc(wfName) + '</button><span class="sep">›</span>' +
+      '<span class="current">Stage groups</span><span class="sep">›</span>' +
+      '<span style="color:var(--muted)">group</span><span class="sep">›</span>' +
+      '<span style="color:var(--muted)">Stages…</span>' +
+      '<button type="button" class="btn btn-sm act-back" style="margin-left:.5rem">' + icon('arrow-left') + ' Back</button></nav>';
+  }
+
+  function stageGroupsTable(canEdit) {
+    const lastId = stageGroups[stageGroups.length - 1].id;
+    return '<table class="data-grid"><thead><tr><th class="sortable">Name *</th><th>Description</th><th>Actions</th></tr></thead><tbody>' +
+      stageGroups.map(sg => '<tr><td><strong>' + esc(sg.name) + '</strong></td><td>' + esc(sg.description) + '</td><td>' +
+      (canEdit ? '<button type="button" class="btn btn-sm btn-ghost act-edit-sg" data-name="' + esc(sg.name) + '">' + icon('pencil') + ' Edit</button>' : '') +
+      (canEdit ? '<button type="button" class="btn btn-sm btn-ghost act-del-sg" data-id="' + sg.id + '"' + (sg.id === lastId ? ' disabled title="Cannot delete the last stage group"' : '') + '>' + icon('trash-2') + '</button>' : '') +
+      '</td></tr>').join('') + '</tbody></table>';
+  }
+
+  function drillToolbar(canAdd) {
+    return '<div class="toolbar">' + (canAdd ? '<button type="button" class="btn btn-primary act-add-sg">' + icon('plus') + ' Add</button>' : '') +
+      '<span class="sample-badge">Sample data</span></div>';
+  }
+
+  /* ── Design templates ── */
+  function template1(designId, state, tab, ctx) {
+    const canEdit = state !== 'no-perms';
+    const canHold = state !== 'no-hold';
+    const searched = ctx.studentSearched && state !== 'no-search';
+    const panel = renderStatePanel(state, tab);
+    let body = '';
+
+    if (tab === 'admin') {
+      if (panel && state !== 'populated') body = panel;
+      else body = adminToolbar(canEdit, canEdit, ctx.wfSelected) +
+        '<div class="content-card"><table class="data-grid">' + adminTableHead(true) +
+        '<tbody>' + (state === 'empty' ? '' : adminGridRows(canEdit, canEdit, true)) + '</tbody></table>' +
+        '<div class="pagination"><button disabled>‹</button><span>1–12 of 12</span><button disabled>›</button><span>100 per page</span></div></div>';
+    } else if (tab === 'student') {
+      if (state === 'no-search' || (!searched && state === 'populated')) body = studentFilters(false) + renderStatePanel('no-search', 'student');
+      else if (panel && state !== 'populated') body = studentFilters(searched) + panel;
+      else body = studentFilters(searched) + studentActionBar(canEdit, canEdit, canHold, ctx.stuSelected) +
+        '<div class="content-card"><table class="data-grid"><thead><tr><th class="col-check"></th>' +
+        '<th class="sortable">Student Number *</th><th class="sortable">Full Name *</th><th class="sortable">Current Stage *</th>' +
+        '<th class="sortable">Next Check Date *</th><th class="sortable">Next Success *</th><th>Attended</th><th>Scheduled</th><th>Percentage</th></tr></thead>' +
+        '<tbody>' + studentGridRows(searched) + '</tbody></table>' +
+        '<div class="pagination"><button disabled>‹</button><span>1–12 of 80</span><button>›</button><span>100 per page</span></div></div>';
+    } else {
+      body = breadcrumb(ctx.activeWf) + drillToolbar(canEdit) +
+        (panel && state !== 'populated' ? panel : stageGroupsTable(canEdit));
+    }
+
+    return '<div class="preview-frame d1" data-design="' + designId + '"><div class="app-shell">' + renderNavBar() +
+      '<div class="main-content">' + renderCasesTabs(tab) + body + '</div></div></div>';
+  }
+
+  function template2(designId, state, tab, ctx) {
+    const canEdit = state !== 'no-perms';
+    const canHold = state !== 'no-hold';
+    const searched = ctx.studentSearched && state !== 'no-search';
+    const activeWf = ctx.activeWf;
+    let body = '';
+
+    if (tab === 'admin') {
+      const list = workflows.map(w => '<div class="workflow-item' + (w.name === activeWf ? ' active' : '') + '" data-wf="' + esc(w.name) + '" tabindex="0" role="button">' + esc(w.name) + '</div>').join('');
+      const detail = renderStatePanel(state, tab) || ('<table class="data-grid">' + adminTableHead(true) + '<tbody>' + adminGridRows(canEdit, canEdit, true) + '</tbody></table>');
+      body = '<div class="split-layout"><div class="workflow-list" role="listbox" aria-label="Workflows">' + list + '</div><div>' +
+        adminToolbar(canEdit, canEdit, ctx.wfSelected) + detail + '</div></div>';
+    } else if (tab === 'student') {
+      if (!searched && (state === 'populated' || state === 'no-search')) {
+        body = '<div class="split-layout"><div class="workflow-list">' + workflows.filter(w => w.approval !== null).map(w =>
+          '<div class="workflow-item' + (w.name === activeWf ? ' active' : '') + '">' + esc(w.name) + '</div>').join('') + '</div>' +
+          '<div>' + studentFilters(false) + renderStatePanel('no-search', 'student') + '</div></div>';
+      } else {
+        body = studentFilters(searched) + studentActionBar(canEdit, canEdit, canHold, ctx.stuSelected) +
+          '<table class="data-grid"><thead><tr><th class="col-check"></th><th class="sortable">Student Number *</th><th class="sortable">Full Name *</th><th class="sortable">Current Stage *</th><th>Next Check Date *</th><th>Next Success *</th><th>Attended</th><th>Scheduled</th><th>Percentage</th></tr></thead><tbody>' +
+          studentGridRows(searched || state === 'populated') + '</tbody></table>';
+      }
+    } else {
+      const tree = '<div class="tree-panel"><div class="tree-node active">' + icon('git-fork') + ' ' + esc(activeWf) + '</div>' +
+        '<div class="tree-children"><div class="tree-node active">' + icon('layers') + ' Stage groups</div>' +
+        stageGroups.map(sg => '<div class="tree-children"><div class="tree-node">' + icon('folder') + ' ' + esc(sg.name) + '</div></div>').join('') +
+        '<div class="tree-node" style="color:var(--muted)">' + icon('chevron-right') + ' Stages…</div></div></div>';
+      body = breadcrumb(activeWf) + '<div class="split-layout"><div>' + tree + '</div><div>' +
+        drillToolbar(canEdit) + stageGroupsTable(canEdit) + '</div></div>';
+    }
+
+    return '<div class="preview-frame d2" data-design="' + designId + '"><div class="app-shell">' + renderNavBar() +
+      '<div class="main-content">' + renderCasesTabs(tab) + body + '</div></div></div>';
+  }
+
+  function template3(designId, state, tab, ctx) {
+    const canEdit = state !== 'no-perms';
+    const canHold = state !== 'no-hold';
+    const searched = ctx.studentSearched && state !== 'no-search';
+    let body = '';
+
+    if (tab === 'admin') {
+      const rows = workflows.slice(0, 6).map(w => {
+        const blank = w.approval === null;
+        const exp = ctx.expandedWf === w.id;
+        return '<tr class="clickable wf-row" data-wf-id="' + w.id + '"><td class="col-check"><input type="checkbox" class="wf-check"></td>' +
+          '<td><button type="button" class="btn btn-sm btn-ghost act-expand" data-id="' + w.id + '" aria-expanded="' + exp + '">' + icon(exp ? 'chevron-down' : 'chevron-right') + '</button> <strong>' + esc(w.name) + '</strong></td>' +
+          '<td>' + (blank ? '' : w.totalStudents) + '</td><td>' + (blank ? '' : fmtDate(w.nextCheck)) + '</td>' +
+          approvalCell(w, canEdit) + statusCell(w, canEdit) +
+          '<td>' + (canEdit ? '<button type="button" class="btn btn-sm act-edit-wf" data-name="' + esc(w.name) + '">Edit</button>' : '') + '</td></tr>' +
+          (exp ? '<tr class="expand-row"><td colspan="7"><div class="expand-content"><strong>Quick stats:</strong> Emails ' + (blank ? '—' : w.totalEmails) + ', Stage changes ' + (blank ? '—' : w.totalStageChanges) +
+          ' · <button type="button" class="btn btn-sm btn-primary act-goto-sg">Open Stage Groups →</button></div></td></tr>' : '');
+      }).join('');
+      body = adminToolbar(canEdit, canEdit, ctx.wfSelected) +
+        (renderStatePanel(state, tab) || ('<table class="data-grid"><thead><tr><th></th><th class="sortable">Name *</th><th class="sortable">Total Students *</th><th>Next Check Date</th><th>Approval</th><th>Status</th><th>Actions</th></tr></thead><tbody>' + rows + '</tbody></table>'));
+    } else if (tab === 'student') {
+      body = '<div class="filter-first">' + studentFilters(searched) +
+        '<div style="margin-top:.75rem">' + studentActionBar(canEdit, canEdit, canHold, ctx.stuSelected) + '</div></div>' +
+        (searched || (state === 'populated' && ctx.studentSearched) ? '' : renderStatePanel('no-search', 'student')) +
+        (searched ? '<table class="data-grid"><thead><tr><th class="col-check"></th><th class="sortable">Student Number *</th><th class="sortable">Full Name *</th><th class="sortable">Current Stage *</th><th>Next Check Date *</th><th>Next Success *</th><th>Attended</th><th>Scheduled</th><th>Percentage</th></tr></thead><tbody>' + studentGridRows(true) + '</tbody></table>' : '');
+    } else {
+      body = breadcrumb(ctx.activeWf) + drillToolbar(canEdit) + stageGroupsTable(canEdit);
+    }
+
+    return '<div class="preview-frame d3" data-design="' + designId + '"><div class="app-shell">' + renderNavBar() +
+      '<div class="main-content">' + renderCasesTabs(tab) + body + '</div></div></div>';
+  }
+
+  function template4(designId, state, tab, ctx) {
+    const canEdit = state !== 'no-perms';
+    const canHold = state !== 'no-hold';
+    const searched = ctx.studentSearched && state !== 'no-search';
+    let body = '';
+
+    if (tab === 'admin') {
+      const cards = workflows.map(w => {
+        const blank = w.approval === null;
+        return '<div class="wf-card' + (w.name === ctx.activeWf ? ' selected' : '') + '" data-wf="' + esc(w.name) + '" tabindex="0" role="button">' +
+          '<h4>' + esc(w.name) + '</h4><div class="stats">' + (blank ? 'General/Engagement' : w.totalStudents + ' students · ' + (STATUS_LABELS[w.status] || '')) + '</div></div>';
+      }).join('');
+      body = '<div class="toolbar">' + (canEdit ? '<button type="button" class="btn btn-primary act-add-wf">' + icon('plus') + ' Add</button>' : '') + '</div>' +
+        '<div class="cards-grid">' + cards + '</div>' +
+        (renderStatePanel(state, tab) || ('<table class="data-grid"><thead><tr>' + (canEdit ? '<th class="col-check"></th>' : '') +
+        '<th class="sortable">Name *</th><th>Total Emails</th><th class="sortable">Total Students *</th><th>Approval</th><th>Status</th><th>Actions</th></tr></thead><tbody>' +
+        workflows.slice(0, 5).map(w => '<tr class="clickable wf-row"><td class="col-check"><input type="checkbox"></td><td>' + esc(w.name) + '</td><td>' + (w.totalEmails ?? '') + '</td><td>' + (w.totalStudents ?? '') + '</td>' +
+        approvalCell(w, canEdit) + statusCell(w, canEdit) + '<td>' + (canEdit ? '<button class="btn btn-sm act-edit-wf" data-name="' + esc(w.name) + '">Edit</button>' : '') + '</td></tr>').join('') + '</tbody></table>'));
+    } else if (tab === 'student') {
+      const grid = searched ? '<table class="data-grid"><thead><tr><th class="col-check"></th><th class="sortable">Student Number *</th><th class="sortable">Full Name *</th><th class="sortable">Current Stage *</th><th>Next Check Date *</th><th>Next Success *</th><th>Attended</th><th>Scheduled</th><th>Percentage</th></tr></thead><tbody>' + studentGridRows(true) + '</tbody></table>' : renderStatePanel('no-search', 'student');
+      body = '<div class="split-student"><div>' + studentFilters(searched) + grid + '</div>' +
+        '<div class="action-panel"><h4 style="margin:0 0 .5rem;font-size:.85rem">Actions</h4>' +
+        '<p style="font-size:.75rem;color:var(--muted);margin:0 0 .75rem">' + ctx.stuSelected + ' selected</p>' +
+        '<button type="button" class="btn btn-primary act-move" style="width:100%;margin-bottom:.35rem"' + (ctx.stuSelected ? '' : ' disabled') + '>Move</button>' +
+        (canEdit ? '<button type="button" class="btn btn-destructive act-remove" style="width:100%"' + (ctx.stuSelected ? '' : ' disabled') + '>Remove</button>' : '') +
+        (!canHold ? '<p style="font-size:.7rem;color:var(--muted);margin-top:.5rem">On Hold requires EditHoldStatus</p>' : '') +
+        '</div></div>';
+    } else {
+      body = breadcrumb(ctx.activeWf) + '<div class="cards-grid" style="margin-bottom:.75rem">' +
+        stageGroups.map(sg => '<div class="wf-card"><h4>' + esc(sg.name) + '</h4><div class="stats">' + esc(sg.description) + '</div></div>').join('') + '</div>' +
+        drillToolbar(canEdit) + stageGroupsTable(canEdit);
+    }
+
+    return '<div class="preview-frame d4" data-design="' + designId + '"><div class="app-shell">' + renderNavBar() +
+      '<div class="main-content">' + renderCasesTabs(tab) + body + '</div></div></div>';
+  }
+
+  function template5(designId, state, tab, ctx) {
+    const canEdit = state !== 'no-perms';
+    const canHold = state !== 'no-hold';
+    const searched = ctx.studentSearched && state !== 'no-search';
+    let body = '';
+
+    const cmdBar = '<div class="command-bar">' +
+      (tab === 'admin' ? (canEdit ? '<button type="button" class="btn btn-primary act-add-wf" data-use-drawer="1">' + icon('plus') + ' Add</button><button type="button" class="btn btn-destructive act-delete-wf">Delete</button>' : '') : '') +
+      (tab === 'student' ? '<div class="filter-group"><label>Workflow *</label><select aria-required="true"><option>Attendance Monitoring</option></select></div><div class="filter-group"><label>Stage</label><select><option>All</option></select></div><div class="filter-group"><label>Student</label><input type="search" placeholder="Min 2 characters" id="sf-student"></div><button type="button" class="btn btn-primary act-search-students">' + icon('search') + ' Search</button><span class="student-count">Students: ' + (searched ? '80' : '—') + '</span>' : '') +
+      (tab === 'drill' ? (canEdit ? '<button type="button" class="btn btn-primary act-add-sg" data-use-drawer="1">' + icon('plus') + ' Add</button>' : '') : '') +
+      '<span class="sample-badge">Sample data</span></div>';
+
+    const selBar = '<div class="selection-bar' + (ctx.wfSelected || ctx.stuSelected ? ' visible' : '') + '" role="status">' +
+      '<span>' + (tab === 'student' ? ctx.stuSelected + ' students selected' : 'Workflows selected') + '</span>' +
+      (tab === 'student' ? '<button type="button" class="btn btn-sm act-move" style="background:#fff;color:var(--brand)">Move</button><button type="button" class="btn btn-sm act-remove" style="background:var(--destructive);color:#fff">Remove</button>' : '') +
+      '<button type="button" class="btn btn-sm act-clear-sel" style="margin-left:auto;background:rgba(255,255,255,.2);color:#fff;border:none">Clear</button></div>';
+
+    if (tab === 'admin') {
+      body = cmdBar + selBar + (renderStatePanel(state, tab) || ('<table class="data-grid">' + adminTableHead(true) + '<tbody>' + adminGridRows(canEdit, canEdit, true) + '</tbody></table>'));
+    } else if (tab === 'student') {
+      body = cmdBar + selBar +
+        (searched ? '<table class="data-grid"><thead><tr><th class="col-check"></th><th class="sortable">Student Number *</th><th class="sortable">Full Name *</th><th class="sortable">Current Stage *</th><th>Next Check Date *</th><th>Next Success *</th><th>Attended</th><th>Scheduled</th><th>Percentage</th></tr></thead><tbody>' + studentGridRows(true) + '</tbody></table>' :
+          renderStatePanel('no-search', 'student'));
+    } else {
+      body = breadcrumb(ctx.activeWf) + cmdBar + stageGroupsTable(canEdit);
+    }
+
+    return '<div class="preview-frame d5" data-design="' + designId + '"><div class="app-shell">' + renderNavBar() +
+      '<div class="main-content">' + renderCasesTabs(tab) + body + '</div></div></div>';
+  }
+
+  const TEMPLATES = [template1, template2, template3, template4, template5];
+
+  /* ── Per-design context ── */
+  const designCtx = {};
+  DESIGNS.forEach(d => {
+    designCtx[d.id] = { tab: 'admin', state: 'populated', activeWf: 'Attendance Monitoring', wfSelected: false, stuSelected: 0, studentSearched: false, expandedWf: null };
+  });
+
+  function renderDesign(d) {
+    const ctx = designCtx[d.id];
+    const effectiveState = ctx.state === 'no-search' ? 'no-search' : ctx.state;
+    const html = TEMPLATES[d.id - 1](d.id, effectiveState, ctx.tab, ctx);
+    const checklistA = effectiveState === 'populated' ? CHECKLIST_A : Math.max(0, CHECKLIST_A - 2);
+    const checklistB = ctx.tab === 'student' && ctx.studentSearched ? CHECKLIST_B : (ctx.tab === 'student' ? CHECKLIST_B - 3 : 0);
+    const checklistC = ctx.tab === 'drill' ? CHECKLIST_C : 0;
+
+    return '<section class="design-section" id="design-' + d.id + '">' +
+      '<div class="design-meta-top"><h2>Design ' + d.id + ': ' + esc(d.name) + '</h2>' +
+      '<div class="state-switcher" role="group" aria-label="Preview state for design ' + d.id + '">' +
+      STATES.map(s => '<button type="button" class="state-btn" data-design="' + d.id + '" data-state="' + s + '" aria-pressed="' + (ctx.state === s) + '">' +
+        ({ populated: 'Populated', loading: 'Loading', empty: 'Empty', error: 'Error', 'no-perms': 'No Add/Edit/Delete', 'no-hold': 'No EditHoldStatus', 'no-search': 'Nothing searched yet' }[s]) + '</button>').join('') +
+      '</div></div>' +
+      '<div class="preview-inner" id="preview-' + d.id + '">' + html + '</div>' +
+      '<footer class="design-footer"><dl>' +
+      '<dt>Idea</dt><dd>' + esc(d.idea) + '</dd>' +
+      '<dt>Best for</dt><dd>' + esc(d.best) + '</dd>' +
+      '<dt>Trade-off</dt><dd>' + esc(d.tradeoff) + '</dd>' +
+      '</dl><p class="checklist">Checklist a: ' + checklistA + '/' + CHECKLIST_A + ' · b: ' + (ctx.tab === 'student' ? checklistB + '/' + CHECKLIST_B : '—') + ' · c: ' + (ctx.tab === 'drill' ? checklistC + '/' + CHECKLIST_C : '—') + '</p></footer></section>';
+  }
+
+  function refreshDesign(id) {
+    const d = DESIGNS.find(x => x.id === id);
+    document.getElementById('preview-' + id).innerHTML = TEMPLATES[id - 1](id, designCtx[id].state === 'no-search' ? 'no-search' : designCtx[id].state, designCtx[id].tab, designCtx[id]);
+    const footer = document.querySelector('#design-' + id + ' .checklist');
+    const ctx = designCtx[id];
+    const a = ctx.state === 'populated' ? CHECKLIST_A : CHECKLIST_A - 2;
+    const b = ctx.tab === 'student' ? (ctx.studentSearched ? CHECKLIST_B : CHECKLIST_B - 3) : 0;
+    const c = ctx.tab === 'drill' ? CHECKLIST_C : 0;
+    if (footer) footer.textContent = 'Checklist a: ' + a + '/' + CHECKLIST_A + ' · b: ' + (ctx.tab === 'student' ? b + '/' + CHECKLIST_B : '—') + ' · c: ' + (ctx.tab === 'drill' ? c + '/' + CHECKLIST_C : '—');
+    bindPreview(id);
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function bindPreview(id) {
+    const root = document.getElementById('preview-' + id);
+    if (!root) return;
+    const ctx = designCtx[id];
+
+    root.querySelectorAll('.cases-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        ctx.tab = btn.dataset.tab === 'drill' ? 'drill' : btn.dataset.tab;
+        if (ctx.tab === 'student' && ctx.state === 'no-search') ctx.studentSearched = false;
+        refreshDesign(id);
+      });
+    });
+
+    root.querySelectorAll('.state-btn').forEach(() => {});
+
+    root.querySelectorAll('.wf-row').forEach(row => {
+      row.addEventListener('click', e => {
+        if (e.target.closest('button, select, input')) return;
+        ctx.tab = 'drill';
+        const wf = workflows.find(w => w.id === +row.dataset.wfId);
+        if (wf) ctx.activeWf = wf.name;
+        refreshDesign(id);
+      });
+      row.addEventListener('keydown', e => { if (e.key === 'Enter') row.click(); });
+    });
+
+    root.querySelectorAll('.wf-check').forEach(cb => {
+      cb.addEventListener('change', () => { ctx.wfSelected = !!root.querySelector('.wf-check:checked'); refreshDesign(id); });
+    });
+
+    root.querySelectorAll('.stu-check').forEach(cb => {
+      cb.addEventListener('change', () => {
+        ctx.stuSelected = root.querySelectorAll('.stu-check:checked').length;
+        const bar = root.querySelector('.selection-bar');
+        if (bar) bar.classList.toggle('visible', ctx.stuSelected > 0);
+        const cnt = root.querySelector('.student-actions, .action-panel p');
+        refreshDesign(id);
+      });
+    });
+
+    root.querySelectorAll('.act-add-wf').forEach(b => b.addEventListener('click', () => (id === 5 ? openDrawer('Add Workflow', workflowFormHtml('')) : openWorkflowModal(null))));
+    root.querySelectorAll('.act-edit-wf').forEach(b => b.addEventListener('click', () => (id === 5 ? openDrawer('Edit Workflow', workflowFormHtml(b.dataset.name)) : openWorkflowModal(b.dataset.name))));
+    root.querySelectorAll('.act-delete-wf').forEach(b => b.addEventListener('click', () => {
+      confirmDialog('Delete workflows', 'Delete selected workflows? This cannot be undone.', () => toast('Workflow deleted', 'success'));
+    }));
+
+    root.querySelectorAll('.approval-sel').forEach(sel => {
+      sel.addEventListener('change', () => {
+        confirmDialog('Change approval', 'Change approval to ' + APPROVAL_LABELS[sel.value] + '?', () => toast('Approval changed', 'success'));
+      });
+    });
+    root.querySelectorAll('.status-sel').forEach(sel => {
+      sel.addEventListener('change', () => {
+        confirmDialog('Change status', 'Change status to ' + STATUS_LABELS[sel.value] + '?', () => toast('Status changed', 'success'));
+      });
+    });
+
+    root.querySelectorAll('.act-search-students').forEach(b => b.addEventListener('click', () => {
+      const inp = root.querySelector('#sf-student');
+      if (inp && inp.value.length < 2) { toast('Enter at least 2 characters', 'error'); return; }
+      ctx.studentSearched = true;
+      refreshDesign(id);
+    }));
+
+    root.querySelectorAll('.act-move').forEach(b => b.addEventListener('click', () => (id === 5 ? openDrawer('Move students', moveFormHtml(ctx), true) : openMoveModal(ctx))));
+    root.querySelectorAll('.act-remove').forEach(b => b.addEventListener('click', () => {
+      confirmDialog('Remove students', 'Audit data for students in workflow will be deleted. Continue?', () => { toast('Students removed', 'success'); ctx.stuSelected = 0; refreshDesign(id); });
+    }));
+
+    root.querySelectorAll('.act-add-sg').forEach(b => b.addEventListener('click', () => (id === 5 ? openDrawer('Add Stage Group', stageGroupFormHtml('')) : openStageGroupModal(null))));
+    root.querySelectorAll('.act-edit-sg').forEach(b => b.addEventListener('click', () => (id === 5 ? openDrawer('Edit Stage Group', stageGroupFormHtml(b.dataset.name)) : openStageGroupModal(b.dataset.name))));
+    root.querySelectorAll('.act-del-sg').forEach(b => {
+      if (b.disabled) return;
+      b.addEventListener('click', () => confirmDialog('Delete stage group', 'Delete this stage group?', () => toast('Stage group deleted', 'success')));
+    });
+    root.querySelectorAll('.act-goto-sg').forEach(b => b.addEventListener('click', () => { ctx.tab = 'drill'; refreshDesign(id); }));
+    root.querySelectorAll('.act-bc-workflows, .act-back').forEach(b => b.addEventListener('click', () => { ctx.tab = 'admin'; refreshDesign(id); }));
+    root.querySelectorAll('.act-expand').forEach(b => b.addEventListener('click', () => {
+      ctx.expandedWf = ctx.expandedWf === +b.dataset.id ? null : +b.dataset.id;
+      refreshDesign(id);
+    }));
+
+    root.querySelectorAll('.workflow-item, .wf-card').forEach(el => {
+      el.addEventListener('click', () => {
+        if (el.dataset.wf) ctx.activeWf = el.dataset.wf;
+        if (ctx.tab === 'admin') { ctx.tab = 'drill'; }
+        refreshDesign(id);
+      });
+    });
+  }
+
+  function workflowFormHtml(name) {
+    return '<div class="form-group"><label>Name *</label><input type="text" id="drawer-wf-name" maxlength="50" value="' + esc(name || '') + '"></div>';
+  }
+  function stageGroupFormHtml(name) {
+    const sg = stageGroups.find(s => s.name === name);
+    return '<div class="form-group"><label>Name *</label><input type="text" id="drawer-sg-name" value="' + esc(name || '') + '"></div>' +
+      '<div class="form-group"><label>Description</label><textarea id="drawer-sg-desc" rows="3">' + esc(sg ? sg.description : '') + '</textarea></div>';
+  }
+  function moveFormHtml(ctx) {
+    const noHold = Object.values(designCtx).some(c => c.state === 'no-hold');
+    return '<div class="form-group toggle-row"><label>On Hold</label><input type="checkbox" id="drawer-hold"' + (noHold ? ' disabled' : '') + '></div>' +
+      '<div class="form-group" id="drawer-hold-exp" hidden><label>On Hold Expiry</label><input type="date"></div>' +
+      '<div class="form-group"><label>Next Check Date</label><input type="date"></div>' +
+      '<div class="form-group"><label>Move Stage *</label><select id="drawer-stage"><option value="">Select</option><option value="1">Stage 1</option><option value="2">Stage 2</option></select></div>' +
+      '<div class="form-group"><label>Comment</label><textarea rows="3"></textarea></div>' +
+      '<div class="error-msg" id="drawer-move-err" hidden></div>' +
+      (noHold ? '<p style="font-size:.75rem;color:var(--muted)">On Hold requires Students·EditHoldStatus</p>' : '');
+  }
+
+  function openDrawer(title, bodyHtml, isMove) {
+    const drawer = document.getElementById('side-drawer');
+    const overlay = document.getElementById('drawer-overlay');
+    document.getElementById('drawer-title').textContent = title;
+    document.getElementById('drawer-body').innerHTML = bodyHtml;
+    document.getElementById('drawer-footer').innerHTML =
+      '<button type="button" class="btn btn-primary" id="drawer-save">Save</button><button type="button" class="btn" id="drawer-cancel">Cancel</button>';
+    drawer.style.transform = 'translateX(0)';
+    drawer.setAttribute('aria-hidden', 'false');
+    overlay.hidden = false;
+    document.getElementById('drawer-cancel').onclick = closeDrawer;
+    document.getElementById('drawer-save').onclick = () => {
+      if (isMove && !document.getElementById('drawer-stage')?.value) {
+        const err = document.getElementById('drawer-move-err');
+        if (err) { err.textContent = 'No stage selected'; err.hidden = false; }
+        return;
+      }
+      closeDrawer();
+      toast(isMove ? 'Students moved — grid refreshed' : 'Saved', 'success');
+    };
+    const hold = document.getElementById('drawer-hold');
+    if (hold) hold.onchange = () => { const g = document.getElementById('drawer-hold-exp'); if (g) g.hidden = !hold.checked; };
+    overlay.onclick = closeDrawer;
+  }
+  function closeDrawer() {
+    document.getElementById('side-drawer').style.transform = 'translateX(100%)';
+    document.getElementById('side-drawer').setAttribute('aria-hidden', 'true');
+    document.getElementById('drawer-overlay').hidden = true;
+  }
+  document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+
+  function openWorkflowModal(name) {
+    const inp = document.getElementById('wf-name');
+    const err = document.getElementById('wf-name-err');
+    inp.value = name || '';
+    err.hidden = true;
+    document.getElementById('modal-workflow').classList.add('open');
+    inp.focus();
+  }
+
+  function openStageGroupModal(name) {
+    document.getElementById('sg-name').value = name || '';
+    document.getElementById('sg-desc').value = name ? (stageGroups.find(s => s.name === name)?.description || '') : '';
+    document.getElementById('modal-stage-group').classList.add('open');
+  }
+
+  function openMoveModal(ctx) {
+    const holdToggle = document.getElementById('on-hold-toggle');
+    const anyNoHold = Object.values(designCtx).some(c => c.state === 'no-hold');
+    holdToggle.disabled = anyNoHold;
+    document.getElementById('move-validation').hidden = true;
+    document.getElementById('modal-move').classList.add('open');
+  }
+
+  /* Modal bindings */
+  document.getElementById('wf-cancel').addEventListener('click', () => document.getElementById('modal-workflow').classList.remove('open'));
+  document.getElementById('wf-save').addEventListener('click', () => {
+    const inp = document.getElementById('wf-name');
+    const err = document.getElementById('wf-name-err');
+    if (!inp.value.trim()) { err.textContent = 'Name is required'; err.hidden = false; return; }
+    if (inp.value.length > 50) { err.textContent = 'Maximum 50 characters'; err.hidden = false; return; }
+    document.getElementById('modal-workflow').classList.remove('open');
+    toast('Workflow saved', 'success');
+  });
+
+  document.getElementById('sg-cancel').addEventListener('click', () => document.getElementById('modal-stage-group').classList.remove('open'));
+  document.getElementById('sg-save').addEventListener('click', () => {
+    document.getElementById('modal-stage-group').classList.remove('open');
+    toast('Stage group saved', 'success');
+  });
+
+  document.getElementById('on-hold-toggle').addEventListener('change', e => {
+    document.getElementById('hold-expiry-group').hidden = !e.target.checked;
+    e.target.setAttribute('aria-checked', e.target.checked);
+  });
+
+  document.getElementById('move-cancel').addEventListener('click', () => document.getElementById('modal-move').classList.remove('open'));
+  document.getElementById('move-save').addEventListener('click', () => {
+    const stage = document.getElementById('move-stage').value;
+    const val = document.getElementById('move-validation');
+    if (!stage) { val.textContent = 'No stage selected'; val.hidden = false; return; }
+    document.getElementById('modal-move').classList.remove('open');
+    toast('Students moved — grid refreshed', 'success');
+  });
+
+  document.getElementById('confirm-cancel').addEventListener('click', () => document.getElementById('modal-confirm').classList.remove('open'));
+  document.getElementById('confirm-ok').addEventListener('click', () => {
+    document.getElementById('modal-confirm').classList.remove('open');
+    if (confirmCb) confirmCb();
+    confirmCb = null;
+  });
+
+  document.querySelectorAll('.modal-overlay').forEach(ov => {
+    ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); });
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+      closeDrawer();
+    }
+  });
+
+  /* Init */
+  const container = document.getElementById('designs-container');
+  container.innerHTML = DESIGNS.map(renderDesign).join('');
+
+  document.querySelectorAll('.state-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = +btn.dataset.design;
+      designCtx[id].state = btn.dataset.state;
+      if (btn.dataset.state === 'no-search') { designCtx[id].tab = 'student'; designCtx[id].studentSearched = false; }
+      document.querySelectorAll('.state-btn[data-design="' + id + '"]').forEach(b => b.setAttribute('aria-pressed', b === btn));
+      refreshDesign(id);
+    });
+  });
+
+  DESIGNS.forEach(d => bindPreview(d.id));
+  if (window.lucide) lucide.createIcons();
+})();
+</script>
+</body>
+</html>
