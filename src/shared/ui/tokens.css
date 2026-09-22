@@ -6,7 +6,6 @@
   --color-background: hsl(210 40% 98%);
   --color-foreground: hsl(222.2 84% 4.9%);
   --color-card: hsl(0 0% 100%);
-  --color-card-foreground: hsl(222.2 84% 4.9%);
   --color-popover: hsl(0 0% 100%);
   --color-popover-foreground: hsl(222.2 84% 4.9%);
   --color-primary: hsl(221.2 83.2% 53.3%);
@@ -27,13 +26,6 @@
   --color-brand: #1566a2;
   --color-brand-avatar: #56bdea;
   --color-page: #f5f6fa;
-  --color-seats-blue-100: hsl(204 77% 36%);
-  --color-seats-blue-200: hsl(198 73% 63%);
-  --color-grey-200: hsl(220 20% 97%);
-  --color-grey-300: hsl(220 11% 94%);
-  --color-grey-500: hsl(0 0% 85%);
-  --color-grey-600: hsl(0 0% 46%);
-  --color-grey-700: hsl(0 0% 40%);
 
   /* Battery gauge: iPhone status-bar hues (design battery.designs.html, Battery A); the number sits beside the cell. */
   --color-battery-good: #34c759;
@@ -47,11 +39,9 @@
 
   /* Repeated neutrals and shadows (audit L-01), same values as the literals they replace. */
   --color-ink: #0a0a0a;
-  --color-ink-soft: #525252;
   --color-ink-muted: #4d4d4d;
   --color-ink-faint: #8f8f8f;
   --color-line-soft: #eaeaea;
-  --color-fill-soft: #ededed;
   --shadow-float: 0 18px 40px -16px rgba(15, 23, 42, 0.35), 0 2px 6px -2px rgba(15, 23, 42, 0.08);
   --shadow-press: 0 8px 14px -8px rgba(15, 23, 42, 0.45);
   --shadow-card-lift: 0 10px 24px -6px rgba(15, 23, 42, 0.18);
@@ -529,10 +519,6 @@ html[data-contrast='high'] {
   --color-slate-400: hsl(215 20% 38%);
   --color-slate-500: hsl(215 25% 28%);
   --color-slate-600: hsl(215 28% 22%);
-  --color-gray-400: hsl(220 9% 38%);
-  --color-gray-500: hsl(220 9% 28%);
-  --color-grey-600: hsl(0 0% 28%);
-  --color-grey-700: hsl(0 0% 22%);
 }
 
 html[data-contrast='high'] :focus-visible {
