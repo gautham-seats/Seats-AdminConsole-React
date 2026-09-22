@@ -79,7 +79,7 @@ export function RoomsTable({ list, selectable, t }: RoomsTableProps) {
   } else if (items.length === 0) {
     body = (
       <StateRow span={span}>
-        <EmptyState title={DEVICES_FALLBACK_ONLY.noItems} />
+        <EmptyState title={DEVICES_FALLBACK_ONLY.noItems} surface="table" />
       </StateRow>
     )
   } else {

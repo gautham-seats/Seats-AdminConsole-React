@@ -286,7 +286,7 @@ function LessonTypesList() {
     body = (
       <tr>
         <td colSpan={columns.length} className="h-full p-0">
-          <EmptyState title={LESSON_TYPE_FALLBACK_ONLY.noItems} />
+          <EmptyState title={LESSON_TYPE_FALLBACK_ONLY.noItems} surface="table" />
         </td>
       </tr>
     )

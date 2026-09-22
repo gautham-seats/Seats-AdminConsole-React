@@ -79,7 +79,7 @@ export function ReportTable<TItem, TSort extends string>({
   } else if (items.length === 0) {
     body = (
       <StateRow span={columns.length}>
-        <EmptyState title={DEVICES_FALLBACK_ONLY.noItems} />
+        <EmptyState title={DEVICES_FALLBACK_ONLY.noItems} surface="table" />
       </StateRow>
     )
   } else {

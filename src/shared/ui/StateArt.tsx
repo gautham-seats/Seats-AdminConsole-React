@@ -104,6 +104,23 @@ function Glyph({ kind, x, y, scale }: { kind: StateArtKind; x: number; y: number
   )
 }
 
+// Breath: one thin ring that breathes around the mark; nothing else moves (docs/specs/shared/empty-state.designs.html).
+function Breath({ kind, icon: Icon }: { kind: StateArtKind; icon?: LucideIcon }) {
+  return (
+    <>
+      <circle className="qs-breath-ring" cx="80" cy="80" r="52" />
+      <circle className="qs-breath-core" cx="80" cy="80" r="40" />
+      {Icon ? (
+        <g className={`qs-glyph qs-gl-${kind}`}>
+          <Icon x={66} y={66} width={28} height={28} strokeWidth={1.8} className="qs-gi" />
+        </g>
+      ) : (
+        <Glyph kind={kind} x={66} y={66} scale={1.1667} />
+      )}
+    </>
+  )
+}
+
 function Halo({ kind, uid, icon: Icon }: { kind: StateArtKind; uid: string; icon?: LucideIcon }) {
   return (
     <>
@@ -202,8 +219,8 @@ function Aurora({ kind, uid, icon: Icon }: { kind: StateArtKind; uid: string; ic
 }
 
 const DIRECTION = {
-  empty: 'halo',
-  results: 'halo',
+  empty: 'breath',
+  results: 'breath',
   connection: 'halo',
   server: 'pulse',
   missing: 'aurora',
@@ -212,7 +229,7 @@ const DIRECTION = {
   unable: 'draft',
 } as const satisfies Record<StateArtKind, string>
 
-// A screen-specific icon (such as a workflow) replaces the drawn glyph on Halo and Aurora states.
+// A screen-specific icon (such as a workflow) replaces the drawn glyph on Breath, Halo and Aurora states.
 export function StateArt({
   kind,
   icon,
@@ -230,6 +247,7 @@ export function StateArt({
       viewBox="0 0 160 160"
       className={cn('qs-art overflow-visible', `qs-${direction}`, `qs-st-${kind}`, TONE[kind], className)}
     >
+      {direction === 'breath' ? <Breath kind={kind} icon={icon} /> : null}
       {direction === 'halo' ? <Halo kind={kind} uid={uid} icon={icon} /> : null}
       {direction === 'draft' ? <Drafting kind={kind} uid={uid} /> : null}
       {direction === 'pulse' ? <Pulse kind={kind} /> : null}

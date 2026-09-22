@@ -14,6 +14,8 @@ export type EmptyStateProps = {
   headingLevel?: 2 | 3
   /** Resource word for the small "No results" label; the English fallback is used when absent. */
   resultsLabel?: string
+  /** 'table' pins the block over the visible columns of a sideways-scrolling table. */
+  surface?: 'plain' | 'table'
   className?: string
 }
 
@@ -29,18 +31,20 @@ export function EmptyState({
   action,
   headingLevel,
   resultsLabel,
+  surface = 'plain',
   className,
 }: EmptyStateProps) {
   const titleClassName = 'text-[15px] font-semibold text-balance text-foreground'
-  return (
+  const block = (
     <div
       role="status"
       className={cn(
-        'flex h-full min-h-72 flex-col items-center justify-center gap-4 px-6 py-12 text-center',
+        'flex h-full min-h-72 flex-col items-center justify-center gap-3.5 px-6 py-12 text-center',
+        surface === 'table' && 'sticky left-0 w-[100cqw] max-w-full',
         className,
       )}
     >
-      <StateArt kind={kind} icon={kind === 'empty' ? icon : undefined} className="qs-rise size-36 shrink-0" />
+      <StateArt kind={kind} icon={kind === 'empty' ? icon : undefined} className="qs-rise size-28 shrink-0" />
       <div className="qs-rise flex flex-col gap-1.5 [animation-delay:120ms]">
         {kind === 'results' ? (
           <span className="text-[10.5px] font-bold tracking-[0.17em] text-slate-600 uppercase">
@@ -61,4 +65,7 @@ export function EmptyState({
       {action ? <div className="qs-rise [animation-delay:240ms]">{action}</div> : null}
     </div>
   )
+
+  // Size containment keeps the 100cqw box out of the table's intrinsic width, as the table loader does.
+  return surface === 'table' ? <div className="min-h-[inherit] [contain:inline-size]">{block}</div> : block
 }
