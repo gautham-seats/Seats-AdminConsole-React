@@ -560,7 +560,7 @@ Accepted by Gautham on 2026-09-21: the same Stay / Leave prompt every other deta
 - The helper is a new shared file, added with this decision.
 - Cost: date strings on the wire now vary by culture — exactly as they already do in legacy.
 
-## D-077 · Accepted · Battery gauge colours are tokens, lightened to pass contrast
+## D-077 · Superseded by D-126 · Battery gauge colours are tokens, lightened to pass contrast
 
 - Legacy paints the battery bar with raw hex thresholds in the view (`Views/Device/Index.cshtml:145-157,199-205`: above 40 green, above 15 amber, else red). The percentage label sits on the fill, and the legacy greens and reds do not reach 4.5:1 behind it.
 - React defines `--color-battery-ok`, `--color-battery-low` and `--color-battery-critical` in `tokens.css`, each lightened until the label holds 4.5:1 at every fill level, and the thresholds stay 40 / 15.
@@ -1105,3 +1105,12 @@ Gautham took the recommendations on 2026-09-21.
 - **J13 closed, no change:** "Use default colours" only edits the draft; Save is a separate click and Discard restores it. Nothing is posted by the reset itself.
 - **C5 closed, no change:** a field that was null on the server and was never touched stays null; a touched field posts its text. Legacy posts the KO model as-is, which is the same outcome for every field the user edited.
 - **I1 / I2 stay planned:** the live check on 2026-09-21 returned `null` from `SettingsApi/GetSettingByKeys` for every key on the local tenant (the Config service has no rows here), so the switch from the HTML scrape waits for a tenant with settings.
+
+## D-126 · Accepted · Battery gauge drawn as a status-bar cell with the number beside it
+
+Approved by Gautham on 2026-09-22 when he asked for this work to land. The design is Battery A ("iPhone Glass") and Picker A in `docs/specs/resources/battery.designs.html`.
+
+- The Devices list draws each battery as a small glass cell (`BatteryGlyph.tsx`) with the percentage written beside it, not on the fill. The thresholds stay 40 / 15 (`Views/Device/Index.cshtml:199-205`).
+- The fill uses the status-bar hues (`--color-battery-good`, `-medium`, `-low` and a `-deep` shade of each in `tokens.css`). Because no text sits on the fill any more, the lightening D-077 needed is no longer required.
+- Accessibility: the cell is `aria-hidden`; the number is real text and the level is given in words in the cell's title. The low number uses `--color-battery-low-deep` (about 4.8:1 on white). The low pulse and the fill sweep stop under reduced motion.
+- The Battery % range filter (Picker A) shows the chosen band on the same glass cell, with two thumbs; it keeps the legacy rules (`_IndexFilterRow.cshtml:17-24`: 0-100, min at most max) and commits a bound on release, key-up or blur (D-112).
