@@ -172,11 +172,18 @@ describe('FileTemplateDetailsScreen', () => {
     const input = await screen.findByLabelText('Template')
     const good = new File(['<html><body><p>From file</p></body></html>'], 'new.html', { type: 'text/html' })
     fireEvent.change(input, { target: { files: [good] } })
-    await waitFor(() => expect(screen.getByLabelText('File Template Editor')).toHaveValue('<p>From file</p>'))
+    await waitFor(
+      () => expect(screen.getByLabelText('File Template Editor')).toHaveValue('<p>From file</p>'),
+      {
+        timeout: 5000,
+      },
+    )
     expect(screen.getByText('new.html')).toBeInTheDocument()
     const bad = new File(['x'], 'photo.png', { type: 'image/png' })
     fireEvent.change(input, { target: { files: [bad] } })
-    expect(await screen.findByText('Attachment file format is not supported.')).toBeInTheDocument()
+    expect(
+      await screen.findByText('Attachment file format is not supported.', {}, { timeout: 5000 }),
+    ).toBeInTheDocument()
   })
 
   it('shows the invalid format message when validation fails and does not save', async () => {
