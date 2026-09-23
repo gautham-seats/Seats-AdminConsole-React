@@ -13,6 +13,8 @@ const config: Config = {
   testPathIgnorePatterns: ['/node_modules/', '/.next/'],
   // The whole suite on a busy laptop can push a screen test past the 5 s default.
   testTimeout: 20000,
+  // Half the cores: the suite beside a Playwright run starved screen tests into false timeouts.
+  maxWorkers: '50%',
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
     '!src/**/__tests__/**',
