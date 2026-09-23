@@ -13,6 +13,8 @@ import {
   type LookupOption,
 } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
+import { ADD_BUTTON_CLASS, ADD_ICON_CLASS } from '@/shared/ui/add-button'
+import { NAV_BAND_CELL } from '@/shared/ui/nav-band'
 import { ENGAGEMENT_FALLBACK_ONLY, type EngagementText } from '../engagement-text'
 import { fetchCategoryOptions, searchCategory } from './details-api'
 import {
@@ -249,13 +251,8 @@ export function ConstraintRules({
             </p>
           ) : null}
         </div>
-        <button
-          type="button"
-          onClick={add}
-          disabled={disabled}
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand/[0.08] px-4 text-sm font-semibold text-brand transition-colors hover:bg-brand/[0.14] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
-        >
-          <Plus aria-hidden className="size-4" />
+        <button type="button" onClick={add} disabled={disabled} className={ADD_BUTTON_CLASS}>
+          <Plus aria-hidden className={ADD_ICON_CLASS} />
           {t('Add')}
         </button>
       </div>
@@ -268,20 +265,20 @@ export function ConstraintRules({
         <div className="max-h-72 scroll-pt-10 overflow-auto rounded-md border border-border">
           <table className="w-full border-separate border-spacing-0 text-sm">
             <thead>
-              <tr className="text-left text-xs font-semibold tracking-wide text-slate-500 uppercase">
-                <th scope="col" className="sticky top-0 border-b border-border bg-slate-50 px-3 py-2">
+              <tr className="text-left text-xs font-semibold tracking-wide uppercase">
+                <th scope="col" className={`sticky top-0 z-10 px-3 py-2 text-white ${NAV_BAND_CELL}`}>
                   {t('Include')}
                 </th>
-                <th scope="col" className="sticky top-0 border-b border-border bg-slate-50 px-3 py-2">
+                <th scope="col" className={`sticky top-0 z-10 px-3 py-2 text-white ${NAV_BAND_CELL}`}>
                   {t('Category')}
                 </th>
-                <th scope="col" className="sticky top-0 w-8 border-b border-border bg-slate-50 px-3 py-2">
+                <th scope="col" className={`sticky top-0 z-10 w-8 px-3 py-2 text-white ${NAV_BAND_CELL}`}>
                   <span className="sr-only">{ENGAGEMENT_FALLBACK_ONLY.equals}</span>
                 </th>
-                <th scope="col" className="sticky top-0 border-b border-border bg-slate-50 px-3 py-2">
+                <th scope="col" className={`sticky top-0 z-10 px-3 py-2 text-white ${NAV_BAND_CELL}`}>
                   {t('Value')}
                 </th>
-                <th scope="col" className="sticky top-0 w-12 border-b border-border bg-slate-50 px-3 py-2">
+                <th scope="col" className={`sticky top-0 z-10 w-12 px-3 py-2 text-white ${NAV_BAND_CELL}`}>
                   <span className="sr-only">{t('Delete')}</span>
                 </th>
               </tr>

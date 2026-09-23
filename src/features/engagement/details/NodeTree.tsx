@@ -1,6 +1,7 @@
 'use client'
 
 import { ChevronRight, Play } from 'lucide-react'
+import { HEAD_CELL } from '@/shared/ui/HeadBackdrop'
 import { useState } from 'react'
 import { Checkbox, Input } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
@@ -44,8 +45,8 @@ export type NodeTreeProps = {
 }
 
 const CELL = 'border-b border-border px-2 py-1.5 align-middle'
-const HEAD =
-  'sticky top-0 z-10 h-10 bg-brand px-2 text-left align-middle text-xs font-medium tracking-[0.02em] whitespace-nowrap text-white'
+// Sticky so the column names stay with the rows while the box scrolls.
+const HEAD = cn(HEAD_CELL, 'sticky top-0 z-10')
 
 // Node rows with legacy enable rules (seats-admin-engagement-node.html:60-159).
 export function NodeTree({
@@ -75,7 +76,9 @@ export function NodeTree({
     errors.find(error => error.path === path && error.field === field)
 
   return (
-    <div className="scroll-pt-10 overflow-x-auto">
+    // The table is wider and taller than the card, so it scrolls inside its own box: the sideways
+    // scrollbar stays at the bottom of the visible area instead of below the last node.
+    <div className="max-h-[min(60vh,40rem)] scroll-pt-10 overflow-auto overscroll-contain">
       <table className="w-full min-w-[64rem] border-separate border-spacing-0 text-sm">
         <thead>
           <tr>

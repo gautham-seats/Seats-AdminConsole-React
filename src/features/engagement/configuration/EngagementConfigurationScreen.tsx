@@ -1,6 +1,7 @@
 'use client'
 
 import { ArrowDown, ArrowUp, ArrowUpDown, Plus, RefreshCw } from 'lucide-react'
+import { HEAD_CELL } from '@/shared/ui/HeadBackdrop'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { toApiError, useApiRead } from '@/shared/api'
 import Link from 'next/link'
@@ -47,8 +48,7 @@ import { CountUp } from '@/shared/ui/CountUp'
 import { ScrollEdges } from '@/shared/ui/ScrollEdges'
 
 const NO_IDS: ReadonlySet<number> = new Set()
-const HEAD =
-  'sticky top-0 z-10 h-10 bg-brand px-3 text-left align-middle text-xs font-medium tracking-[0.02em] whitespace-nowrap text-white'
+const HEAD = HEAD_CELL
 export function EngagementConfigurationScreen() {
   return (
     <EngagementGate>

@@ -74,7 +74,7 @@ const NEVER = 'never'
 const CALCULATION_PERIOD = 'Calculation period'
 const ALL = 'all'
 const HEAD =
-  'sticky top-0 z-10 h-10 bg-brand px-3 text-left align-middle text-xs font-medium tracking-[0.02em] whitespace-nowrap text-white'
+  'nav-band-cell sticky top-0 z-10 h-10 px-3 text-left align-middle text-[12.5px] font-bold tracking-[0.01em] whitespace-nowrap text-white'
 const CELL = 'border-b border-border px-3 py-2.5 whitespace-nowrap text-slate-700'
 const PAGER_MIN_ROWS = 10
 // Student lookups are capped so a broad query never renders thousands of options.
