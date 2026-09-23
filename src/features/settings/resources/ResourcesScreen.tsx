@@ -8,7 +8,7 @@ import { clearResourceCache } from '@/shared/resources'
 import { PermissionAction, PermissionItem } from '@/shared/shell/admin-menu'
 import { useProfile } from '@/shared/shell/profile'
 import { Button, FilterPanel, Input, Pagination, type FilterChip } from '@/shared/ui'
-import { ADD_BUTTON_CLASS } from '@/shared/ui/add-button'
+import { ADD_BUTTON_CLASS, CANCEL_BUTTON_CLASS } from '@/shared/ui/add-button'
 import { cn } from '@/shared/ui/cn'
 import type { ResourceTextDto, ResourceTypeDto } from '@/types/resource-texts'
 import { FormDialog } from '../shared/FormDialog'
@@ -390,12 +390,17 @@ function ResourcesWorkspace() {
         className="max-w-xl"
         footer={
           <>
-            <Button variant="ghost" onClick={() => setEditing(null)} disabled={saving}>
+            <Button
+              variant="ghost"
+              onClick={() => setEditing(null)}
+              disabled={saving}
+              className={CANCEL_BUTTON_CLASS}
+            >
               {t('Cancel')}
             </Button>
             {canEdit ? (
-              <Button type="submit" loading={saving} className="active:scale-[.98]">
-                <Save aria-hidden className={cn('size-4', saving && 'animate-pulse')} />
+              <Button type="submit" loading={saving} className={ADD_BUTTON_CLASS}>
+                <Save aria-hidden className="size-[18px]" />
                 {t('Save')}
               </Button>
             ) : null}

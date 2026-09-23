@@ -7,7 +7,8 @@ import { PermissionAction, PermissionItem } from '@/shared/shell/admin-menu'
 import { useProfile } from '@/shared/shell/profile'
 import { Button, ConfirmDialog, Input, Pagination } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
-import { ADD_BUTTON_CLASS, ADD_ICON_CLASS } from '@/shared/ui/add-button'
+import { ADD_BUTTON_CLASS, ADD_ICON_CLASS, CANCEL_BUTTON_CLASS } from '@/shared/ui/add-button'
+import { NAV_BAND_ROW } from '@/shared/ui/nav-band'
 import type { CustomFieldGroupDto, CustomFieldGroupPageDto } from '@/types/custom-fields'
 import { FormDialog } from '../shared/FormDialog'
 import { NativeSelect } from '../shared/NativeSelect'
@@ -301,8 +302,14 @@ function CustomFieldsWorkspace() {
         ) : null
       }
       actions={
-        profile.can(ADD) && read.status === 'success' ? (
-          <button type="button" onClick={() => open(newGroup())} className={ADD_BUTTON_CLASS}>
+        profile.can(ADD) ? (
+          // Rendered from the first paint, disabled until the list is in, so the header does not jump.
+          <button
+            type="button"
+            onClick={() => open(newGroup())}
+            disabled={read.status !== 'success'}
+            className={ADD_BUTTON_CLASS}
+          >
             <Plus aria-hidden strokeWidth={2.5} className={ADD_ICON_CLASS} />
             {t('Add')}
           </button>
@@ -388,12 +395,17 @@ function CustomFieldsWorkspace() {
                 {t('Delete')}
               </Button>
             ) : null}
-            <Button variant="ghost" onClick={() => setDraft(null)} disabled={saving}>
+            <Button
+              variant="ghost"
+              onClick={() => setDraft(null)}
+              disabled={saving}
+              className={CANCEL_BUTTON_CLASS}
+            >
               {t('Cancel')}
             </Button>
             {canWrite ? (
-              <Button type="submit" loading={saving} className="active:scale-[.98]">
-                <Save aria-hidden className={cn('size-4', saving && 'animate-pulse')} />
+              <Button type="submit" loading={saving} className={ADD_BUTTON_CLASS}>
+                <Save aria-hidden className="size-[18px]" />
                 {t('Save')}
               </Button>
             ) : null}
@@ -486,7 +498,7 @@ function CustomFieldsWorkspace() {
                 <p className="mb-2 text-[13.5px] font-semibold text-slate-800">{t('Fields')}</p>
                 <div className="overflow-x-auto rounded-lg border border-border">
                   <table className="w-full min-w-[40rem] text-sm">
-                    <thead className="bg-slate-50 text-left text-xs font-semibold text-slate-600">
+                    <thead className={`${NAV_BAND_ROW} text-left text-xs font-semibold`}>
                       <tr>
                         <th className="px-3 py-2">{t('Name')}</th>
                         {showVisibility ? <th className="px-2 py-2 text-center">{t('Visibility')}</th> : null}
@@ -660,12 +672,17 @@ function CustomFieldsWorkspace() {
         onSubmit={() => void send()}
         footer={
           <>
-            <Button variant="ghost" onClick={() => setCheck(null)} disabled={saving}>
+            <Button
+              variant="ghost"
+              onClick={() => setCheck(null)}
+              disabled={saving}
+              className={CANCEL_BUTTON_CLASS}
+            >
               {t('Cancel')}
             </Button>
             {check?.allowed ? (
-              <Button type="submit" loading={saving}>
-                <Save aria-hidden className="size-4" />
+              <Button type="submit" loading={saving} className={ADD_BUTTON_CLASS}>
+                <Save aria-hidden className="size-[18px]" />
                 {t('Save')}
               </Button>
             ) : null}

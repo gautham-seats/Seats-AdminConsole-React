@@ -2,12 +2,9 @@ import { Link2, type LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { cn } from '@/shared/ui/cn'
 
-// Same blue glass band as the Admin nav bar (src/shared/shell/NavBar.tsx header).
-export const NAV_BAND =
-  'bg-brand bg-[linear-gradient(180deg,rgba(255,255,255,.13)_0%,rgba(255,255,255,.04)_46%,rgba(255,255,255,0)_54%,rgba(0,0,0,.05)_100%)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,.22),inset_0_-1px_0_rgba(0,0,0,.12)]'
+import { NAV_BAND, NAV_ICON_BOX, NavBandGlow } from '@/shared/ui/nav-band'
 
-export const NAV_ICON_BOX =
-  'bg-white/15 text-white ring-1 ring-white/25 shadow-[inset_0_1px_0_rgba(255,255,255,.2)]'
+export { NAV_BAND, NAV_ICON_BOX, NavBandGlow }
 
 type SettingsCardProps = {
   icon: LucideIcon
@@ -39,20 +36,21 @@ export function SettingsCard({
       style={{ animationDelay: `${delay}ms` }}
     >
       {/* Trimmed so a card header sits below the page title rather than competing with it. */}
-      <div className={cn('flex items-center gap-2.5 px-4 py-2', NAV_BAND)}>
+      <div className={cn('flex items-center gap-2.5 rounded-t-xl px-4 py-2.5', NAV_BAND)}>
+        <NavBandGlow />
         <span
           className={cn(
-            'grid size-7 shrink-0 place-items-center rounded-md transition-transform duration-300 ease-premium group-focus-within/card:scale-105 group-hover/card:-rotate-6',
+            'grid size-7 shrink-0 place-items-center transition-transform duration-300 ease-premium group-focus-within/card:scale-105 group-hover/card:-rotate-6',
             NAV_ICON_BOX,
           )}
         >
-          <Icon aria-hidden className="size-3.5" />
+          <Icon aria-hidden className="size-[13px]" />
         </span>
-        <div className="min-w-0">
-          <h2 className="text-[13.5px] leading-5 font-semibold tracking-tight text-white">{title}</h2>
-          {hint ? <p className="text-[11.5px] leading-4 text-white/90">{hint}</p> : null}
+        <div className="flex min-w-0 flex-col justify-center">
+          <h2 className="text-[14.5px] leading-[19px] font-bold tracking-[-.005em] text-white">{title}</h2>
+          {hint ? <p className="text-[11.5px] leading-[15px] font-medium text-white/85">{hint}</p> : null}
         </div>
-        {action ? <div className="ml-auto">{action}</div> : null}
+        {action ? <div className="ml-auto flex items-center">{action}</div> : null}
       </div>
       <div className={cn('flex flex-col divide-y divide-border/70', bodyClassName)}>{children}</div>
     </section>
@@ -101,7 +99,7 @@ export function SettingsField({
         </label>
         {hint ? <p className="mt-0.5 text-xs text-slate-500">{hint}</p> : null}
       </div>
-      <div className="min-w-0">
+      <div className="flex min-w-0 flex-col justify-center">
         {children}
         {note}
         {error ? (
