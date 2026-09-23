@@ -3,7 +3,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
 
-export type FieldSelectOption = { value: string; label: string }
+type FieldSelectOption = { value: string; label: string }
 
 type FieldSelectProps = {
   id: string

@@ -16,5 +16,3 @@ export function sameDraft(a: unknown, b: unknown): boolean {
   for (const key of keys) if (!sameDraft(left[key], right[key])) return false
   return true
 }
-
-export const sameFilters = sameDraft

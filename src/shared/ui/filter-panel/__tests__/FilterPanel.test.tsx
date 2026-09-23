@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { useState } from 'react'
 import { FilterPanel, type FilterPanelLabels } from '../FilterPanel'
-import { sameFilters } from '../use-filter-draft'
+import { sameDraft } from '../use-filter-draft'
 
 const labels: FilterPanelLabels = {
   title: 'Filters',
@@ -87,8 +87,8 @@ describe('FilterPanel', () => {
   })
 
   it('compares filter values', () => {
-    expect(sameFilters({ a: 1 }, { a: 1 })).toBe(true)
-    expect(sameFilters({ a: 1 }, { a: 2 })).toBe(false)
+    expect(sameDraft({ a: 1 }, { a: 1 })).toBe(true)
+    expect(sameDraft({ a: 1 }, { a: 2 })).toBe(false)
   })
 
   it('SL-30 keeps focus on the chip list after a chip is removed', () => {

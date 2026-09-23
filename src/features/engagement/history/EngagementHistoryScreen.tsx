@@ -18,7 +18,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  sameFilters,
+  sameDraft,
   type FilterChip,
 } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
@@ -240,7 +240,7 @@ function HistoryWorkspace({ initial }: { initial: HistoryFilters }) {
   // D-097, following D-112: a picked value reloads at once; nothing waits for a Search button.
   const apply = (filters: HistoryFilters) => {
     setDraft(filters)
-    if (!sameFilters(filters, query.filters)) search(filters)
+    if (!sameDraft(filters, query.filters)) search(filters)
   }
 
   const isStats = query.view === 'Stats'
@@ -442,7 +442,7 @@ function HistoryWorkspace({ initial }: { initial: HistoryFilters }) {
         activeView={query.view}
         onViewChange={view => search(draft, view as EngagementHistoryView)}
         chips={chips}
-        canReset={!sameFilters(draft, initial) || !sameFilters(query.filters, initial)}
+        canReset={!sameDraft(draft, initial) || !sameDraft(query.filters, initial)}
         onReset={() => {
           setDraft(initial)
           search(initial)
