@@ -1,7 +1,6 @@
 'use client'
 
-import { BadgeCheck, Braces, FileCode2, FileUp, PenLine, Save, Search } from 'lucide-react'
-import Link from 'next/link'
+import { BadgeCheck, Braces, FileCode2, FileUp, PenLine, Search } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { api, toApiError, useApiRead } from '@/shared/api'
@@ -9,7 +8,7 @@ import { FILE_TEMPLATES_ROUTE, PermissionAction, PermissionItem } from '@/shared
 import { LEAVE_EN } from '@/shared/shell/LeaveDialog'
 import { useProfile } from '@/shared/shell/profile'
 import { useLeaveGuard } from '@/shared/shell/use-leave-guard'
-import { Button, buttonVariants, Input } from '@/shared/ui'
+import { Button, Input } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
 import type { FileTemplateDetailsDto, FileTemplateDto, GlobalListItemDto } from '@/types/file-templates'
 import { setFlash } from '../shared/flash'
@@ -17,8 +16,10 @@ import { NativeSelect } from '../shared/NativeSelect'
 import { SaveToast, type Notice } from '../shared/SaveToast'
 import { SettingsCard, SettingsField } from '../shared/SettingsCard'
 import {
+  DetailActions,
   FormStatusPill,
   FRAME_EN,
+  SecondaryAction,
   SettingsBody,
   SettingsGate,
   SettingsLayout,
@@ -46,6 +47,7 @@ import {
   wildcardsFor,
 } from './file-template-form'
 import { TemplateEditor, type TemplateEditorHandle } from './TemplateEditor'
+import { NAV_BAND, NavBandGlow } from '@/shared/ui/nav-band'
 
 const ITEM = PermissionItem.FileTemplate
 const ACCESS = { item: ITEM, action: PermissionAction.Access }
@@ -92,6 +94,7 @@ const EN = {
   pickType: 'Select a type',
   addWildcard: 'Insert wildcard',
   wildcardHint: 'Click to insert at the cursor',
+  editorPlaceholder: 'Write the template here, or insert a wildcard from the list.',
   filter: 'Filter wildcards',
 } as const
 
@@ -272,39 +275,31 @@ function FileTemplateWorkspace({ id }: { id: number }) {
       title={title}
       meta={<FormStatusPill canEdit={canSave} dirty={dirty} />}
       actions={
-        <div className="flex items-center gap-2">
-          <Link
-            href={FILE_TEMPLATES_ROUTE}
-            className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'text-muted-foreground')}
-          >
-            {t('Cancel')}
-          </Link>
-          {canSave && current ? (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
+        <DetailActions
+          cancelHref={FILE_TEMPLATES_ROUTE}
+          cancelLabel={t('Cancel')}
+          saveLabel={t('Save')}
+          onSave={() => void save()}
+          saving={busy === 'save'}
+          disabled={busy !== null}
+          canSave={canSave && current !== null}
+          extra={
+            canSave && current ? (
+              <SecondaryAction
                 onClick={() => void validate()}
                 disabled={busy !== null}
-                className="bg-white active:scale-[.98]"
+                icon={
+                  <BadgeCheck
+                    aria-hidden
+                    className={cn('size-[18px]', busy === 'validate' && 'animate-pulse')}
+                  />
+                }
               >
-                <BadgeCheck aria-hidden className={cn('size-4', busy === 'validate' && 'animate-pulse')} />
                 {t('Validate')}
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => void save()}
-                disabled={busy !== null}
-                aria-keyshortcuts="Control+S"
-                title={FRAME_EN.shortcut}
-                className="shadow-sm transition-[box-shadow,transform] hover:shadow-[0_6px_16px_-6px_rgba(21,102,162,.6)] active:scale-[.98]"
-              >
-                <Save aria-hidden className={cn('size-4', busy === 'save' && 'animate-pulse')} />
-                {t('Save')}
-              </Button>
-            </>
-          ) : null}
-        </div>
+              </SecondaryAction>
+            ) : null
+          }
+        />
       }
     >
       <SaveToast notice={notice} onDismiss={dismissNotice} dismissLabel={FRAME_EN.dismiss} />
@@ -437,7 +432,8 @@ function FileTemplateWorkspace({ id }: { id: number }) {
                       variant="ghost"
                       disabled={locked}
                       onClick={() => fileRef.current?.click()}
-                      className="group/file text-white hover:bg-white/15 hover:text-white"
+                      // A ghost button disappears into the band, so it carries its own chrome here.
+                      className="group/file rounded-lg border border-white/45 bg-white/15 px-4 font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,.28)] backdrop-blur-[1px] hover:border-white/70 hover:bg-white/25 hover:text-white focus-visible:ring-white/80"
                       title={EN.fileHint}
                     >
                       <FileUp
@@ -462,6 +458,7 @@ function FileTemplateWorkspace({ id }: { id: number }) {
                   <TemplateEditor
                     ref={editorRef}
                     label={t('FileEditor')}
+                    placeholder={EN.editorPlaceholder}
                     disabled={locked}
                     invalid={missing.includes('FileEditor')}
                     describedBy={missing.includes('FileEditor') ? 'template-editor-error' : undefined}
@@ -484,9 +481,10 @@ function FileTemplateWorkspace({ id }: { id: number }) {
                   aria-label={t('Wildcards')}
                   className="flex max-h-[28rem] flex-col overflow-hidden rounded-lg border border-border bg-white"
                 >
-                  <div className="flex items-center gap-2 border-b border-border bg-slate-50 px-3 py-2">
-                    <Braces aria-hidden className="size-4 text-brand" />
-                    <span className="text-sm font-semibold text-slate-800">{t('Wildcards')}</span>
+                  <div className={cn('flex items-center gap-2 px-3 py-2', NAV_BAND)}>
+                    <NavBandGlow />
+                    <Braces aria-hidden className="size-4 text-white" />
+                    <span className="text-sm font-semibold text-white">{t('Wildcards')}</span>
                   </div>
                   <div className="relative border-b border-border p-2">
                     <Search

@@ -1,7 +1,6 @@
 'use client'
 
-import { BellRing, CalendarPlus, ClipboardCheck, FileText, Save, UserCheck } from 'lucide-react'
-import Link from 'next/link'
+import { BellRing, CalendarPlus, ClipboardCheck, FileText, UserCheck } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import { api, toApiError, useApiRead } from '@/shared/api'
@@ -9,7 +8,7 @@ import { ACTIVITY_TYPES_ROUTE, PermissionAction, PermissionItem } from '@/shared
 import { LEAVE_EN } from '@/shared/shell/LeaveDialog'
 import { useProfile } from '@/shared/shell/profile'
 import { useLeaveGuard } from '@/shared/shell/use-leave-guard'
-import { Button, buttonVariants, Input } from '@/shared/ui'
+import { Input } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
 import type { ActivityTypeDetailsDto, ActivityTypeDto } from '@/types/activity-types'
 import { setFlash } from '../shared/flash'
@@ -17,6 +16,7 @@ import { NativeSelect } from '../shared/NativeSelect'
 import { SaveToast, type Notice } from '../shared/SaveToast'
 import { SettingsCard, SettingsField } from '../shared/SettingsCard'
 import {
+  DetailActions,
   FormStatusPill,
   FRAME_EN,
   SettingsBody,
@@ -162,34 +162,21 @@ function ActivityTypeDetailsWorkspace({ id }: { id: number }) {
       title={title}
       meta={<FormStatusPill canEdit={canSave} dirty={dirty} />}
       actions={
-        <div className="flex items-center gap-2">
-          <Link
-            href={ACTIVITY_TYPES_ROUTE}
-            className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'text-muted-foreground')}
-          >
-            {t('Cancel')}
-          </Link>
-          {canSave && detail ? (
-            <Button
-              size="sm"
-              onClick={() => void save()}
-              loading={saving}
-              aria-keyshortcuts="Control+S"
-              title={FRAME_EN.shortcut}
-              className="shadow-sm transition-[box-shadow,transform] hover:shadow-[0_6px_16px_-6px_rgba(21,102,162,.6)] active:scale-[.98]"
-            >
-              <Save aria-hidden className={cn('size-4', saving && 'animate-pulse')} />
-              {t('Save')}
-            </Button>
-          ) : null}
-        </div>
+        <DetailActions
+          cancelHref={ACTIVITY_TYPES_ROUTE}
+          cancelLabel={t('Cancel')}
+          saveLabel={t('Save')}
+          onSave={() => void save()}
+          saving={saving}
+          canSave={canSave && detail !== null}
+        />
       }
     >
       <SaveToast notice={notice} onDismiss={dismissNotice} dismissLabel={FRAME_EN.dismiss} />
       <SettingsBody error={read.error} status={read.status} onRetry={read.reload}>
         {details && detail ? (
-          <div className="mx-auto grid max-w-6xl items-start gap-4 xl:grid-cols-2">
-            <div className="flex flex-col gap-4">
+          <div className="mx-auto grid h-full w-full max-w-6xl gap-4 lg:grid-cols-2 lg:items-stretch">
+            <div className="flex min-h-0 flex-col gap-4">
               <SettingsCard icon={CalendarPlus} title={EN.general} hint={EN.generalHint}>
                 <SettingsField
                   htmlFor="activity-type-name"
@@ -244,7 +231,14 @@ function ActivityTypeDetailsWorkspace({ id }: { id: number }) {
                 </div>
               </SettingsCard>
 
-              <SettingsCard icon={UserCheck} title={EN.attendance} hint={EN.attendanceHint} delay={60}>
+              <SettingsCard
+                icon={UserCheck}
+                title={EN.attendance}
+                hint={EN.attendanceHint}
+                delay={60}
+                className="flex flex-1 flex-col"
+                bodyClassName="flex-1"
+              >
                 <ToggleRow
                   id="activity-type-clocking"
                   label={t('ActAsClocking')}
@@ -293,7 +287,7 @@ function ActivityTypeDetailsWorkspace({ id }: { id: number }) {
               </SettingsCard>
             </div>
 
-            <div className="flex flex-col gap-4">
+            <div className="flex min-h-0 flex-col gap-4">
               <SettingsCard icon={ClipboardCheck} title={EN.rules} hint={EN.rulesHint} delay={120}>
                 <ToggleRow
                   id="activity-type-mandatory-comment"
@@ -322,7 +316,14 @@ function ActivityTypeDetailsWorkspace({ id }: { id: number }) {
                 ) : null}
               </SettingsCard>
 
-              <SettingsCard icon={BellRing} title={EN.notifications} hint={EN.notificationsHint} delay={180}>
+              <SettingsCard
+                icon={BellRing}
+                title={EN.notifications}
+                hint={EN.notificationsHint}
+                delay={180}
+                className="flex flex-1 flex-col"
+                bodyClassName="flex-1"
+              >
                 <ToggleRow
                   id="activity-type-trigger-email"
                   label={t('TriggerEmail')}

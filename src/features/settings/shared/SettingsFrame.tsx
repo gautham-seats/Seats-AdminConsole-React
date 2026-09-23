@@ -1,6 +1,7 @@
 'use client'
 
 import { Lock, Save, Undo2 } from 'lucide-react'
+import Link from 'next/link'
 import { useEffect, useMemo, useRef, type ReactNode } from 'react'
 import { SETTINGS_GROUP, type MenuLink, type Permission } from '@/shared/shell/admin-menu'
 import { AreaWorkspace, type WorkspaceSection } from '@/shared/shell/AreaWorkspace'
@@ -8,7 +9,8 @@ import { LEAVE_EN } from '@/shared/shell/LeaveDialog'
 import { useLeaveGuard } from '@/shared/shell/use-leave-guard'
 import { useProfile } from '@/shared/shell/profile'
 import { Button, DelayedLoading, ErrorState } from '@/shared/ui'
-import { ADD_BUTTON_CLASS } from '@/shared/ui/add-button'
+import { cn } from '@/shared/ui/cn'
+import { ADD_BUTTON_CLASS, CANCEL_BUTTON_CLASS, EXPORT_BUTTON_CLASS } from '@/shared/ui/add-button'
 import type { ApiError, ReadStatus } from '@/shared/api'
 import { useScreenText } from './use-screen-text'
 import { StatusBadge } from '@/shared/ui/StatusBadge'
@@ -218,17 +220,15 @@ export function SaveActions({
       {dirty || alwaysShowDiscard ? (
         <Button
           variant="ghost"
-          size="sm"
           onClick={onDiscard}
           disabled={saving}
-          className="animate-slide-in text-muted-foreground motion-reduce:animate-none"
+          className={cn(CANCEL_BUTTON_CLASS, 'animate-slide-in motion-reduce:animate-none')}
         >
-          <Undo2 aria-hidden className="size-4" />
+          <Undo2 aria-hidden className="size-[18px]" />
           {discardLabel}
         </Button>
       ) : null}
       <Button
-        size="sm"
         onClick={onSave}
         loading={saving}
         aria-keyshortcuts="Control+S"
@@ -243,6 +243,79 @@ export function SaveActions({
         {saveLabel}
       </Button>
     </div>
+  )
+}
+
+type DetailActionsProps = {
+  cancelHref: string
+  cancelLabel: string
+  saveLabel: string
+  onSave: () => void
+  saving: boolean
+  canSave: boolean
+  /** Blocks Save while another action on the form is running. */
+  disabled?: boolean
+  /** A second action beside Save, built with SecondaryAction so all three share one box. */
+  extra?: ReactNode
+}
+
+// Cancel / (extra) / Save for a full-page Settings form. One box for all three: see add-button.ts.
+export function DetailActions({
+  cancelHref,
+  cancelLabel,
+  saveLabel,
+  onSave,
+  saving,
+  canSave,
+  disabled = false,
+  extra,
+}: DetailActionsProps) {
+  return (
+    // One equal track per action, so a longer label widens all three rather than just its own button.
+    <div className="grid grid-flow-col auto-cols-fr items-center gap-2">
+      <Link href={cancelHref} className={CANCEL_BUTTON_CLASS}>
+        {cancelLabel}
+      </Link>
+      {extra}
+      {canSave ? (
+        <Button
+          onClick={onSave}
+          loading={saving}
+          disabled={disabled}
+          aria-keyshortcuts="Control+S"
+          title={FRAME_EN.shortcut}
+          className={ADD_BUTTON_CLASS}
+        >
+          <Save aria-hidden className="size-[18px]" />
+          {saveLabel}
+        </Button>
+      ) : null}
+    </div>
+  )
+}
+
+// A quiet button in the same box as Cancel and Save, for a form's own extra action.
+export function SecondaryAction({
+  onClick,
+  disabled,
+  icon,
+  children,
+}: {
+  onClick: () => void
+  disabled?: boolean
+  icon: ReactNode
+  children: ReactNode
+}) {
+  return (
+    <Button
+      variant="outline"
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(EXPORT_BUTTON_CLASS, 'border-slate-300 text-slate-700')}
+    >
+      {icon}
+      {children}
+    </Button>
   )
 }
 

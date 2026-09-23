@@ -1,19 +1,14 @@
 'use client'
 
 import Image from 'next/image'
-import {
-  ArrowUp,
-  ArrowUpDown,
-  Bell,
-  CircleHelp,
-  Layers,
-  Settings,
-  TabletSmartphone,
-  Users,
-  type LucideIcon,
-} from 'lucide-react'
-import type { CSSProperties, ReactNode } from 'react'
+import { ArrowUp, ArrowUpDown, Bell, ChevronDown, CircleHelp, Layers, Search } from 'lucide-react'
+import { useMemo, type CSSProperties, type ReactNode } from 'react'
+import { SharedResourceKeys } from '@/shared/resources/keys'
+import { useResources } from '@/shared/resources/use-resources'
+import { menuResourceKeys, type TopEntry } from '@/shared/shell/admin-menu'
+import { MENU_ICONS } from '@/shared/shell/menu-icons'
 import seatsLogo from '@/shared/shell/seats-one-logo.png'
+import { useSessionHeader, useShellMenu } from '@/shared/shell/use-shell-data'
 import { cn } from '@/shared/ui/cn'
 import { contrastGrade, contrastRatio, previewColor } from './settings-form'
 import { SETTINGS_FALLBACK_ONLY as EN } from './settings-text'
@@ -50,13 +45,30 @@ const TONES = {
   warn: 'bg-amber-50 text-amber-800',
   bad: 'bg-red-50 text-red-700',
 }
-const NAV_ITEMS: readonly { icon: LucideIcon; label: string }[] = [
-  { icon: Users, label: EN.navUsers },
-  { icon: TabletSmartphone, label: EN.navDevices },
-  { icon: Settings, label: EN.navSettings },
-]
+// The preview bar is drawn from the live menu, so it shows the items and icons this user really has.
+const PREVIEW_NAV_ITEMS = 4
+
+function useNavPreview(): { entry: TopEntry; label: string }[] {
+  const menu = useShellMenu()
+  const keys = useMemo(
+    () => [...menuResourceKeys(), SharedResourceKeys.refresh, SharedResourceKeys.noRecords],
+    [],
+  )
+  const { text } = useResources(keys)
+  return useMemo(
+    () =>
+      menu.layout.bar.slice(0, PREVIEW_NAV_ITEMS).map(entry => {
+        const value = entry.labelKey ? text(entry.labelKey) : ''
+        return { entry, label: !value.trim() || value === entry.labelKey ? entry.fallback : value }
+      }),
+    [menu.layout.bar, text],
+  )
+}
 
 export function BrandPreview({ brand, labels }: BrandPreviewProps) {
+  const navItems = useNavPreview()
+  const session = useSessionHeader()
+  const initials = session?.initials ?? ''
   const menu = previewColor(brand.menuColor, BRAND)
   const header = previewColor(brand.tableColor, BRAND)
   const headerText = previewColor(brand.tableTextColor, '#ffffff')
@@ -96,7 +108,7 @@ export function BrandPreview({ brand, labels }: BrandPreviewProps) {
             <Callout className="-top-6 right-16 hidden sm:flex" dot={menu}>
               <span className="font-mono">{brand.menuColor || dash}</span>
             </Callout>
-            <AppNav menu={menu} logoUrl={brand.logoUrl} />
+            <AppNav menu={menu} logoUrl={brand.logoUrl} items={navItems} initial={initials} />
           </div>
           <div className="mt-3 grid grid-cols-3 gap-2.5">
             {[
@@ -277,7 +289,17 @@ function Callout({ className, dot, children }: { className: string; dot: string;
   )
 }
 
-function AppNav({ menu, logoUrl }: { menu: string; logoUrl: string }) {
+function AppNav({
+  menu,
+  logoUrl,
+  items,
+  initial,
+}: {
+  menu: string
+  logoUrl: string
+  items: { entry: TopEntry; label: string }[]
+  initial: string
+}) {
   return (
     <div
       aria-hidden
@@ -287,21 +309,31 @@ function AppNav({ menu, logoUrl }: { menu: string; logoUrl: string }) {
       <span className="pointer-events-none absolute inset-0 bg-linear-to-b from-white/20 to-transparent to-55%" />
       <Logo url={logoUrl} className="relative h-[26px] max-w-24" />
       <span className="relative h-[22px] w-px bg-white/35" />
-      {NAV_ITEMS.map(({ icon: Icon, label }, index) => (
-        <span
-          key={label}
-          className={cn(
-            'relative inline-flex h-[30px] items-center gap-1.5 rounded-md px-2 text-[12.5px] font-medium whitespace-nowrap',
-            index === 0 && 'bg-white/15',
-          )}
-        >
-          <Icon className="size-3.5" />
-          {label}
+      {items.map(({ entry, label }, index) => {
+        const Icon = MENU_ICONS[entry.icon]
+        return (
+          <span
+            key={entry.id}
+            className={cn(
+              'relative inline-flex h-[30px] items-center gap-1.5 rounded-md px-2 text-[12.5px] font-medium whitespace-nowrap',
+              index === 0 && 'bg-white/15',
+            )}
+          >
+            <Icon className="size-3.5" />
+            {label}
+            {entry.children.length > 1 ? <ChevronDown className="size-3 opacity-80" /> : null}
+          </span>
+        )
+      })}
+      <span className="relative ml-auto flex items-center gap-2.5">
+        <span className="hidden items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[11px] text-white/85 sm:inline-flex">
+          <Search className="size-3" />
+          {EN.previewSearch}
         </span>
-      ))}
-      <span className="relative ml-auto flex items-center gap-3">
         <Bell className="size-4" />
-        <span className="size-[26px] rounded-full bg-brand-avatar shadow-[0_0_0_2px_rgba(255,255,255,.4)]" />
+        <span className="grid size-[26px] place-items-center rounded-full bg-brand-avatar text-[11px] font-bold text-white shadow-[0_0_0_2px_rgba(255,255,255,.4)]">
+          {initial}
+        </span>
       </span>
     </div>
   )
