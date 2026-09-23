@@ -91,6 +91,19 @@ const NEW_JOB: JobDetailsDto = {
   ],
 }
 
+// The form's dropdowns are the shared Radix Select: open with the keyboard, then commit the option.
+async function chooseOption(comboboxName: string, optionName: string | RegExp) {
+  const trigger = screen.getByRole('combobox', { name: comboboxName })
+  await act(async () => {
+    fireEvent.keyDown(trigger, { key: 'Enter' })
+  })
+  const option = await screen.findByRole('option', { name: optionName })
+  await act(async () => {
+    option.focus()
+    fireEvent.keyDown(option, { key: 'Enter' })
+  })
+}
+
 function claims(item: number, actions: number[]) {
   return Promise.resolve([{ id: item, actions: actions.map(id => ({ id })) }])
 }
@@ -453,14 +466,14 @@ describe('JobScheduleDetailsScreen', () => {
         <JobScheduleDetailsScreen id={0} />
       </ProfileProvider>,
     )
-    expect(await screen.findByLabelText('Date Range')).toHaveValue('1')
+    expect(await screen.findByRole('combobox', { name: 'Date Range' })).toHaveTextContent('Last Day')
     expect(screen.getAllByText('Every month on the 1st at 04:00').length).toBeGreaterThanOrEqual(1)
     fireEvent.click(
       within(screen.getByRole('radiogroup', { name: 'Frequency' })).getByRole('radio', { name: 'Week' }),
     )
     fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Tutor report' } })
-    fireEvent.change(screen.getByLabelText('Type'), { target: { value: '103' } })
-    expect(screen.queryByLabelText('Date Range')).not.toBeInTheDocument()
+    await chooseOption('Type', 'Last Heartbeat Report')
+    expect(screen.queryByRole('combobox', { name: 'Date Range' })).not.toBeInTheDocument()
     fireEvent.change(screen.getByLabelText('Recipients'), { target: { value: 'a@b.com' } })
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: 'Save' }))
