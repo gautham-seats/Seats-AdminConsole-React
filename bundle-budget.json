@@ -28,7 +28,7 @@
     "/resources/lesson-types/[id]": 896,
     "/resources/readings-report": 900,
     "/resources/rooms": 890,
-    "/resources/rooms/[id]": 882,
+    "/resources/rooms/[id]": 905,
     "/resources/suspicious-readings-report": 903,
     "/rollback": 886,
     "/settings": 904,

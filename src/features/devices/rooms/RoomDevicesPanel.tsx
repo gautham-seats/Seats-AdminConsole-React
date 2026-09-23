@@ -23,7 +23,7 @@ const LEVEL_COLOR: Record<BatteryLevel, string> = {
 
 const HEAD = HEAD_CELL
 
-export type RoomDevicesRead = ReturnType<typeof useRoomDevices>
+type RoomDevicesRead = ReturnType<typeof useRoomDevices>
 
 // The room's devices come from the devices grid call, so the room page adds no new endpoint.
 export function useRoomDevices(roomId: number | null) {

@@ -1,4 +1,4 @@
-import { sameDraft, sameFilters } from '../use-filter-draft'
+import { sameDraft } from '../use-filter-draft'
 
 describe('sameDraft (SL-25)', () => {
   it('ignores key order and undefined members', () => {
@@ -12,8 +12,8 @@ describe('sameDraft (SL-25)', () => {
     expect(sameDraft([1, 2], [1, 2, 3])).toBe(false)
   })
 
-  it('compares dates by time and keeps sameFilters as an alias', () => {
+  it('compares dates by time', () => {
     expect(sameDraft({ d: new Date(2026, 8, 21) }, { d: new Date(2026, 8, 21) })).toBe(true)
-    expect(sameFilters({ start: '1' }, { start: '2' })).toBe(false)
+    expect(sameDraft({ start: '1' }, { start: '2' })).toBe(false)
   })
 })
