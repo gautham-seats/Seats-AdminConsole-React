@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Room Details Designs</title>
+<style>
+:root{--brand:#1566a2;--brand-90:#2c75ab;--brand-soft:#e8f1f8;--accent:#56bdea;--page:#f5f6fa;--fg:hsl(222.2 84% 4.9%);--muted:hsl(210 40% 96.1%);--muted-fg:hsl(215.4 16.3% 46.9%);--border:hsl(214.3 31.8% 91.4%);--destructive:hsl(0 84.2% 60.2%);--radius:.5rem;--ease:cubic-bezier(.16,1,.3,1);--bat-ok:#34c759;--bat-mid:#ffcc00;--bat-low:#ff3b30;--shadow-sm:0 1px 2px rgb(0 0 0/.06);--shadow-md:0 4px 6px -1px rgb(0 0 0/.1),0 2px 4px -2px rgb(0 0 0/.1);--shadow-lg:0 10px 15px -3px rgb(0 0 0/.1),0 4px 6px -4px rgb(0 0 0/.1);--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*,*::before,*::after{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0;background:#e9ecf1;color:var(--fg);font:14px/1.5 ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji";-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+svg{width:16px;height:16px;flex:none;stroke-width:2;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- document ---------- */
+.doc{max-width:1400px;margin:0 auto;padding:36px 24px 80px}
+.doc-head{display:grid;gap:10px;margin-bottom:8px}
+.doc-head h1{margin:0;font-size:28px;line-height:1.2;letter-spacing:-.01em}
+.doc-head p{margin:0;color:#475569;max-width:900px}
+.doc-meta{display:flex;flex-wrap:wrap;gap:8px}
+.tag{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:999px;background:#fff;border:1px solid var(--border);font-size:12px;font-weight:600;color:#334155}
+.tag.pick{background:var(--brand-soft);border-color:var(--brand);color:var(--brand)}
+.jump{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.jump a{font-size:13px;text-decoration:none;padding:6px 12px;border-radius:6px;background:#fff;border:1px solid var(--border);transition:border-color .2s var(--ease),color .2s}
+.jump a:hover{border-color:var(--brand);color:var(--brand)}
+.today{margin-top:34px;border:1px dashed #cbd5e1;border-radius:12px;background:#fff8f1;padding:16px 18px}
+.today h2{margin:0 0 6px;font-size:16px}
+.today p{margin:0;color:#6b5945;font-size:13px}
+.design{margin-top:54px;scroll-margin-top:16px}
+.design-title{display:flex;align-items:baseline;flex-wrap:wrap;gap:12px;margin:0 0 4px}
+.design-title h2{margin:0;font-size:22px}
+.design-title span{color:var(--muted-fg);font-weight:600}
+.design>p.note{margin:0 0 12px;color:#475569;max-width:900px}
+.adds{margin:10px 0 0;padding:10px 14px;border-left:3px solid var(--accent);background:#fff;border-radius:0 8px 8px 0;font-size:13px;color:#334155}
+.adds b{color:var(--fg)}
+
+/* ---------- browser frame ---------- */
+.frame{margin-top:14px;background:var(--page);border:1px solid #cfd6df;border-radius:12px;box-shadow:0 18px 40px -18px rgba(15,23,42,.35);overflow:hidden}
+.chrome{display:flex;align-items:center;gap:12px;height:34px;padding:0 12px;background:#dfe4ea;border-bottom:1px solid #cfd6df}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:#b8c1cc;display:block}
+.url{flex:1;max-width:520px;height:22px;border-radius:6px;background:#f4f6f8;color:#475569;font-size:12px;display:flex;align-items:center;padding:0 10px;font-family:var(--mono);overflow:hidden;white-space:nowrap}
+.sample{margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#92400e;background:#fef3c7;border:1px solid #fcd34d;border-radius:999px;padding:1px 9px}
+
+/* ---------- app shell ---------- */
+.nav{display:flex;align-items:center;height:50px;padding:0 16px;color:#fff;background:#1566a2 linear-gradient(180deg,rgba(255,255,255,.13) 0%,rgba(255,255,255,.04) 46%,rgba(255,255,255,0) 54%,rgba(0,0,0,.05) 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.12)}
+.nav b{font-size:15px;letter-spacing:.02em}
+.nav-div{margin:0 14px 0 16px;height:30px;width:1px;background:rgba(255,255,255,.3)}
+.nbtn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 12px;border-radius:6px;font-size:14px;font-weight:500;color:#fff}
+.nbtn[aria-current=page]{background:rgba(255,255,255,.16);box-shadow:inset 0 -2px 0 #fff}
+.nav .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.avatar{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:12px;font-weight:700}
+
+.work{display:flex;min-height:660px}
+.side{width:212px;flex:none;background:#fff;border-right:1px solid var(--border);padding:14px 10px;display:flex;flex-direction:column;gap:2px}
+.side .cap{padding:6px 10px 10px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-fg)}
+.side a{display:flex;align-items:center;gap:10px;height:36px;padding:0 10px;border-radius:7px;text-decoration:none;font-size:13.5px;color:#334155;transition:background-color .2s}
+.side a:hover{background:var(--muted)}
+.side a[aria-current=page]{background:var(--brand-soft);color:var(--brand);font-weight:600}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.phead{display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px solid var(--border);background:#fff}
+.crumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted-fg)}
+.phead h1{margin:2px 0 0;font-size:19px;line-height:1.2}
+.phead .acts{margin-left:auto;display:flex;align-items:center;gap:8px}
+.body{flex:1;padding:22px;overflow:hidden}
+
+/* ---------- controls ---------- */
+.btn{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 15px;border-radius:var(--radius);border:1px solid var(--border);background:#fff;font-size:14px;font-weight:500;box-shadow:var(--shadow-sm);transition:border-color .2s,background-color .2s,transform .2s var(--ease)}
+.btn:hover{border-color:#94a3b8}
+.btn.primary{border-color:transparent;color:#fff;background:linear-gradient(180deg,var(--brand-90),var(--brand));box-shadow:0 1px 2px rgba(21,102,162,.5),0 4px 12px -4px rgba(21,102,162,.5)}
+.btn.primary:hover{transform:translateY(-1px)}
+.btn.sm{height:32px;padding:0 11px;font-size:13px}
+.pill{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:600}
+.pill.warn{background:#fef3c7;color:#92400e}
+.pill.ok{background:#dcfce7;color:#166534}
+
+.card{background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-sm)}
+.card>header{display:flex;align-items:center;gap:8px;padding:13px 20px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600}
+.card>header svg{color:var(--brand)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px;padding:20px}
+.grid2 .full{grid-column:1/-1}
+.sect{grid-column:1/-1;margin:0;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-fg)}
+.sect+.sect,.rule{grid-column:1/-1;border-top:1px solid var(--border);margin-top:2px;padding-top:14px}
+
+.f{display:flex;flex-direction:column;gap:6px;min-width:0}
+.f>label{font-size:13px;font-weight:500}
+.f>label .req{color:var(--destructive)}
+.inp{display:flex;align-items:center;gap:9px;height:38px;padding:0 11px;border:1px solid var(--border);border-radius:var(--radius);background:#fff;box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+.inp:hover{border-color:#94a3b8}
+.inp:focus-within{border-color:var(--brand);box-shadow:0 0 0 3px rgba(21,102,162,.16)}
+.inp svg{color:var(--muted-fg)}
+.inp input{flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:14px}
+.inp .chev{margin-left:auto;color:var(--muted-fg)}
+.hint{font-size:12px;color:var(--muted-fg)}
+
+/* ---------- pieces ---------- */
+.stat{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.stat:last-child{border-bottom:0}
+.stat dt{margin:0;font-size:12.5px;color:var(--muted-fg)}
+.stat dd{margin:0;font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums}
+
+.tabs{position:relative;display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--border)}
+.tabs button{display:flex;align-items:center;gap:8px;height:42px;padding:0 16px;border-radius:7px 7px 0 0;font-size:14px;font-weight:600;color:var(--muted-fg);transition:background-color .2s,color .2s}
+.tabs button:hover{background:#f8fafc;color:var(--fg)}
+.tabs button[aria-selected=true]{background:rgba(21,102,162,.08);color:var(--brand)}
+.tabs button[aria-selected=true]::after{content:"";position:absolute;bottom:-1px;height:2px;border-radius:2px;background:var(--brand);box-shadow:0 0 10px rgba(21,102,162,.45);left:var(--ix,0);width:var(--iw,0);transition:left .45s var(--ease),width .45s var(--ease)}
+.count{min-width:20px;padding:0 6px;border-radius:999px;background:#e2e8f0;color:#475569;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;text-align:center;line-height:18px}
+button[aria-selected=true] .count{background:var(--brand);color:#fff}
+[role=tabpanel][hidden]{display:none}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-fg);padding:9px 12px;border-bottom:1px solid var(--border);background:#fbfcfe}
+td{padding:10px 12px;border-bottom:1px solid var(--border)}
+tbody tr:hover td{background:#f8fafc}
+tbody tr:last-child td{border-bottom:0}
+.mono{font-family:var(--mono);font-size:12.5px}
+
+.bat{display:inline-flex;align-items:center;gap:7px}
+.shell{position:relative;width:30px;height:15px;border:1.5px solid rgba(15,23,42,.28);border-radius:3px;background:rgba(15,23,42,.05)}
+.shell::after{content:"";position:absolute;top:50%;right:-3.5px;width:2.5px;height:6px;transform:translateY(-50%);border-radius:0 2px 2px 0;background:rgba(15,23,42,.28)}
+.shell i{position:absolute;inset:2px;width:auto;right:auto;border-radius:1.5px;display:block}
+
+.hero{position:relative;overflow:hidden;border-radius:12px;padding:26px 28px;color:#fff;background:linear-gradient(120deg,#0f4f7d,#1566a2 55%,#2f86c4)}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(600px 180px at 80% -20%,rgba(255,255,255,.28),transparent 70%)}
+.hero .in{position:relative;display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap}
+.hero h2{margin:0;font-size:30px;line-height:1.1;letter-spacing:-.01em}
+.hero .sub{margin:6px 0 0;font-size:13.5px;color:rgba(255,255,255,.82)}
+.hero .stats{margin-left:auto;display:flex;gap:26px;text-align:right}
+.hero .stats b{display:block;font-size:26px;font-variant-numeric:tabular-nums;line-height:1}
+.hero .stats span{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.75)}
+.spark{display:flex;align-items:flex-end;gap:3px;height:30px}
+.spark i{width:6px;border-radius:2px;background:rgba(255,255,255,.75);display:block}
+.meter{height:8px;border-radius:999px;background:#e2e8f0;overflow:hidden}
+.meter i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--brand),var(--accent))}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);border-radius:10px;background:#fff;box-shadow:var(--shadow-sm);overflow:hidden}
+.split>div{padding:20px}
+.split>div+div{border-left:1px solid var(--border);background:#fbfcfe}
+.capn{margin:0 0 14px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-fg)}
+.prev{border:1px solid var(--border);border-radius:8px;background:#fff;box-shadow:var(--shadow-sm);margin-bottom:8px}
+.prev .lbl{font-size:12px;color:var(--muted-fg);margin:14px 0 6px}
+.prow{display:flex;align-items:center;gap:12px;padding:10px 12px;font-size:13.5px}
+.pick-item{display:flex;gap:10px;padding:10px 12px}
+.pick-item b{display:block;font-size:13.5px}
+.pick-item span{font-size:12px;color:var(--muted-fg)}
+
+.drawer-wrap{position:relative;display:flex;gap:0;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:#fff;box-shadow:var(--shadow-sm)}
+.drawer-wrap .grid{flex:1;min-width:0}
+.scrim{position:absolute;inset:0;background:rgba(15,23,42,.18);backdrop-filter:blur(1.5px);pointer-events:none}
+.drawer{position:relative;z-index:2;width:330px;flex:none;border-left:1px solid var(--border);background:#fff;box-shadow:-18px 0 40px -24px rgba(15,23,42,.5);display:flex;flex-direction:column}
+.drawer header{display:flex;align-items:center;gap:8px;padding:14px 18px;border-bottom:1px solid var(--border);font-size:15px;font-weight:600}
+.drawer header button{margin-left:auto;color:var(--muted-fg)}
+.drawer .in{padding:18px;display:flex;flex-direction:column;gap:14px}
+.drawer footer{margin-top:auto;display:flex;align-items:center;gap:8px;padding:14px 18px;border-top:1px solid var(--border);background:#fbfcfe}
+.drawer footer a{margin-left:auto;font-size:12.5px;color:var(--brand);text-decoration:none;font-weight:600}
+tr[aria-selected=true] td{background:var(--brand-soft)!important;box-shadow:inset 3px 0 0 var(--brand)}
+
+@media(max-width:1080px){.grid2,.split{grid-template-columns:1fr}.split>div+div{border-left:0;border-top:1px solid var(--border)}.side{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="doc">
+
+<header class="doc-head">
+  <h1>Room details — five layouts</h1>
+  <p>Five ways to rebuild <span class="mono">/resources/rooms/[id]</span>. Today the page holds four fields
+     (Building, Room code, Room name, Capacity) in one small card on an empty workspace — Gautham rated it 1/10
+     on 23 Sep 2026. Each layout below says how to arrange the page <em>and</em> what to put on it, because the
+     real problem is that there is not enough on the page to arrange.</p>
+  <div class="doc-meta">
+    <span class="tag">Seats-Admin-React</span>
+    <span class="tag">23 Sep 2026</span>
+    <span class="tag">Brand #1566a2 · same tokens as the app</span>
+    <span class="tag pick">Recommended: Layout 2</span>
+  </div>
+  <nav class="jump">
+    <a href="#today">Today</a>
+    <a href="#l1">1 · Two-column record</a>
+    <a href="#l2">2 · Tabbed workspace</a>
+    <a href="#l3">3 · Hero + sections</a>
+    <a href="#l4">4 · Split with preview</a>
+    <a href="#l5">5 · Drawer</a>
+  </nav>
+</header>
+
+<!-- ============ TODAY ============ -->
+<section class="today" id="today">
+  <h2>What the page looks like now</h2>
+  <p>A 240px identity box beside a card of four fields, sitting in the top-left of a full-height workspace.
+     Nothing else. No devices, no history, no usage — so the page cannot help you do anything except rename a room.</p>
+  <div class="frame" style="box-shadow:none;margin-top:14px">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">/resources/rooms/204</div><span class="sample">today</span></div>
+    <div style="background:var(--page);padding:22px;min-height:230px">
+      <div style="display:grid;grid-template-columns:240px 1fr;gap:16px;max-width:900px">
+        <div class="card" style="padding:16px"><div style="font-size:12px;color:var(--muted-fg)">Science Block</div><div style="font-size:17px;font-weight:600;margin-top:2px">Room 204</div></div>
+        <div class="card">
+          <header><svg viewBox="0 0 24 24"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5.442 20.2A1 1 0 0 1 4.7 19.23V5.562a2 2 0 0 1 1.517-1.94l4-1z"/></svg>Room details</header>
+          <div class="grid2" style="padding:16px">
+            <div class="f full"><label>Building</label><div class="inp"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"/></svg><input value="Science Block" readonly><svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div></div>
+            <div class="f"><label>Room code</label><div class="inp"><svg viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg><input value="SCI-204" readonly></div></div>
+            <div class="f"><label>Room name <span class="req">*</span></label><div class="inp"><input value="Room 204" readonly></div></div>
+            <div class="f"><label>Capacity <span class="req">*</span></label><div class="inp"><input value="30" readonly></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LAYOUT 1 ============ -->
+<section class="design" id="l1">
+  <div class="design-title"><h2>Layout 1</h2><span>Two-column record page</span></div>
+  <p class="note">The form keeps a comfortable reading width on the left; a context rail on the right carries
+     everything the page knows but never showed you. Nothing becomes clickable that was not clickable before,
+     so this is the cheapest of the five.</p>
+
+  <div class="frame">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">/resources/rooms/204</div><span class="sample">layout 1</span></div>
+    <div class="nav"><b>SEAtS</b><span class="nav-div"></span>
+      <span class="nbtn">Users</span><span class="nbtn" aria-current="page">Devices</span><span class="nbtn">Settings</span>
+      <span class="right"><span class="avatar">GB</span></span></div>
+    <div class="work">
+      <nav class="side"><span class="cap">Devices</span>
+        <a href="#l1">Devices</a><a href="#l1" aria-current="page">Rooms</a><a href="#l1">Readings report</a><a href="#l1">Suspicious readings</a></nav>
+      <div class="main">
+        <div class="phead"><div><div class="crumb">Devices / Rooms</div><h1>Room 204</h1></div>
+          <div class="acts"><span class="pill warn">Unsaved changes</span><button class="btn">Cancel</button><button class="btn primary">Save</button></div></div>
+        <div class="body">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start;max-width:1040px">
+            <div class="card">
+              <header><svg viewBox="0 0 24 24"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3M13 20h9M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5.442 20.2A1 1 0 0 1 4.7 19.23V5.562a2 2 0 0 1 1.517-1.94l4-1z"/></svg>Room details</header>
+              <div class="grid2">
+                <div class="f full"><label>Building</label><div class="inp"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M8 10h.01M16 10h.01"/></svg><input value="Science Block"><svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div></div>
+                <div class="f"><label>Room code</label><div class="inp"><svg viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg><input value="SCI-204"></div></div>
+                <div class="f"><label>Room name <span class="req">*</span></label><div class="inp"><svg viewBox="0 0 24 24"><path d="M13 4h3a2 2 0 0 1 2 2v14M2 20h3M13 20h9M10 12v.01"/></svg><input value="Room 204"></div></div>
+                <div class="f"><label>Capacity <span class="req">*</span></label><div class="inp"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg><input value="30" style="font-variant-numeric:tabular-nums"></div>
+                  <span class="hint">Used to flag over-full lectures.</span></div>
+              </div>
+            </div>
+            <div class="card" style="padding:4px 18px 14px">
+              <p class="capn" style="margin:16px 0 6px">At a glance</p>
+              <dl style="margin:0">
+                <div class="stat"><dt>Devices in room</dt><dd>3</dd></div>
+                <div class="stat"><dt>Last reading</dt><dd>15/09/26 08:05</dd></div>
+                <div class="stat"><dt>Readings (7 days)</dt><dd>1,284</dd></div>
+                <div class="stat"><dt>Building address</dt><dd style="text-align:right;font-weight:500">12 Mill Lane<br>Cambridge</dd></div>
+                <div class="stat"><dt>Created</dt><dd style="font-weight:500">04/02/25 · R. Silva</dd></div>
+                <div class="stat"><dt>Modified</dt><dd style="font-weight:500">21/09/26 · G. Binoy</dd></div>
+              </dl>
+              <button class="btn sm" style="width:100%;justify-content:center;margin-top:14px">View activity log</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="adds"><b>What gets added:</b> device count, last reading, 7-day reading volume, building address,
+     created/modified stamps, a link into the activity log. All of it read-only, so no new save logic.</p>
+</section>
+
+<!-- ============ LAYOUT 2 ============ -->
+<section class="design" id="l2">
+  <div class="design-title"><h2>Layout 2</h2><span>Tabbed room workspace</span> <span class="tag pick">Recommended</span></div>
+  <p class="note">The same tab strip, header and save bar as the Device details page, so the two screens finally
+     look like one product. Details holds the four fields in labelled groups; the other tabs give the page
+     something to be. <b>The tabs below work — click them.</b></p>
+
+  <div class="frame">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">/resources/rooms/204</div><span class="sample">layout 2</span></div>
+    <div class="nav"><b>SEAtS</b><span class="nav-div"></span>
+      <span class="nbtn">Users</span><span class="nbtn" aria-current="page">Devices</span><span class="nbtn">Settings</span>
+      <span class="right"><span class="avatar">GB</span></span></div>
+    <div class="work">
+      <nav class="side"><span class="cap">Devices</span>
+        <a href="#l2">Devices</a><a href="#l2" aria-current="page">Rooms</a><a href="#l2">Readings report</a><a href="#l2">Suspicious readings</a></nav>
+      <div class="main">
+        <div class="phead"><div><div class="crumb">Devices / Rooms</div><h1>Room 204</h1></div>
+          <div class="acts"><button class="btn">Cancel</button><button class="btn primary">Save</button></div></div>
+        <div class="body">
+          <div class="card" data-tabs>
+            <div class="tabs" role="tablist" aria-label="Room">
+              <button role="tab" aria-selected="true"  aria-controls="p-det">Details</button>
+              <button role="tab" aria-selected="false" aria-controls="p-dev">Devices <span class="count">3</span></button>
+              <button role="tab" aria-selected="false" aria-controls="p-tim">Timetable</button>
+              <button role="tab" aria-selected="false" aria-controls="p-act">Activity</button>
+            </div>
+
+            <div class="grid2" role="tabpanel" id="p-det">
+              <p class="sect">Location</p>
+              <div class="f full"><label>Building</label><div class="inp"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M8 10h.01M16 10h.01"/></svg><input value="Science Block"><svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div></div>
+              <p class="sect rule">Identification</p>
+              <div class="f"><label>Room code</label><div class="inp"><svg viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg><input value="SCI-204"></div></div>
+              <div class="f"><label>Room name <span class="req">*</span></label><div class="inp"><svg viewBox="0 0 24 24"><path d="M13 4h3a2 2 0 0 1 2 2v14M2 20h3M13 20h9M10 12v.01"/></svg><input value="Room 204"></div></div>
+              <p class="sect rule">Capacity</p>
+              <div class="f"><label>Seats <span class="req">*</span></label><div class="inp"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><input value="30" style="font-variant-numeric:tabular-nums"></div></div>
+              <div class="f"><label>Typical attendance</label><div style="padding-top:10px"><div class="meter"><i style="width:68%"></i></div><span class="hint">20 of 30 seats · last 30 days</span></div></div>
+            </div>
+
+            <div role="tabpanel" id="p-dev" hidden>
+              <div style="display:flex;gap:10px;padding:16px 20px;align-items:flex-end;flex-wrap:wrap">
+                <div class="f" style="flex:1;max-width:420px"><label>Add device</label>
+                  <div class="inp"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search serial or description…"></div></div>
+                <button class="btn">Add</button>
+                <button class="btn sm" style="margin-left:auto;color:var(--destructive);border-color:#fecaca">Remove selected</button>
+              </div>
+              <table>
+                <thead><tr><th style="width:36px"></th><th>Serial</th><th>Description</th><th>Battery</th><th>Last seen</th><th>Active</th></tr></thead>
+                <tbody>
+                  <tr><td><input type="checkbox"></td><td class="mono">S1002</td><td>Door beacon</td>
+                      <td><span class="bat"><span class="shell"><i style="width:78%;background:var(--bat-ok)"></i></span>78%</span></td><td>15/09/26 08:05</td><td><span class="pill ok">Yes</span></td></tr>
+                  <tr><td><input type="checkbox"></td><td class="mono">S1044</td><td>Ceiling beacon</td>
+                      <td><span class="bat"><span class="shell"><i style="width:34%;background:var(--bat-mid)"></i></span>34%</span></td><td>15/09/26 08:04</td><td><span class="pill ok">Yes</span></td></tr>
+                  <tr><td><input type="checkbox"></td><td class="mono">S1090</td><td>Rear wall beacon</td>
+                      <td><span class="bat"><span class="shell"><i style="width:9%;background:var(--bat-low)"></i></span>9%</span></td><td>12/09/26 16:20</td><td><span class="pill warn">No</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div role="tabpanel" id="p-tim" hidden>
+              <table>
+                <thead><tr><th>Time</th><th>Module</th><th>Lecturer</th><th>Booked</th><th>Attended</th></tr></thead>
+                <tbody>
+                  <tr><td class="mono">09:00 – 10:00</td><td>Physics 101</td><td>Dr Okafor</td><td>28</td><td>24</td></tr>
+                  <tr><td class="mono">10:00 – 11:00</td><td>Mechanics</td><td>Dr Okafor</td><td>30</td><td>29</td></tr>
+                  <tr><td class="mono">13:00 – 15:00</td><td>Lab session</td><td>Ms Raymond</td><td>16</td><td>15</td></tr>
+                </tbody>
+              </table>
+              <p class="hint" style="padding:12px 20px;margin:0">Today, 23 September 2026 · read-only</p>
+            </div>
+
+            <div role="tabpanel" id="p-act" hidden>
+              <table>
+                <thead><tr><th>When</th><th>Who</th><th>Change</th></tr></thead>
+                <tbody>
+                  <tr><td class="mono">21/09/26 14:02</td><td>G. Binoy</td><td>Capacity 28 → 30</td></tr>
+                  <tr><td class="mono">14/06/26 09:30</td><td>R. Silva</td><td>Device S1090 removed</td></tr>
+                  <tr><td class="mono">04/02/25 11:11</td><td>R. Silva</td><td>Room created</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="adds"><b>What gets added:</b> three whole tabs — the devices assigned to this room (the reverse of the
+     Device page's Rooms tab, so the code is already written), today's timetable with booked vs attended, and the
+     audit trail. Plus an attendance meter on Details. <b>Why it is the pick:</b> it reuses the tab strip, header
+     and save bar you already have, so it is the least new code for the most new page.</p>
+</section>
+
+<!-- ============ LAYOUT 3 ============ -->
+<section class="design" id="l3">
+  <div class="design-title"><h2>Layout 3</h2><span>Hero + stacked sections</span></div>
+  <p class="note">Reads like a profile rather than a form. A branded hero carries the room's identity and its
+     numbers; the fields sit below in three labelled bands, full width, one idea at a time.</p>
+
+  <div class="frame">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">/resources/rooms/204</div><span class="sample">layout 3</span></div>
+    <div class="nav"><b>SEAtS</b><span class="nav-div"></span>
+      <span class="nbtn">Users</span><span class="nbtn" aria-current="page">Devices</span><span class="nbtn">Settings</span>
+      <span class="right"><span class="avatar">GB</span></span></div>
+    <div class="work">
+      <nav class="side"><span class="cap">Devices</span>
+        <a href="#l3">Devices</a><a href="#l3" aria-current="page">Rooms</a><a href="#l3">Readings report</a><a href="#l3">Suspicious readings</a></nav>
+      <div class="main">
+        <div class="phead"><div><div class="crumb">Devices / Rooms</div><h1>Room 204</h1></div>
+          <div class="acts"><button class="btn">Cancel</button><button class="btn primary">Save</button></div></div>
+        <div class="body">
+          <div style="max-width:940px">
+            <div class="hero">
+              <div class="in">
+                <div>
+                  <h2>Room 204</h2>
+                  <p class="sub">Science Block · SCI-204 · <span style="color:#86efac">● Active</span></p>
+                </div>
+                <div class="stats">
+                  <div><b>30</b><span>Seats</span></div>
+                  <div><b>3</b><span>Devices</span></div>
+                  <div><span class="spark" aria-hidden="true"><i style="height:30%"></i><i style="height:55%"></i><i style="height:80%"></i><i style="height:100%"></i><i style="height:72%"></i><i style="height:48%"></i><i style="height:26%"></i></span><span>7-day use</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:18px">
+              <div class="grid2">
+                <p class="sect">Identification</p>
+                <div class="f"><label>Room code</label><div class="inp"><svg viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg><input value="SCI-204"></div></div>
+                <div class="f"><label>Room name <span class="req">*</span></label><div class="inp"><input value="Room 204"></div></div>
+
+                <p class="sect rule">Location</p>
+                <div class="f full"><label>Building</label><div class="inp"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01"/></svg><input value="Science Block"><svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div></div>
+
+                <p class="sect rule">Capacity &amp; usage</p>
+                <div class="f"><label>Seats <span class="req">*</span></label><div class="inp"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><input value="30" style="font-variant-numeric:tabular-nums"></div></div>
+                <div class="f"><label>Average occupancy</label>
+                  <div style="padding-top:11px"><div class="meter"><i style="width:68%"></i></div>
+                  <span class="hint">68% — 20 of 30 seats over the last 30 days</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="adds"><b>What gets added:</b> an active/inactive state for the room, a 7-day usage sparkline and an
+     average-occupancy meter. <b>Watch out:</b> the hero needs occupancy figures the Rooms API does not return
+     today, so this one carries a backend ask.</p>
+</section>
+
+<!-- ============ LAYOUT 4 ============ -->
+<section class="design" id="l4">
+  <div class="design-title"><h2>Layout 4</h2><span>Split editor with live preview</span></div>
+  <p class="note">Your existing identity box promoted to a whole half of the page. Type on the left and the right
+     shows how this room will read everywhere else in the product — the rooms grid, the device picker, a
+     timetable row. <b>Type in the Room name field below and watch the right side.</b></p>
+
+  <div class="frame">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">/resources/rooms/204</div><span class="sample">layout 4</span></div>
+    <div class="nav"><b>SEAtS</b><span class="nav-div"></span>
+      <span class="nbtn">Users</span><span class="nbtn" aria-current="page">Devices</span><span class="nbtn">Settings</span>
+      <span class="right"><span class="avatar">GB</span></span></div>
+    <div class="work">
+      <nav class="side"><span class="cap">Devices</span>
+        <a href="#l4">Devices</a><a href="#l4" aria-current="page">Rooms</a><a href="#l4">Readings report</a><a href="#l4">Suspicious readings</a></nav>
+      <div class="main">
+        <div class="phead"><div><div class="crumb">Devices / Rooms</div><h1>Room 204</h1></div>
+          <div class="acts"><button class="btn">Cancel</button><button class="btn primary">Save</button></div></div>
+        <div class="body">
+          <div class="split" style="max-width:980px" data-live>
+            <div>
+              <p class="capn">Edit</p>
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <div class="f"><label>Building</label><div class="inp"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01"/></svg><input value="Science Block" data-bind="bld"><svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div></div>
+                <div class="f"><label>Room code</label><div class="inp"><svg viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg><input value="SCI-204" data-bind="code"></div></div>
+                <div class="f"><label>Room name <span class="req">*</span></label><div class="inp"><svg viewBox="0 0 24 24"><path d="M13 4h3a2 2 0 0 1 2 2v14M2 20h3M13 20h9M10 12v.01"/></svg><input value="Room 204" data-bind="name"></div></div>
+                <div class="f"><label>Capacity <span class="req">*</span></label><div class="inp"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><input value="30" data-bind="cap" style="font-variant-numeric:tabular-nums"></div></div>
+              </div>
+            </div>
+            <div>
+              <p class="capn">How it will look</p>
+              <p class="lbl" style="margin-top:0">In the rooms grid</p>
+              <div class="prev"><div class="prow"><span class="mono" data-out="code">SCI-204</span><span data-out="name">Room 204</span><span style="margin-left:auto;color:var(--muted-fg);font-variant-numeric:tabular-nums" data-out="cap">30</span></div></div>
+              <p class="lbl">In the device room picker</p>
+              <div class="prev"><div class="pick-item"><svg viewBox="0 0 24 24" style="color:var(--brand);margin-top:2px"><path d="M13 4h3a2 2 0 0 1 2 2v14M2 20h3M13 20h9M10 12v.01"/></svg>
+                <span><b data-out="name">Room 204</b><span data-out="bld">Science Block</span></span></div></div>
+              <p class="lbl">On a timetable row</p>
+              <div class="prev"><div class="prow"><span class="mono">09:00</span><span>Physics 101</span><span style="margin-left:auto;color:var(--muted-fg)" data-out="name">Room 204</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="adds"><b>What gets added:</b> nothing new from the server — this layout earns its keep by showing the
+     consequences of an edit before you save it, which is where room naming actually goes wrong.</p>
+</section>
+
+<!-- ============ LAYOUT 5 ============ -->
+<section class="design" id="l5">
+  <div class="design-title"><h2>Layout 5</h2><span>Drawer over the rooms grid</span></div>
+  <p class="note">Do not navigate at all. Clicking a room slides a panel over the grid, so you can edit ten rooms
+     without losing your filters, your page or your scroll position. A link out to the full page stays for the
+     heavier tabs. <b>Click any row below.</b></p>
+
+  <div class="frame">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">/resources/rooms</div><span class="sample">layout 5</span></div>
+    <div class="nav"><b>SEAtS</b><span class="nav-div"></span>
+      <span class="nbtn">Users</span><span class="nbtn" aria-current="page">Devices</span><span class="nbtn">Settings</span>
+      <span class="right"><span class="avatar">GB</span></span></div>
+    <div class="work">
+      <nav class="side"><span class="cap">Devices</span>
+        <a href="#l5">Devices</a><a href="#l5" aria-current="page">Rooms</a><a href="#l5">Readings report</a><a href="#l5">Suspicious readings</a></nav>
+      <div class="main">
+        <div class="phead"><div><div class="crumb">Devices</div><h1>Rooms</h1></div>
+          <div class="acts"><button class="btn">Export</button><button class="btn primary">Add room</button></div></div>
+        <div class="body">
+          <div class="drawer-wrap" data-drawer>
+            <div class="grid">
+              <table>
+                <thead><tr><th>Code</th><th>Name</th><th>Building</th><th style="text-align:right">Seats</th></tr></thead>
+                <tbody>
+                  <tr><td class="mono">SCI-201</td><td>Room 201</td><td>Science Block</td><td style="text-align:right">24</td></tr>
+                  <tr><td class="mono">SCI-202</td><td>Room 202</td><td>Science Block</td><td style="text-align:right">30</td></tr>
+                  <tr aria-selected="true"><td class="mono">SCI-204</td><td>Room 204</td><td>Science Block</td><td style="text-align:right">30</td></tr>
+                  <tr><td class="mono">SCI-205</td><td>Room 205</td><td>Science Block</td><td style="text-align:right">18</td></tr>
+                  <tr><td class="mono">ART-101</td><td>Studio A</td><td>Arts Building</td><td style="text-align:right">16</td></tr>
+                  <tr><td class="mono">ART-102</td><td>Studio B</td><td>Arts Building</td><td style="text-align:right">16</td></tr>
+                  <tr><td class="mono">LIB-010</td><td>Reading Room</td><td>Library</td><td style="text-align:right">64</td></tr>
+                </tbody>
+              </table>
+              <p class="hint" style="padding:12px;margin:0">Your filters and scroll position are never lost.</p>
+            </div>
+            <aside class="drawer">
+              <header><svg viewBox="0 0 24 24" style="color:var(--brand)"><path d="M13 4h3a2 2 0 0 1 2 2v14M2 20h3M13 20h9M10 12v.01"/></svg>
+                <span data-drawer-title>Room 204</span><button aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></header>
+              <div class="in">
+                <div class="f"><label>Building</label><div class="inp"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/></svg><input value="Science Block" data-drawer-bld><svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div></div>
+                <div class="f"><label>Room code</label><div class="inp"><svg viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg><input value="SCI-204" data-drawer-code></div></div>
+                <div class="f"><label>Room name <span class="req">*</span></label><div class="inp"><input value="Room 204" data-drawer-name></div></div>
+                <div class="f"><label>Capacity <span class="req">*</span></label><div class="inp"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><input value="30" data-drawer-cap style="font-variant-numeric:tabular-nums"></div></div>
+              </div>
+              <footer><button class="btn sm">Cancel</button><button class="btn sm primary">Save</button>
+                <a href="#l2">Open full page →</a></footer>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="adds"><b>What gets added:</b> nothing — this one wins by removing a page rather than filling one.
+     It pairs well with Layout 2: the drawer for quick edits, the full tabbed page for devices and history.</p>
+</section>
+
+</div>
+
+<script>
+// Layout 2 — tabs, with the sliding brand underline.
+document.querySelectorAll('[data-tabs]').forEach(function (root) {
+  var tabs = Array.prototype.slice.call(root.querySelectorAll('[role=tab]'))
+  var strip = root.querySelector('.tabs')
+  function indicator(tab) {
+    strip.style.setProperty('--ix', tab.offsetLeft + 8 + 'px')
+    strip.style.setProperty('--iw', Math.max(0, tab.offsetWidth - 16) + 'px')
+  }
+  function select(tab) {
+    tabs.forEach(function (other) {
+      var on = other === tab
+      other.setAttribute('aria-selected', String(on))
+      root.querySelector('#' + other.getAttribute('aria-controls')).hidden = !on
+    })
+    indicator(tab)
+  }
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () { select(tab) })
+  })
+  indicator(tabs[0])
+  window.addEventListener('resize', function () {
+    var on = root.querySelector('[role=tab][aria-selected=true]')
+    if (on) indicator(on)
+  })
+})
+
+// Layout 4 — the preview follows what you type.
+document.querySelectorAll('[data-live]').forEach(function (root) {
+  root.querySelectorAll('[data-bind]').forEach(function (input) {
+    input.addEventListener('input', function () {
+      var key = input.getAttribute('data-bind')
+      root.querySelectorAll('[data-out=' + key + ']').forEach(function (out) {
+        out.textContent = input.value || '—'
+      })
+    })
+  })
+})
+
+// Layout 5 — picking a row fills the drawer.
+document.querySelectorAll('[data-drawer]').forEach(function (root) {
+  var rows = Array.prototype.slice.call(root.querySelectorAll('tbody tr'))
+  rows.forEach(function (row) {
+    row.style.cursor = 'pointer'
+    row.addEventListener('click', function () {
+      rows.forEach(function (other) { other.removeAttribute('aria-selected') })
+      row.setAttribute('aria-selected', 'true')
+      var cell = row.querySelectorAll('td')
+      root.querySelector('[data-drawer-title]').textContent = cell[1].textContent
+      root.querySelector('[data-drawer-code]').value = cell[0].textContent
+      root.querySelector('[data-drawer-name]').value = cell[1].textContent
+      root.querySelector('[data-drawer-bld]').value = cell[2].textContent
+      root.querySelector('[data-drawer-cap]').value = cell[3].textContent.trim()
+    })
+  })
+})
+</script>
+</body>
+</html>

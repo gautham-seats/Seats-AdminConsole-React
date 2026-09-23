@@ -52,4 +52,4 @@ Period, Calculated (`dd/MM/yyyy HH:mm:ss`), Training (Yes/No), Model, Node, Stat
 - [x] PDF and CSV export in the header Export menu (D-097)
 - [x] Filters apply on change, no Search button (D-097)
 - [ ] PDF export confirmed on Alpha (`exportTo: 0` comes from a compiled enum; not proven until a PDF arrives)
-- [ ] Real Alpha data check (needs sign-in)
+- [x] Real Alpha data check: loads clean on Alpha, 0 rows because no calculation has ever run (the only model is inactive, Last Run = Never)

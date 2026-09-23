@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Bars — 5 variants</title>
+    <style>
+      :root {
+        --nav-start: #135d93;
+        --nav-mid: #1566a2;
+        --nav-end: #145f9c;
+        --brand: #1566a2;
+        --ink: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --page: #f1f5f9;
+        --card: #ffffff;
+        --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--page);
+        color: var(--ink);
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+      }
+      header.page {
+        padding: 32px 24px 8px;
+        max-width: 1180px;
+        margin: 0 auto;
+      }
+      header.page h1 {
+        margin: 0 0 6px;
+        font-size: 26px;
+        letter-spacing: -0.01em;
+      }
+      header.page p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+        max-width: 70ch;
+      }
+      main {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 8px 24px 64px;
+      }
+      section.variant {
+        margin-top: 40px;
+        border-top: 1px solid var(--border);
+        padding-top: 28px;
+      }
+      .vhead {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 6px;
+      }
+      .vhead h2 {
+        margin: 0;
+        font-size: 19px;
+        letter-spacing: -0.01em;
+      }
+      .vhead .tag {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #fff;
+        background: var(--brand);
+        border-radius: 999px;
+        padding: 3px 9px;
+      }
+      .vnote {
+        margin: 0 0 18px;
+        color: var(--muted);
+        font-size: 13.5px;
+        line-height: 1.6;
+        max-width: 78ch;
+      }
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+      }
+      .card .body {
+        padding: 16px 20px;
+        color: var(--muted);
+        font-size: 13.5px;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      td {
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border);
+        color: #334155;
+      }
+      .dlg {
+        max-width: 520px;
+        border-radius: 14px;
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.2);
+        box-shadow: 0 30px 70px -24px rgba(15, 23, 42, 0.45);
+      }
+      .dlg .body {
+        padding: 20px;
+        font-size: 13.5px;
+        color: #334155;
+      }
+      .dlg .foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 14px 20px;
+        border-top: 1px solid var(--border);
+        background: #f8fafc;
+      }
+      .btn {
+        height: 36px;
+        padding: 0 16px;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        background: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        color: #334155;
+      }
+      .btn.primary {
+        border: 0;
+        color: #fff;
+        background: linear-gradient(180deg, #2d84c4, #1566a2 55%, #10568a);
+      }
+      /* ---------- shared bar scaffolding ---------- */
+      .bar {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .bar .icon {
+        display: grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        flex: none;
+      }
+      .bar .txt {
+        min-width: 0;
+      }
+      .bar .title {
+        font-weight: 650;
+        letter-spacing: -0.005em;
+      }
+      .bar .hint {
+        opacity: 0.9;
+      }
+      .bar .slot {
+        margin-left: auto;
+        font-size: 12px;
+        font-weight: 600;
+        opacity: 0.95;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .pill {
+        background: rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        border-radius: 999px;
+        padding: 2px 9px;
+        font-size: 11.5px;
+        font-weight: 700;
+      }
+      .glow {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      @keyframes aurora {
+        0% {
+          transform: translate3d(-4%, 0, 0);
+        }
+        100% {
+          transform: translate3d(4%, 0, 0);
+        }
+      }
+      @keyframes sheen {
+        0% {
+          background-position: 160% 0;
+        }
+        55% {
+          background-position: -60% 0;
+        }
+        100% {
+          background-position: -60% 0;
+        }
+      }
+      @keyframes drift {
+        0% {
+          transform: translate3d(-8%, -10%, 0) scale(1);
+        }
+        100% {
+          transform: translate3d(8%, 10%, 0) scale(1.15);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+        }
+      }
+
+      /* ---------- V1  AURORA ---------- */
+      .v1 {
+        padding: 11px 16px;
+        background: linear-gradient(90deg, var(--nav-start) 0%, var(--nav-mid) 45%, var(--nav-end) 100%);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.22),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+      }
+      .v1 .title {
+        font-size: 15.5px;
+        line-height: 21px;
+      }
+      .v1 .hint {
+        font-size: 12.5px;
+        line-height: 17px;
+      }
+      .v1 .icon {
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+      }
+      .v1 .g1 {
+        position: absolute;
+        inset: -40px -10%;
+        animation: aurora 26s var(--ease) infinite alternate;
+        filter: blur(8px);
+        background:
+          radial-gradient(220px 70px at 18% 50%, rgba(86, 189, 234, 0.22), transparent 70%),
+          radial-gradient(260px 80px at 68% 40%, rgba(255, 255, 255, 0.1), transparent 70%),
+          radial-gradient(200px 60px at 96% 60%, rgba(86, 189, 234, 0.18), transparent 70%);
+      }
+      .v1 .g2 {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          112deg,
+          transparent 38%,
+          rgba(255, 255, 255, 0.06) 45%,
+          rgba(255, 255, 255, 0.26) 50%,
+          rgba(255, 255, 255, 0.06) 55%,
+          transparent 62%
+        );
+        background-size: 240% 100%;
+        background-repeat: no-repeat;
+        animation: sheen 9s var(--ease) infinite;
+      }
+      .v1 .g3 {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(160, 220, 248, 0.95), transparent);
+      }
+
+      /* ---------- V2  GLASS RAIL ---------- */
+      .v2 {
+        padding: 11px 16px 11px 18px;
+        background: linear-gradient(180deg, rgba(21, 102, 162, 0.97), rgba(16, 86, 138, 0.97));
+        border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+      }
+      .v2::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: linear-gradient(180deg, #7dd3fc, #38bdf8 55%, #0ea5e9);
+      }
+      .v2 .title {
+        font-size: 15.5px;
+        line-height: 21px;
+      }
+      .v2 .hint {
+        font-size: 12.5px;
+        line-height: 17px;
+        opacity: 0.82;
+      }
+      .v2 .icon {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 999px;
+      }
+      .v2 .g1 {
+        position: absolute;
+        inset: -60px -20%;
+        filter: blur(26px);
+        opacity: 0.55;
+        animation: drift 22s var(--ease) infinite alternate;
+        background:
+          radial-gradient(300px 120px at 20% 40%, rgba(125, 211, 252, 0.3), transparent 70%),
+          radial-gradient(260px 120px at 80% 60%, rgba(56, 189, 248, 0.22), transparent 70%);
+      }
+
+      /* ---------- V3  MOMENTUM ---------- */
+      .v3 {
+        padding: 13px 18px;
+        background: linear-gradient(115deg, #0f4f7f 0%, #1566a2 42%, #1f7cc0 100%);
+      }
+      .v3::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #38bdf8, #7dd3fc 35%, rgba(125, 211, 252, 0) 85%);
+      }
+      .v3 .title {
+        font-size: 16.5px;
+        line-height: 22px;
+        font-weight: 700;
+      }
+      .v3 .hint {
+        font-size: 12.5px;
+        line-height: 17px;
+        opacity: 0.85;
+      }
+      .v3 .icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.26);
+        box-shadow: 0 6px 14px -8px rgba(2, 32, 56, 0.9);
+      }
+      .v3 .g1 {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.22) 48%, transparent 66%);
+        background-size: 220% 100%;
+        background-repeat: no-repeat;
+        animation: sheen 7s var(--ease) infinite;
+      }
+
+      /* ---------- V4  SLAB ---------- */
+      .v4 {
+        padding: 12px 18px;
+        background: #12527f;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.28),
+          0 10px 22px -16px rgba(2, 32, 56, 0.9);
+      }
+      .v4::before {
+        content: '';
+        position: absolute;
+        inset: 0 0 50% 0;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0));
+      }
+      .v4 .title {
+        font-size: 16px;
+        line-height: 22px;
+        font-weight: 700;
+        letter-spacing: 0.005em;
+      }
+      .v4 .hint {
+        font-size: 12.5px;
+        line-height: 17px;
+        opacity: 0.8;
+      }
+      .v4 .icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        background: #0d4770;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      }
+
+      /* ---------- V5  INK RULE ---------- */
+      .v5 {
+        padding: 12px 18px 11px;
+        background: linear-gradient(180deg, #0e4d79, #0b4068);
+      }
+      .v5 .title {
+        font-size: 16px;
+        line-height: 21px;
+        font-weight: 650;
+      }
+      .v5 .kicker {
+        font-size: 10.5px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        opacity: 0.72;
+        margin-bottom: 3px;
+      }
+      .v5 .icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+      }
+      .v5::after {
+        content: '';
+        position: absolute;
+        left: 18px;
+        right: 18px;
+        bottom: 0;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.26);
+      }
+      .v5 .g1 {
+        position: absolute;
+        inset: 0;
+        opacity: 0.5;
+        background: radial-gradient(520px 120px at 12% 120%, rgba(125, 211, 252, 0.22), transparent 70%);
+      }
+      svg {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="page">
+      <h1>Admin bars — five variants</h1>
+      <p>
+        Every variant is built from the same tokens the app already ships:
+        <code>#135d93 / #1566a2 / #145f9c</code>, the same font stack as the nav bar and the Scheduler (both
+        declare no custom font), and the same shared button gradient. Each variant is shown three times — as a
+        <strong>card header</strong>, a <strong>table header</strong> and a <strong>dialog header</strong> —
+        because whichever you pick is applied to all three across every page. Titles are larger than today in
+        all five.
+      </p>
+    </header>
+    <main>
+      <!-- 1 -->
+      <section class="variant">
+        <div class="vhead">
+          <h2>1 · Aurora</h2>
+          <span class="tag">closest to today</span>
+        </div>
+        <p class="vnote">
+          The nav bar's own recipe, turned up: drifting aurora clouds, a slow light sweep every nine seconds
+          and a cyan hairline along the bottom. Title 15.5px. Familiar, alive, never loud.
+        </p>
+        <div class="stack">
+          <div class="card">
+            <div class="bar v1">
+              <span class="glow"
+                ><span class="g1"></span><span class="g2"></span><span class="g3"></span
+              ></span>
+              <span class="icon"
+                ><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></svg
+              ></span>
+              <span class="txt"
+                ><div class="title">User details</div>
+                <div class="hint">Sign-in name, contact details and the linked student record</div></span
+              >
+              <span class="slot"><span class="pill">Active</span></span>
+            </div>
+            <div class="body">Card body</div>
+          </div>
+          <div class="card">
+            <table>
+              <thead>
+                <tr class="bar v1" style="display: table-row">
+                  <th style="padding: 11px 14px; text-align: left; font-size: 13px">Name ↑</th>
+                  <th style="padding: 11px 14px; text-align: left; font-size: 13px">Group Email Address ⇅</th>
+                  <th style="padding: 11px 14px; text-align: left; font-size: 13px">Function ⇅</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Registry</td>
+                  <td>registry@seats.ac.uk</td>
+                  <td>Attendance</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="dlg">
+            <div class="bar v1" style="padding: 14px 20px">
+              <span class="glow"
+                ><span class="g1"></span><span class="g2"></span><span class="g3"></span
+              ></span>
+              <span class="txt"
+                ><div class="title" style="font-size: 17px">Security Level Permissions</div></span
+              >
+            </div>
+            <div class="body">Dialog body</div>
+            <div class="foot">
+              <button class="btn">Cancel</button><button class="btn primary">Apply</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2 -->
+      <section class="variant">
+        <div class="vhead"><h2>2 · Glass rail</h2></div>
+        <p class="vnote">
+          A bright cyan rail down the left edge marks every bar, over deep translucent blue with a slow
+          blurred glow behind it. The icon becomes a circle. Calm, modern, easy to scan down a long page of
+          cards.
+        </p>
+        <div class="stack">
+          <div class="card">
+            <div class="bar v2">
+              <span class="glow"><span class="g1"></span></span>
+              <span class="icon"
+                ><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></svg
+              ></span>
+              <span class="txt"
+                ><div class="title">User details</div>
+                <div class="hint">Sign-in name, contact details and the linked student record</div></span
+              >
+              <span class="slot"><span class="pill">Active</span></span>
+            </div>
+            <div class="body">Card body</div>
+          </div>
+          <div class="card">
+            <table>
+              <thead>
+                <tr class="bar v2" style="display: table-row">
+                  <th style="padding: 11px 14px; text-align: left; font-size: 13px">Name ↑</th>
+                  <th style="padding: 11px 14px; text-align: left; font-size: 13px">Group Email Address ⇅</th>
+                  <th style="padding: 11px 14px; text-align: left; font-size: 13px">Function ⇅</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Registry</td>
+                  <td>registry@seats.ac.uk</td>
+                  <td>Attendance</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="dlg">
+            <div class="bar v2" style="padding: 14px 20px 14px 22px">
+              <span class="glow"><span class="g1"></span></span>
+              <span class="txt"
+                ><div class="title" style="font-size: 17px">Security Level Permissions</div></span
+              >
+            </div>
+            <div class="body">Dialog body</div>
+            <div class="foot">
+              <button class="btn">Cancel</button><button class="btn primary">Apply</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3 -->
+      <section class="variant">
+        <div class="vhead">
+          <h2>3 · Momentum</h2>
+          <span class="tag">boldest</span>
+        </div>
+        <p class="vnote">
+          A diagonal gradient with a light beam that sweeps across every seven seconds, a raised icon tile and
+          a cyan accent line fading out along the bottom. The largest title of the five at 16.5px, semi-bold.
+        </p>
+        <div class="stack">
+          <div class="card">
+            <div class="bar v3">
+              <span class="glow"><span class="g1"></span></span>
+              <span class="icon"
+                ><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></svg
+              ></span>
+              <span class="txt"
+                ><div class="title">User details</div>
+                <div class="hint">Sign-in name, contact details and the linked student record</div></span
+              >
+              <span class="slot"><span class="pill">Active</span></span>
+            </div>
+            <div class="body">Card body</div>
+          </div>
+          <div class="card">
+            <table>
+              <thead>
+                <tr class="bar v3" style="display: table-row">
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px">Name ↑</th>
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px">Group Email Address ⇅</th>
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px">Function ⇅</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Registry</td>
+                  <td>registry@seats.ac.uk</td>
+                  <td>Attendance</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="dlg">
+            <div class="bar v3" style="padding: 15px 20px">
+              <span class="glow"><span class="g1"></span></span>
+              <span class="txt"
+                ><div class="title" style="font-size: 18px">Security Level Permissions</div></span
+              >
+            </div>
+            <div class="body">Dialog body</div>
+            <div class="foot">
+              <button class="btn">Cancel</button><button class="btn primary">Apply</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 -->
+      <section class="variant">
+        <div class="vhead">
+          <h2>4 · Slab</h2>
+          <span class="tag">no motion</span>
+        </div>
+        <p class="vnote">
+          A solid, slightly deeper blue with a gloss across the top half and a shadow that lifts the bar off
+          the card. No animation at all, so a page full of cards stays completely still — and it is the
+          lightest on your laptop.
+        </p>
+        <div class="stack">
+          <div class="card">
+            <div class="bar v4">
+              <span class="icon"
+                ><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></svg
+              ></span>
+              <span class="txt"
+                ><div class="title">User details</div>
+                <div class="hint">Sign-in name, contact details and the linked student record</div></span
+              >
+              <span class="slot"><span class="pill">Active</span></span>
+            </div>
+            <div class="body">Card body</div>
+          </div>
+          <div class="card">
+            <table>
+              <thead>
+                <tr class="bar v4" style="display: table-row">
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px">Name ↑</th>
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px">Group Email Address ⇅</th>
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px">Function ⇅</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Registry</td>
+                  <td>registry@seats.ac.uk</td>
+                  <td>Attendance</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="dlg">
+            <div class="bar v4" style="padding: 14px 20px">
+              <span class="txt"
+                ><div class="title" style="font-size: 17.5px">Security Level Permissions</div></span
+              >
+            </div>
+            <div class="body">Dialog body</div>
+            <div class="foot">
+              <button class="btn">Cancel</button><button class="btn primary">Apply</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 -->
+      <section class="variant">
+        <div class="vhead">
+          <h2>5 · Ink rule</h2>
+          <span class="tag">quietest</span>
+        </div>
+        <p class="vnote">
+          Editorial: a small uppercase kicker above a large title, a hairline rule inset from both ends, an
+          outlined icon and one soft glow low on the left. Deepest blue of the five, the least decoration, the
+          most grown-up.
+        </p>
+        <div class="stack">
+          <div class="card">
+            <div class="bar v5">
+              <span class="glow"><span class="g1"></span></span>
+              <span class="icon"
+                ><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></svg
+              ></span>
+              <span class="txt"
+                ><div class="kicker">User</div>
+                <div class="title">User details</div></span
+              >
+              <span class="slot"><span class="pill">Active</span></span>
+            </div>
+            <div class="body">Card body — the hint moves out of the bar and sits here as helper text.</div>
+          </div>
+          <div class="card">
+            <table>
+              <thead>
+                <tr class="bar v5" style="display: table-row">
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px">Name ↑</th>
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px">Group Email Address ⇅</th>
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px">Function ⇅</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Registry</td>
+                  <td>registry@seats.ac.uk</td>
+                  <td>Attendance</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="dlg">
+            <div class="bar v5" style="padding: 15px 20px 14px">
+              <span class="glow"><span class="g1"></span></span>
+              <span class="txt"
+                ><div class="kicker">User</div>
+                <div class="title" style="font-size: 17.5px">Security Level Permissions</div></span
+              >
+            </div>
+            <div class="body">Dialog body</div>
+            <div class="foot">
+              <button class="btn">Cancel</button><button class="btn primary">Apply</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

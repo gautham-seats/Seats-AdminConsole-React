@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Access Profile Preview Designs</title>
+<style>
+:root{
+  --brand:#1566a2;--brand-90:#2c75ab;--brand-soft:#e8f1f8;--accent:#56bdea;
+  --nav-start:#135d93;--nav-shadow:rgba(19,93,147,.55);
+  --page:#f5f6fa;--surface:#fff;--surface-2:#fbfcfe;--surface-3:#f5f7fa;
+  --fg:hsl(222.2 84% 4.9%);--muted:hsl(210 40% 96.1%);--muted-fg:hsl(215.4 16.3% 46.9%);
+  --border:hsl(214.3 31.8% 91.4%);--border-soft:hsl(214.3 31.8% 94.5%);
+  --destructive:hsl(0 84.2% 48%);--warn:#92400e;--warn-bg:#fef3c7;
+  --radius:.5rem;--ease:cubic-bezier(.16,1,.3,1);--ease-premium:cubic-bezier(.22,1,.36,1);
+  --shadow-sm:0 1px 2px rgb(15 23 42/.06);
+  --shadow-card:0 1px 2px rgb(15 23 42/.06),0 1px 3px rgb(15 23 42/.04);
+  --shadow-lift:0 10px 24px -6px rgb(15 23 42/.18);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0;background:#e3e7ee;color:var(--fg);font:14px/1.5 ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji";-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- doc ---------- */
+.doc{max-width:1500px;margin:0 auto;padding:32px 22px 80px}
+.doc h1{margin:0 0 8px;font-size:27px;letter-spacing:-.01em}
+.lead{margin:0 0 14px;color:#475569;max-width:1000px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.tag{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:999px;background:#fff;border:1px solid var(--border);font-size:12px;font-weight:600;color:#334155}
+.tag.pick{background:var(--brand-soft);border-color:var(--brand);color:var(--brand)}
+.jump{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.jump a{font-size:13px;text-decoration:none;padding:6px 12px;border-radius:6px;background:#fff;border:1px solid var(--border);transition:border-color .2s var(--ease),color .2s}
+.jump a:hover{border-color:var(--brand);color:var(--brand)}
+.howto{margin-top:22px;border:1px dashed #cbd5e1;border-radius:12px;background:#fff8f1;padding:14px 18px;font-size:13.5px;color:#6b5945}
+.howto b{color:var(--fg)}
+.design{margin-top:52px;scroll-margin-top:14px}
+.design-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:12px;margin-bottom:4px}
+.design-head h2{margin:0;font-size:22px}
+.design-head span.sub{color:var(--muted-fg);font-weight:600}
+.design>p.note{margin:0 0 6px;color:#475569;max-width:1000px}
+.tradeoff{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;font-size:12.5px;font-weight:600;border:1px solid}
+.chip.up{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
+.chip.down{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
+.chip.build{background:#eff6ff;border-color:#bfdbfe;color:#1e40af}
+
+/* ---------- frame ---------- */
+.frame{margin-top:14px;border:1px solid #c9d1dc;border-radius:12px;overflow:hidden;box-shadow:0 22px 46px -22px rgba(15,23,42,.4);background:var(--page)}
+.chrome{display:flex;align-items:center;gap:12px;height:32px;padding:0 12px;background:#dde3ea;border-bottom:1px solid #c9d1dc}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:#b8c1cc;display:block}
+.url{flex:1;max-width:460px;height:21px;border-radius:6px;background:#f4f6f8;color:#475569;font-size:12px;display:flex;align-items:center;padding:0 10px;font-family:var(--mono)}
+.sample{margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--warn);background:var(--warn-bg);border:1px solid #fcd34d;border-radius:999px;padding:1px 9px}
+.nav{display:flex;align-items:center;height:50px;padding:0 16px;color:#fff;background:var(--brand) linear-gradient(180deg,rgba(255,255,255,.13) 0%,rgba(255,255,255,.04) 46%,rgba(255,255,255,0) 54%,rgba(0,0,0,.05) 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.12)}
+.nav b{font-size:15px}
+.nav .div{margin:0 14px 0 16px;height:30px;width:1px;background:rgba(255,255,255,.3)}
+.nav .it{display:inline-flex;align-items:center;height:40px;padding:0 12px;border-radius:6px;font-size:14px;font-weight:500}
+.nav .it[aria-current]{background:rgba(255,255,255,.16);box-shadow:inset 0 -2px 0 #fff}
+.nav .av{margin-left:auto;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:12px;font-weight:700}
+
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:16px;padding:16px;min-height:600px}
+@media(max-width:1180px){.stage{grid-template-columns:1fr}}
+
+/* ---------- editor side ---------- */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-card);overflow:hidden;display:flex;flex-direction:column}
+.card>.hd{display:flex;align-items:center;gap:8px;padding:12px 18px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,var(--surface),var(--surface-2));font-size:14px;font-weight:600}
+.card>.hd svg{color:var(--brand)}
+.tabs{position:relative;display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{display:flex;align-items:center;gap:8px;height:42px;padding:0 14px;border-radius:8px 8px 0 0;font-size:13.5px;font-weight:600;color:var(--muted-fg);white-space:nowrap;transition:background-color .2s,color .2s}
+.tabs button:hover{background:var(--surface-3);color:var(--fg)}
+.tabs button[aria-selected=true]{background:rgba(21,102,162,.08);color:var(--brand)}
+.tabs .ind{position:absolute;bottom:-1px;height:2px;border-radius:2px;background:var(--brand);box-shadow:0 0 10px rgba(21,102,162,.45);transition:left .45s var(--ease),width .45s var(--ease)}
+.cnt{min-width:20px;padding:0 6px;border-radius:999px;background:#e2e8f0;color:#475569;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;text-align:center;line-height:18px;transition:background-color .3s,color .3s}
+button[aria-selected=true] .cnt{background:var(--brand);color:#fff}
+.panel{padding:14px 16px;display:none;flex-direction:column;gap:10px}
+.panel.on{display:flex}
+.panelhd{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}
+.panelhd .txt{min-width:0}
+.panelhd h3{margin:0;font-size:13.5px;font-weight:700}
+.panelhd p{margin:1px 0 0;font-size:12px;color:var(--muted-fg)}
+.panelhd .tools{margin-left:auto;display:flex;align-items:center;gap:8px}
+.mini{height:30px;padding:0 10px;border:1px solid var(--border);border-radius:6px;background:#fff;font-size:12.5px;font-weight:600;color:#334155;box-shadow:var(--shadow-sm);transition:border-color .2s,background-color .2s,transform .15s}
+.mini:hover{border-color:#94a3b8;background:var(--surface-3)}
+.mini:active{transform:scale(.97)}
+.selcount{font-size:12px;font-weight:700;color:var(--brand);background:var(--brand-soft);border-radius:999px;padding:3px 10px;font-variant-numeric:tabular-nums}
+.search{position:relative;max-width:100%}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted-fg);pointer-events:none}
+.search input{width:100%;height:34px;border:1px solid var(--border);border-radius:var(--radius);background:#fff;padding:0 11px 0 34px;font-size:13.5px;box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+.search input:focus{outline:0;border-color:var(--brand);box-shadow:0 0 0 3px rgba(21,102,162,.16)}
+.rows{border:1px solid var(--border);border-radius:9px;background:#fff;max-height:330px;overflow:auto;scrollbar-width:thin}
+.row{display:flex;align-items:center;gap:10px;min-height:44px;padding:6px 12px;border-bottom:1px solid var(--border-soft);transition:background-color .18s}
+.row:last-child{border-bottom:0}
+.row:hover{background:var(--surface-3)}
+.row .nm{flex:1;min-width:0;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .grp{font-size:11px;color:var(--muted-fg);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.tg{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:78px;height:28px;padding:0 9px;border:1px solid var(--border);border-radius:6px;background:#fff;font-size:12px;font-weight:600;color:#334155;transition:background-color .18s,border-color .18s,color .18s,transform .15s var(--ease-premium)}
+.tg:hover{background:var(--surface-3)}
+.tg:active{transform:scale(.94)}
+.tg[aria-pressed=true]{background:#047857;border-color:#047857;color:#fff}
+.tg[aria-pressed=true]:hover{background:#036a4d}
+.tg svg{width:13px;height:13px}
+.tg[disabled]{opacity:.38;cursor:not-allowed}
+.lvl{display:inline-flex;border:1px solid var(--border);border-radius:7px;overflow:hidden;background:#fff}
+.lvl button{height:28px;padding:0 10px;font-size:12px;font-weight:600;color:#475569;border-right:1px solid var(--border);transition:background-color .18s,color .18s}
+.lvl button:last-child{border-right:0}
+.lvl button:hover{background:var(--surface-3)}
+.lvl button[aria-pressed=true]{background:var(--brand);color:#fff}
+.cols{display:flex;gap:6px}
+
+/* ---------- the preview panel ---------- */
+.pv{position:relative;isolation:isolate;display:flex;flex-direction:column;overflow:hidden;border-radius:16px;padding:16px;color:#fff;
+  background:linear-gradient(162deg,#0d3a60 0%,#1566a2 58%,#1a6ea8 100%);
+  box-shadow:0 30px 60px -30px rgba(9,40,64,.85),inset 0 1px 0 rgba(255,255,255,.14);align-self:start;position:sticky;top:16px}
+.pv .aurora{position:absolute;inset:-50%;z-index:-1;border-radius:50%;background:radial-gradient(closest-side,rgba(86,189,234,.16),transparent 70%);animation:aurora 14s ease-in-out infinite alternate}
+.pv .gloss{position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.12) 0%,rgba(255,255,255,.04) 22%,transparent 42%)}
+.pv .sheen{position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(112deg,transparent 38%,rgba(255,255,255,.03) 45%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.03) 55%,transparent 62%);background-size:240% 100%;background-repeat:no-repeat;animation:sheen 18s 600ms linear infinite both}
+.pv .scrim{position:absolute;inset:0;z-index:-1;pointer-events:none;background:rgba(2,6,23,.16)}
+@keyframes aurora{from{transform:translate3d(-6%,-4%,0) scale(1)}to{transform:translate3d(6%,5%,0) scale(1.12)}}
+@keyframes sheen{from{background-position:180% 0}to{background-position:-80% 0}}
+
+.pv header{display:flex;align-items:center;gap:8px}
+.pv header h2{margin:0;display:flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.pv header h2 svg{width:14px;height:14px}
+.state{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:10px}
+.state i{width:6px;height:6px;border-radius:50%;background:#6ee7b7;display:block;animation:soft 2.6s ease-in-out infinite}
+.state.busy{font-weight:700}
+.state.busy i{background:#7dd3fc;box-shadow:0 0 8px rgba(125,211,252,.95);animation:pulse 1s ease-in-out infinite}
+@keyframes soft{0%,100%{opacity:.75}50%{opacity:1}}
+@keyframes pulse{0%,100%{opacity:.45;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+.pv .hint{margin:5px 0 0;font-size:11.5px;line-height:1.55}
+
+.kpis{display:grid;gap:6px;margin-top:12px}
+.kpis.k3{grid-template-columns:repeat(3,1fr)}
+.kpis.k4{grid-template-columns:repeat(4,1fr)}
+.kpi{border-radius:11px;padding:8px 9px;border:1px solid rgba(255,255,255,.2);background:rgba(2,6,23,.3);transition:transform .4s var(--ease-premium),background-color .4s}
+.kpi.bump{animation:bump .5s var(--ease-premium)}
+@keyframes bump{0%{transform:translateY(0)}35%{transform:translateY(-4px)}100%{transform:translateY(0)}}
+.kpi b{display:block;font-size:21px;line-height:1.15;font-weight:700;font-variant-numeric:tabular-nums}
+.kpi span{display:block;margin-top:1px;font-size:10px;line-height:1.25;opacity:.9}
+.kpi.open b{color:#a7f3d0}.kpi.allow b{color:#bae6fd}.kpi.shut b{color:#fecdd3}
+.kpi.ev b{color:#c7d2fe}.kpi.ca b{color:#fde68a}.kpi.wf b{color:#99f6e4}
+
+.say{margin-top:12px;border-radius:12px;border:1px solid rgba(255,255,255,.17);background:rgba(2,6,23,.3);padding:12px 14px;font-size:14.5px;line-height:1.62}
+.say .who{font-weight:700;color:#e0f2fe}
+.say .mark{border-radius:2px;background:linear-gradient(transparent 60%,rgba(110,231,183,.22) 60%);padding:0 2px;font-weight:700}
+.caret{display:inline-block;width:1px;height:1em;vertical-align:-2px;background:#fff;animation:blink 1s steps(2) infinite}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+.shut{margin-top:12px;border-radius:12px;padding:10px 12px;border:1px solid rgba(244,63,94,.45);background:linear-gradient(180deg,rgba(244,63,94,.42),rgba(225,29,72,.26))}
+.shut h3{margin:0 0 5px;display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.shut p{margin:0;font-size:11.5px;line-height:1.5}
+
+/* B — ledger rows */
+.ledger{margin-top:12px;display:flex;flex-direction:column;gap:7px}
+.lrow{border-radius:11px;border:1px solid rgba(255,255,255,.18);background:rgba(2,6,23,.28);overflow:hidden;transition:border-color .3s,background-color .3s}
+.lrow.act{border-color:rgba(186,230,253,.6);background:rgba(2,6,23,.42)}
+.lhead{display:flex;align-items:center;gap:9px;width:100%;padding:9px 11px;text-align:left}
+.lhead svg{width:14px;height:14px;opacity:.85}
+.lhead .lb{font-size:12px;font-weight:700;letter-spacing:.02em}
+.lhead .num{margin-left:auto;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.bar{height:5px;border-radius:999px;background:rgba(255,255,255,.16);overflow:hidden;margin:0 11px 9px}
+.bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#7dd3fc,#a7f3d0);transition:width .6s var(--ease)}
+.lbody{max-height:0;overflow:hidden;transition:max-height .45s var(--ease),opacity .3s;opacity:0}
+.lrow.act .lbody{max-height:120px;opacity:1}
+.lbody p{margin:0;padding:0 11px 10px;font-size:11.5px;line-height:1.55;opacity:.95}
+
+/* C — story lines */
+.story{margin-top:12px;display:flex;flex-direction:column;gap:7px}
+.line{display:block;width:100%;text-align:left;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(2,6,23,.26);padding:9px 12px;font-size:13px;line-height:1.55;transition:background-color .25s,border-color .25s,transform .25s var(--ease-premium)}
+.line:hover{background:rgba(2,6,23,.42);border-color:rgba(186,230,253,.5);transform:translateX(3px)}
+.line.act{border-color:rgba(186,230,253,.65);background:rgba(2,6,23,.45)}
+.line.flash{animation:flash .7s var(--ease)}
+@keyframes flash{0%{background:rgba(125,211,252,.35)}100%{background:rgba(2,6,23,.26)}}
+.line em{font-style:normal;font-weight:700;color:#bae6fd}
+.jumphint{margin:9px 0 0;font-size:10.5px;text-align:center;opacity:.8}
+
+.tap{margin-top:9px;font-size:10.5px;text-align:center;opacity:.85}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="doc">
+
+<h1>Access Profile — live preview, three variations</h1>
+<p class="lead">Today the Live Preview reads only <b>Site Access</b>: it is handed <code>groups</code> and
+  <code>selectedPermissions</code> and nothing else, so ticking Event, Case or Workflow visibility cannot move it.
+  These three variations each answer the same question — <i>how do the other three areas get into the preview</i> —
+  and keep the panel you already like: the blue glass, the aurora drift, the 18s sheen, the updating dot, the
+  typing effect.</p>
+<div class="tags">
+  <span class="tag">Seats-AdminConsole-React</span>
+  <span class="tag">23 Sep 2026</span>
+  <span class="tag">Legacy shapes confirmed from the admin-legacy graph</span>
+  <span class="tag pick">Pick one</span>
+</div>
+<nav class="jump">
+  <a href="#vA">A · Four Lenses</a>
+  <a href="#vB">B · The Ledger</a>
+  <a href="#vC">C · Day in the Life</a>
+</nav>
+
+<div class="howto">
+  <b>These are live.</b> In each variation, switch tabs and toggle rows — the preview beside it reacts exactly as it
+  would in the app: counters count, bars slide, the dot turns to “updating…”, the sentence retypes itself.
+  Each variation keeps its own state, so you can leave them in different shapes and compare.
+</div>
+
+<!-- ============================= A ============================= -->
+<section class="design" id="vA">
+  <div class="design-head"><h2>Variation A</h2><span class="sub">Four Lenses — one panel, four faces</span></div>
+  <p class="note">The preview follows the tab you are editing. On Site Access it is exactly what you have today.
+    On the other three it becomes a full-size briefing for that area: its own three counters, its own sentence,
+    its own “what stays hidden”. Each area gets the whole panel rather than a corner of it.</p>
+  <div class="tradeoff">
+    <span class="chip up">Every area as strong as Site Access</span>
+    <span class="chip down">One area visible at a time</span>
+    <span class="chip build">Smallest build — only the content block swaps</span>
+  </div>
+  <div class="frame" data-variation="A">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">/users/access-profiles/12</div><span class="sample">variation A</span></div>
+    <div class="nav"><b>SEAtS</b><span class="div"></span><span class="it" aria-current="page">Users</span><span class="it">Devices</span><span class="it">Settings</span><span class="av">GB</span></div>
+    <div class="stage"><div class="editor"></div><div class="preview"></div></div>
+  </div>
+</section>
+
+<!-- ============================= B ============================= -->
+<section class="design" id="vB">
+  <div class="design-head"><h2>Variation B</h2><span class="sub">The Ledger — everything at once</span></div>
+  <p class="note">The Site Access briefing stays exactly where it is. Three compact rows join underneath and are
+    always on screen: icon, count, a mini bar. The tab you are editing expands to name what is selected; the others
+    stay one line. You can see in one glance that a profile has wide page access but almost no case visibility.</p>
+  <div class="tradeoff">
+    <span class="chip up">The whole profile in one view</span>
+    <span class="chip down">Taller panel, less room per area</span>
+    <span class="chip build">Medium build</span>
+  </div>
+  <div class="frame" data-variation="B">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">/users/access-profiles/12</div><span class="sample">variation B</span></div>
+    <div class="nav"><b>SEAtS</b><span class="div"></span><span class="it" aria-current="page">Users</span><span class="it">Devices</span><span class="it">Settings</span><span class="av">GB</span></div>
+    <div class="stage"><div class="editor"></div><div class="preview"></div></div>
+  </div>
+</section>
+
+<!-- ============================= C ============================= -->
+<section class="design" id="vC">
+  <div class="design-head"><h2>Variation C</h2><span class="sub">Day in the Life — what it feels like to use</span></div>
+  <p class="note">Counts stop being the point. The panel narrates what the person holding this profile actually
+    experiences, one sentence per area, and every sentence is a link into the tab that owns it. Whichever sentence
+    just changed flashes and retypes. Four counters sit on top for the audit trail.</p>
+  <div class="tradeoff">
+    <span class="chip up">Best for whoever assigns a profile</span>
+    <span class="chip down">Largest build; needs care at 200+ event types</span>
+    <span class="chip build">Largest build</span>
+  </div>
+  <div class="frame" data-variation="C">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">/users/access-profiles/12</div><span class="sample">variation C</span></div>
+    <div class="nav"><b>SEAtS</b><span class="div"></span><span class="it" aria-current="page">Users</span><span class="it">Devices</span><span class="it">Settings</span><span class="av">GB</span></div>
+    <div class="stage"><div class="editor"></div><div class="preview"></div></div>
+  </div>
+</section>
+
+</div>
+
+<script>
+/* ---------------- sample data: shaped like the real payloads ---------------- */
+const PAGES = [
+  { area:'Students', name:'Students' }, { area:'Students', name:'Student details' },
+  { area:'Students', name:'GDPR queue' }, { area:'Users', name:'Users' },
+  { area:'Users', name:'Access profiles' }, { area:'Users', name:'Contact groups' },
+  { area:'Users', name:'Activity log' }, { area:'Devices', name:'Devices' },
+  { area:'Devices', name:'Rooms' }, { area:'Devices', name:'Readings report' },
+  { area:'Settings', name:'General' }, { area:'Settings', name:'Email templates' },
+]
+const EVENTS = ['Exam','Lecture','Tutorial','Seminar','Lab session','Workshop','Field trip','Placement',
+  'Absence','Late arrival','Early leave','Meeting','Induction','Assessment','Resit','Open day',
+  'Library visit','Wellbeing','Careers','Graduation','Registration','Withdrawal']
+const CASES = ['Attendance concern','Academic misconduct','Extenuating circumstances','Fitness to study',
+  'Appeal','Complaint','Disability support','Visa compliance','Financial hardship']
+const WORKFLOWS = ['Attendance escalation','At-risk review','Placement approval','Visa check','Withdrawal']
+
+const ICONS = {
+  eye:'<svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
+  lock:'<svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+  search:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
+  check:'<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>',
+  cal:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+  folder:'<svg viewBox="0 0 24 24"><path d="M4 20a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2Z"/></svg>',
+  flow:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/><path d="M6 9v6a3 3 0 0 0 3 3h6"/></svg>',
+  shield:'<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>',
+}
+
+const AREAS = [
+  { id:'site',      label:'Site Access',         icon:ICONS.shield },
+  { id:'events',    label:'Event Visibility',    icon:ICONS.cal },
+  { id:'cases',     label:'Case Visibility',     icon:ICONS.folder },
+  { id:'workflows', label:'Workflow Visibility', icon:ICONS.flow },
+]
+
+/* ---------------- state ---------------- */
+function newState() {
+  return {
+    tab:'site',
+    // Site Access: page index -> level 0 none / 1 view / 2 edit / 3 full
+    levels: { 0:2, 1:1, 3:1, 8:1 },
+    // Events: index -> {event, detail, comment}
+    events: { 0:{e:1,d:1,c:0}, 1:{e:1,d:0,c:0}, 2:{e:1,d:1,c:1} },
+    cases: new Set([0, 6]),
+    workflows: new Set([0]),
+    query: { site:'', events:'', cases:'', workflows:'' },
+  }
+}
+
+const LEVELS = ['None','View','Edit','Full']
+const pageCount  = s => Object.values(s.levels).filter(v => v > 0).length
+const grantCount = s => Object.values(s.levels).reduce((n,v) => n + v, 0)
+const eventCount = s => Object.values(s.events).filter(v => v.e).length
+const detailCount= s => Object.values(s.events).filter(v => v.e && v.d).length
+const commentCount=s => Object.values(s.events).filter(v => v.e && v.c).length
+const names = (list, ids, max=3) => {
+  const picked = [...ids].map(i => list[i]).filter(Boolean)
+  if (!picked.length) return null
+  const head = picked.slice(0, max).join(' · ')
+  return picked.length > max ? head + ' +' + (picked.length - max) : head
+}
+const eventNames = s => names(EVENTS, Object.keys(s.events).filter(k => s.events[k].e).map(Number))
+
+/* ---------------- tiny helpers ---------------- */
+function el(html) { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild }
+function countUp(node, to) {
+  const from = Number(node.dataset.v || 0)
+  if (from === to) { node.textContent = to; return }
+  node.dataset.v = to
+  const started = performance.now(), ms = 420
+  const step = now => {
+    const k = Math.min(1, (now - started) / ms)
+    const eased = 1 - Math.pow(1 - k, 3)
+    node.textContent = Math.round(from + (to - from) * eased)
+    if (k < 1) requestAnimationFrame(step)
+  }
+  requestAnimationFrame(step)
+}
+function typeInto(node, text) {
+  if (node.dataset.typed === text) return
+  node.dataset.typed = text
+  clearInterval(node._timer)
+  node.textContent = ''
+  const caret = el('<span class="caret"></span>')
+  node.after(caret)
+  let i = 0
+  node._timer = setInterval(() => {
+    node.textContent = text.slice(0, ++i)
+    if (i >= text.length) { clearInterval(node._timer); caret.remove() }
+  }, 18)
+}
+function markBusy(root) {
+  const s = root.querySelector('.state')
+  if (!s) return
+  s.classList.add('busy')
+  s.querySelector('span').textContent = 'updating…'
+  clearTimeout(root._busy)
+  root._busy = setTimeout(() => {
+    s.classList.remove('busy')
+    s.querySelector('span').textContent = 'updated'
+  }, 700)
+}
+
+/* ---------------- editor (identical in all three variations) ---------------- */
+function editorHtml() {
+  return `
+  <div class="card">
+    <div class="hd">${ICONS.shield}Permissions</div>
+    <div class="tabs" role="tablist" aria-label="Permission areas">
+      ${AREAS.map(a => `<button role="tab" data-tab="${a.id}" aria-selected="${a.id==='site'}">${a.label}<span class="cnt" data-cnt="${a.id}">0</span></button>`).join('')}
+      <span class="ind" aria-hidden="true"></span>
+    </div>
+    ${AREAS.map(a => `
+      <div class="panel ${a.id==='site'?'on':''}" data-panel="${a.id}">
+        <div class="panelhd">
+          <div class="txt"><h3>${a.label}</h3><p data-desc="${a.id}"></p></div>
+          <div class="tools">
+            <span class="selcount" data-sel="${a.id}">0 of 0</span>
+            <button class="mini" data-all="${a.id}">Select all</button>
+            <button class="mini" data-none="${a.id}">Clear</button>
+          </div>
+        </div>
+        <div class="search">${ICONS.search}<input type="search" data-q="${a.id}" placeholder="Search ${a.label.toLowerCase()}…" aria-label="Search ${a.label}"></div>
+        <div class="rows" data-rows="${a.id}"></div>
+      </div>`).join('')}
+  </div>`
+}
+
+const DESC = {
+  site:'Which pages this profile opens, and what it may do on each.',
+  events:'Which timeline event types show on a student, and whether details and comments come with them.',
+  cases:'Which case types this profile may open.',
+  workflows:'Which workflows this profile may act in.',
+}
+
+function renderRows(root, s) {
+  const q = id => (s.query[id] || '').toLowerCase()
+
+  // Site Access
+  const site = root.querySelector('[data-rows=site]')
+  site.innerHTML = ''
+  let lastArea = null
+  PAGES.forEach((p, i) => {
+    if (!(p.name.toLowerCase().includes(q('site')) || p.area.toLowerCase().includes(q('site')))) return
+    if (p.area !== lastArea) { lastArea = p.area; site.append(el(`<div class="row"><span class="grp">${p.area}</span></div>`)) }
+    const lv = s.levels[i] || 0
+    const row = el(`<div class="row"><span class="nm">${p.name}</span>
+      <span class="lvl">${LEVELS.map((l, n) => `<button data-lv="${i}:${n}" aria-pressed="${lv===n}">${l}</button>`).join('')}</span></div>`)
+    site.append(row)
+  })
+
+  // Events — three columns, exactly as the real panel
+  const ev = root.querySelector('[data-rows=events]')
+  ev.innerHTML = ''
+  EVENTS.forEach((name, i) => {
+    if (!name.toLowerCase().includes(q('events'))) return
+    const v = s.events[i] || { e:0, d:0, c:0 }
+    ev.append(el(`<div class="row"><span class="nm">${name}</span><span class="cols">
+      <button class="tg" data-ev="${i}:e" aria-pressed="${!!v.e}">${v.e?ICONS.check:''}Event</button>
+      <button class="tg" data-ev="${i}:d" aria-pressed="${!!v.d}" ${v.e?'':'disabled'}>${v.d?ICONS.check:''}Details</button>
+      <button class="tg" data-ev="${i}:c" aria-pressed="${!!v.c}" ${v.e?'':'disabled'}>${v.c?ICONS.check:''}Comment</button>
+    </span></div>`))
+  })
+
+  // Cases and Workflows — one Access toggle, as legacy fires them
+  const simple = (key, list) => {
+    const box = root.querySelector(`[data-rows=${key}]`)
+    box.innerHTML = ''
+    list.forEach((name, i) => {
+      if (!name.toLowerCase().includes(q(key))) return
+      const on = s[key].has(i)
+      box.append(el(`<div class="row"><span class="nm">${name}</span>
+        <button class="tg" data-sw="${key}:${i}" aria-pressed="${on}">${on?ICONS.check:''}Access</button></div>`))
+    })
+  }
+  simple('cases', CASES)
+  simple('workflows', WORKFLOWS)
+
+  // counters
+  const set = (id, n, total) => {
+    root.querySelector(`[data-cnt=${id}]`).textContent = n
+    root.querySelector(`[data-sel=${id}]`).textContent = `${n} of ${total}`
+    root.querySelector(`[data-desc=${id}]`).textContent = DESC[id]
+  }
+  set('site', pageCount(s), PAGES.length)
+  set('events', eventCount(s), EVENTS.length)
+  set('cases', s.cases.size, CASES.length)
+  set('workflows', s.workflows.size, WORKFLOWS.length)
+}
+
+/* ---------------- preview shells ---------------- */
+const SHELL = inner => `
+  <aside class="pv" aria-label="Live preview">
+    <span class="aurora" aria-hidden="true"></span><span class="gloss" aria-hidden="true"></span>
+    <span class="sheen" aria-hidden="true"></span><span class="scrim" aria-hidden="true"></span>
+    <header><h2>${ICONS.eye}Live preview</h2>
+      <span class="state"><i aria-hidden="true"></i><span>updated</span></span></header>
+    ${inner}
+  </aside>`
+
+const kpi = (cls, key, label) => `<div class="kpi ${cls}" data-kpi="${key}"><b data-v="0">0</b><span>${label}</span></div>`
+
+/* ---------- A: the panel changes face with the tab ---------- */
+function previewA(root, s) {
+  const host = root.querySelector('.preview')
+  if (!host.dataset.built) {
+    host.innerHTML = SHELL(`
+      <p class="hint" data-hint></p>
+      <div class="kpis k3" data-kpis></div>
+      <div class="say" data-say></div>
+      <div class="shut"><h3>${ICONS.lock}<span data-shuttitle></span></h3><p data-shut></p></div>`)
+    host.dataset.built = '1'
+  }
+  const kpis = host.querySelector('[data-kpis]')
+  const say = host.querySelector('[data-say]')
+  const shape = {
+    site:     { hint:'What this profile opens across the site.',
+                k:[['open',pageCount(s),'Pages open'],['allow',grantCount(s),'Things allowed'],['shut',PAGES.length-pageCount(s),'Pages closed']],
+                lead:'On ', who:'Students', mid:' they can ',
+                tail:LEVELS.slice(1, (s.levels[0]||0)+1).join(', ').toLowerCase() || 'do nothing yet',
+                shutTitle:'What stays shut', shutList:PAGES.filter((_,i)=>!(s.levels[i]>0)).map(p=>p.name).slice(0,4).join(' · ') || 'Nothing' },
+    events:   { hint:'What shows on a student’s timeline.',
+                k:[['ev',eventCount(s),'Types visible'],['allow',detailCount(s),'With details'],['shut',EVENTS.length-eventCount(s),'Hidden']],
+                lead:'On a timeline they see ', who:eventNames(s) || 'nothing yet', mid:'',
+                tail: commentCount(s) ? ` — and comments on ${commentCount(s)}` : '',
+                shutTitle:'Hidden from the timeline', shutList:EVENTS.filter((_,i)=>!(s.events[i]&&s.events[i].e)).slice(0,4).join(' · ') || 'Nothing' },
+    cases:    { hint:'Which case types this profile may open.',
+                k:[['ca',s.cases.size,'Case types open'],['allow',CASES.length,'Of total'],['shut',CASES.length-s.cases.size,'Closed']],
+                lead:'They can open ', who:names(CASES,s.cases) || 'no case types', mid:'', tail:'',
+                shutTitle:'Cases they cannot open', shutList:CASES.filter((_,i)=>!s.cases.has(i)).slice(0,4).join(' · ') || 'Nothing' },
+    workflows:{ hint:'Which workflows this profile may act in.',
+                k:[['wf',s.workflows.size,'Workflows open'],['allow',WORKFLOWS.length,'Of total'],['shut',WORKFLOWS.length-s.workflows.size,'Closed']],
+                lead:'They can act in ', who:names(WORKFLOWS,s.workflows) || 'no workflows', mid:'', tail:'',
+                shutTitle:'Workflows they cannot touch', shutList:WORKFLOWS.filter((_,i)=>!s.workflows.has(i)).slice(0,4).join(' · ') || 'Nothing' },
+  }[s.tab]
+
+  if (kpis.dataset.shape !== s.tab) {
+    kpis.dataset.shape = s.tab
+    kpis.innerHTML = shape.k.map(([c,,l]) => kpi(c, c, l)).join('')
+  }
+  shape.k.forEach(([c, v], i) => {
+    const node = kpis.children[i].querySelector('b')
+    const box = kpis.children[i]
+    if (Number(node.dataset.v) !== v) { box.classList.remove('bump'); void box.offsetWidth; box.classList.add('bump') }
+    countUp(node, v)
+  })
+  host.querySelector('[data-hint]').textContent = shape.hint
+  if (!say.querySelector('.mark')) say.innerHTML = `<span data-lead></span><span class="who" data-who></span><span data-mid></span><span class="mark" data-tail></span>`
+  say.querySelector('[data-lead]').textContent = shape.lead
+  say.querySelector('[data-who]').textContent = shape.who
+  say.querySelector('[data-mid]').textContent = shape.mid
+  typeInto(say.querySelector('[data-tail]'), shape.tail)
+  host.querySelector('[data-shuttitle]').textContent = shape.shutTitle
+  host.querySelector('[data-shut]').textContent = shape.shutList
+}
+
+/* ---------- B: site briefing on top, three ledger rows under it ---------- */
+function previewB(root, s) {
+  const host = root.querySelector('.preview')
+  if (!host.dataset.built) {
+    host.innerHTML = SHELL(`
+      <p class="hint">Everything this profile opens, in one view.</p>
+      <div class="kpis k3">
+        ${kpi('open','open','Pages open')}${kpi('allow','allow','Things allowed')}${kpi('shut','shut','Pages closed')}
+      </div>
+      <div class="say" data-say><span data-lead>On </span><span class="who">Students</span><span> they can </span><span class="mark" data-tail></span></div>
+      <div class="ledger">
+        ${[['events','Events',ICONS.cal],['cases','Cases',ICONS.folder],['workflows','Workflows',ICONS.flow]].map(([k,l,ic]) => `
+          <div class="lrow" data-l="${k}">
+            <button class="lhead" data-goto="${k}">${ic}<span class="lb">${l}</span><span class="num" data-num="${k}">0/0</span></button>
+            <div class="bar"><i data-bar="${k}" style="width:0%"></i></div>
+            <div class="lbody"><p data-body="${k}"></p></div>
+          </div>`).join('')}
+      </div>`)
+    host.dataset.built = '1'
+    host.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => selectTab(root, s, b.dataset.goto)))
+  }
+  const k = [['open', pageCount(s)], ['allow', grantCount(s)], ['shut', PAGES.length - pageCount(s)]]
+  k.forEach(([key, v]) => {
+    const box = host.querySelector(`[data-kpi=${key}]`), node = box.querySelector('b')
+    if (Number(node.dataset.v) !== v) { box.classList.remove('bump'); void box.offsetWidth; box.classList.add('bump') }
+    countUp(node, v)
+  })
+  typeInto(host.querySelector('[data-tail]'), LEVELS.slice(1, (s.levels[0]||0)+1).join(', ').toLowerCase() || 'do nothing yet')
+  const rows = {
+    events:    [eventCount(s), EVENTS.length, eventNames(s) || 'Nothing selected yet.'],
+    cases:     [s.cases.size, CASES.length, names(CASES, s.cases) || 'Nothing selected yet.'],
+    workflows: [s.workflows.size, WORKFLOWS.length, names(WORKFLOWS, s.workflows) || 'Nothing selected yet.'],
+  }
+  Object.entries(rows).forEach(([key, [n, total, body]]) => {
+    host.querySelector(`[data-num=${key}]`).textContent = `${n}/${total}`
+    host.querySelector(`[data-bar=${key}]`).style.width = (total ? (n / total) * 100 : 0) + '%'
+    host.querySelector(`[data-body=${key}]`).textContent = body
+    host.querySelector(`[data-l=${key}]`).classList.toggle('act', s.tab === key)
+  })
+}
+
+/* ---------- C: four counters and a story you can click ---------- */
+function previewC(root, s) {
+  const host = root.querySelector('.preview')
+  if (!host.dataset.built) {
+    host.innerHTML = SHELL(`
+      <p class="hint">What this profile feels like to use.</p>
+      <div class="kpis k4">
+        ${kpi('open','open','Pages')}${kpi('ev','ev','Events')}${kpi('ca','ca','Cases')}${kpi('wf','wf','Flows')}
+      </div>
+      <div class="story">
+        <button class="line" data-goto="site"   data-line="site"></button>
+        <button class="line" data-goto="events" data-line="events"></button>
+        <button class="line" data-goto="cases"  data-line="cases"></button>
+        <button class="line" data-goto="workflows" data-line="workflows"></button>
+      </div>
+      <p class="jumphint">Click any line to jump to its tab →</p>`)
+    host.dataset.built = '1'
+    host.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => selectTab(root, s, b.dataset.goto)))
+  }
+  ;[['open', pageCount(s)], ['ev', eventCount(s)], ['ca', s.cases.size], ['wf', s.workflows.size]].forEach(([key, v]) => {
+    const box = host.querySelector(`[data-kpi=${key}]`), node = box.querySelector('b')
+    if (Number(node.dataset.v) !== v) { box.classList.remove('bump'); void box.offsetWidth; box.classList.add('bump') }
+    countUp(node, v)
+  })
+  const lines = {
+    site: `They land on <em>Students</em> and can open <em>${pageCount(s)} of ${PAGES.length}</em> pages.`,
+    events: eventCount(s)
+      ? `On a timeline they see <em>${eventCount(s)} of ${EVENTS.length}</em> event types${detailCount(s)?`, with details on <em>${detailCount(s)}</em>`:''}${commentCount(s)?` and comments on <em>${commentCount(s)}</em>`:''}.`
+      : `They see <em>no event types</em> on a student timeline.`,
+    cases: s.cases.size
+      ? `They can open <em>${s.cases.size} of ${CASES.length}</em> case types — ${names(CASES, s.cases, 2)}.`
+      : `They cannot open <em>any case type</em>.`,
+    workflows: s.workflows.size
+      ? `They can act in <em>${s.workflows.size} of ${WORKFLOWS.length}</em> workflows — ${names(WORKFLOWS, s.workflows, 2)}.`
+      : `They cannot act in <em>any workflow</em>.`,
+  }
+  Object.entries(lines).forEach(([key, html]) => {
+    const node = host.querySelector(`[data-line=${key}]`)
+    if (node.dataset.html !== html) {
+      node.dataset.html = html
+      node.innerHTML = html
+      node.classList.remove('flash'); void node.offsetWidth; node.classList.add('flash')
+    }
+    node.classList.toggle('act', s.tab === key)
+  })
+}
+
+/* ---------------- wiring ---------------- */
+const RENDER = { A: previewA, B: previewB, C: previewC }
+
+function moveIndicator(root) {
+  const strip = root.querySelector('.tabs')
+  const on = strip.querySelector('[aria-selected=true]')
+  const ind = strip.querySelector('.ind')
+  ind.style.left = (on.offsetLeft - strip.scrollLeft + 8) + 'px'
+  ind.style.width = Math.max(0, on.offsetWidth - 16) + 'px'
+}
+
+function selectTab(root, s, id) {
+  s.tab = id
+  root.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === id)))
+  root.querySelectorAll('[data-panel]').forEach(p => p.classList.toggle('on', p.dataset.panel === id))
+  moveIndicator(root)
+  draw(root, s)
+}
+
+function draw(root, s) {
+  renderRows(root, s)
+  RENDER[root.dataset.variation](root, s)
+}
+
+document.querySelectorAll('[data-variation]').forEach(root => {
+  const s = newState()
+  root.querySelector('.editor').innerHTML = editorHtml()
+  draw(root, s)
+  requestAnimationFrame(() => moveIndicator(root))
+
+  root.addEventListener('click', event => {
+    const t = event.target.closest('button')
+    if (!t || !root.contains(t)) return
+
+    if (t.dataset.tab) return selectTab(root, s, t.dataset.tab)
+
+    if (t.dataset.lv) {
+      const [i, n] = t.dataset.lv.split(':').map(Number)
+      s.levels[i] = n
+      if (n === 0) delete s.levels[i]
+    } else if (t.dataset.ev) {
+      const [i, col] = t.dataset.ev.split(':')
+      const v = s.events[i] || { e:0, d:0, c:0 }
+      if (col === 'e') { v.e = v.e ? 0 : 1; if (!v.e) { v.d = 0; v.c = 0 } }
+      if (col === 'd' && v.e) v.d = v.d ? 0 : 1
+      if (col === 'c' && v.e) v.c = v.c ? 0 : 1
+      if (v.e || v.d || v.c) s.events[i] = v; else delete s.events[i]
+    } else if (t.dataset.sw) {
+      const [key, i] = t.dataset.sw.split(':')
+      s[key].has(Number(i)) ? s[key].delete(Number(i)) : s[key].add(Number(i))
+    } else if (t.dataset.all) {
+      const key = t.dataset.all
+      if (key === 'site') PAGES.forEach((_, i) => s.levels[i] = 3)
+      if (key === 'events') EVENTS.forEach((_, i) => s.events[i] = { e:1, d:1, c:1 })
+      if (key === 'cases') CASES.forEach((_, i) => s.cases.add(i))
+      if (key === 'workflows') WORKFLOWS.forEach((_, i) => s.workflows.add(i))
+    } else if (t.dataset.none) {
+      const key = t.dataset.none
+      if (key === 'site') s.levels = {}
+      if (key === 'events') s.events = {}
+      if (key === 'cases') s.cases.clear()
+      if (key === 'workflows') s.workflows.clear()
+    } else return
+
+    markBusy(root)
+    draw(root, s)
+  })
+
+  root.addEventListener('input', event => {
+    const q = event.target.dataset && event.target.dataset.q
+    if (!q) return
+    s.query[q] = event.target.value
+    renderRows(root, s)
+  })
+
+  window.addEventListener('resize', () => moveIndicator(root))
+})
+</script>
+</body>
+</html>
