@@ -13,8 +13,7 @@ const t: EngagementText = (key: EngagementTextKey) => ENGAGEMENT_TEXT[key]
 const open = async (item: string) => {
   const trigger = screen.getByText('Export').closest('button')
   if (!trigger) throw new Error('Export trigger not found')
-  trigger.focus()
-  fireEvent.keyDown(trigger, { key: 'Enter' })
+  fireEvent.click(trigger)
   fireEvent.click(await screen.findByText(item))
 }
 

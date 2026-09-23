@@ -189,7 +189,8 @@ describe('EngagementModelDetailsScreen', () => {
     )
     expect(screen.getByText('Science')).toBeInTheDocument()
     const save = screen.getByRole('button', { name: 'Save' })
-    expect(save).toBeDisabled()
+    // Legacy keeps Save clickable; the Unsaved changes pill, not a disabled button, reports dirtiness.
+    expect(save).toBeEnabled()
     fireEvent.change(name, { target: { value: 'Renamed' } })
     fireEvent.change(screen.getByLabelText('Weight Presence'), { target: { value: '0.9' } })
     expect(screen.getByText('Unsaved changes')).toBeInTheDocument()
@@ -218,7 +219,8 @@ describe('EngagementModelDetailsScreen', () => {
     renderScreen()
     await screen.findByLabelText('Model Name')
     const save = screen.getByRole('button', { name: 'Save' })
-    expect(save).toBeDisabled()
+    // Legacy keeps Save clickable; the Unsaved changes pill, not a disabled button, reports dirtiness.
+    expect(save).toBeEnabled()
     const panel = screen.getByRole('region', { name: 'Dataset Building' })
     fireEvent.click(within(panel).getByRole('combobox', { name: 'Category' }))
     fireEvent.click(await screen.findByRole('option', { name: 'College Year' }))

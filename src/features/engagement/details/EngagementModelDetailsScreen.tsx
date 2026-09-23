@@ -62,13 +62,17 @@ import {
   type NodeFields,
 } from './details-model'
 import { NODE_FIELD_TEXT, nodeInputId, NodeTree } from './NodeTree'
+import {
+  ADD_BUTTON_CLASS,
+  CANCEL_BUTTON_CLASS,
+  EXPORT_BUTTON_CLASS,
+  EXPORT_ICON_CLASS,
+} from '@/shared/ui/add-button'
 import { StatusBadge } from '@/shared/ui/StatusBadge'
+import { NAV_BAND, NAV_ICON_BOX, NavBandGlow } from '@/shared/ui/nav-band'
 
 // Save needs Engagement + Edit (Details.cshtml:26-31, EngagementApiController.cs:841).
 const ENGAGEMENT_EDIT = { item: PermissionItem.Engagement, action: PermissionAction.Edit }
-
-const GLOSSY =
-  'group relative inline-flex h-10 items-center gap-2 overflow-hidden rounded-lg bg-[linear-gradient(180deg,color-mix(in_srgb,var(--color-brand)_85%,white)_0%,var(--color-brand)_55%,color-mix(in_srgb,var(--color-brand)_88%,black)_100%)] px-4 text-sm font-semibold tracking-wide text-white shadow-[inset_0_1px_0_rgba(255,255,255,.35),inset_0_-1px_0_rgba(0,0,0,.12),0_4px_12px_-4px_rgba(21,102,162,.45)] transition-[transform,filter,opacity] duration-300 hover:-translate-y-px hover:brightness-[1.06] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none active:translate-y-0 active:scale-[.98] disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none'
 
 export function EngagementModelDetailsScreen({ idParam }: { idParam: string }) {
   return (
@@ -152,13 +156,14 @@ function Card({
       style={{ animationDelay: `${delay}ms` }}
       className="animate-rise-in overflow-hidden rounded-xl border border-border bg-white shadow-sm transition-[box-shadow,border-color] duration-300 focus-within:border-brand/30 focus-within:shadow-[0_10px_30px_-18px_rgba(21,102,162,.55)] motion-reduce:animate-none"
     >
-      <header className="flex items-center gap-3 border-b border-border bg-slate-50/70 px-5 py-3">
-        <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-brand/[0.08] text-brand">
+      <header className={cn('flex items-center gap-3 px-5 py-3', NAV_BAND)}>
+        <NavBandGlow />
+        <span className={cn('grid size-8 shrink-0 place-items-center', NAV_ICON_BOX)}>
           <Icon aria-hidden className="size-4" />
         </span>
         <div className="min-w-0">
-          <h2 className="text-[15px] leading-5 font-semibold tracking-tight text-foreground">{title}</h2>
-          <p className="text-xs text-muted-foreground">{hint}</p>
+          <h2 className="text-[15px] leading-5 font-semibold tracking-tight text-white">{title}</h2>
+          <p className="text-xs text-white/85">{hint}</p>
         </div>
         {meta ? <div className="ml-auto">{meta}</div> : null}
       </header>
@@ -316,31 +321,23 @@ function ModelEditor({ view }: { view: EngagementModelView }) {
       activeId="engagement-configuration"
       title={view.applied.modelName || ENGAGEMENT_FALLBACK_ONLY.model}
       meta={status}
-    >
-      <form
-        noValidate
-        // seats-admin-engagement-model.html:222-227: Save is a button, so Enter in a field never saved.
-        onSubmit={event => event.preventDefault()}
-        className="flex min-h-0 flex-1 flex-col gap-4"
-      >
-        <div className="flex min-h-[3.25rem] flex-wrap items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 shadow-sm">
+      actions={
+        // Back, the legacy link and Save ride the page header, as on every other detail page, so the
+        // scrolling body below them is never covered by a floating bar.
+        <div className="flex flex-wrap items-center justify-end gap-2">
           <Link
             href={ENGAGEMENT_ROUTE}
             aria-disabled={saving}
-            className={cn(
-              buttonVariants({ variant: 'ghost', size: 'sm' }),
-              'h-10 rounded-lg text-muted-foreground',
-              saving && 'pointer-events-none opacity-50',
-            )}
+            className={cn(CANCEL_BUTTON_CLASS, saving && 'pointer-events-none opacity-60')}
           >
-            <ArrowLeft aria-hidden className="size-4" />
+            <ArrowLeft aria-hidden className="size-[18px]" />
             {t('Back')}
           </Link>
           <a
             href={legacyHref(`#/Engagement/Details/${view.applied.id}`)}
-            className="ml-auto inline-flex h-10 items-center gap-1.5 rounded-lg px-3 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            className={cn(buttonVariants({ variant: 'outline' }), EXPORT_BUTTON_CLASS)}
           >
-            <ExternalLink aria-hidden className="size-4" />
+            <ExternalLink aria-hidden className={EXPORT_ICON_CLASS} />
             {ENGAGEMENT_FALLBACK_ONLY.openLegacy}
           </a>
           {canEdit ? (
@@ -362,9 +359,11 @@ function ModelEditor({ view }: { view: EngagementModelView }) {
               <button
                 type="button"
                 onClick={() => void submit()}
-                disabled={!dirty || saving}
+                // Legacy keeps Save clickable (seats-admin-engagement-model.html:222-227); only the
+                // in-flight request disables it, so it never looks dead on a page the user may edit.
+                disabled={saving}
                 aria-busy={saving}
-                className={GLOSSY}
+                className={ADD_BUTTON_CLASS}
               >
                 {saving ? <ButtonSpinner /> : <Save aria-hidden className="size-[18px]" />}
                 {t('Save')}
@@ -372,7 +371,14 @@ function ModelEditor({ view }: { view: EngagementModelView }) {
             </>
           ) : null}
         </div>
-
+      }
+    >
+      <form
+        noValidate
+        // seats-admin-engagement-model.html:222-227: Save is a button, so Enter in a field never saved.
+        onSubmit={event => event.preventDefault()}
+        className="flex min-h-0 flex-1 flex-col gap-4"
+      >
         <EngagementNoticeBar notice={notice} onDismiss={dismiss} />
 
         <div className="min-h-0 flex-1 overflow-y-auto pr-1">
