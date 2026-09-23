@@ -18,6 +18,10 @@ e2e/.auth/
 test-results/
 playwright-report/
 docs/pw/
+# browser profiles hold live session cookies; one landed in the repo root on 2026-09-23
+*.profile/
+**/Default/Cookies
+**/Default/Network/
 
 # logs and OS files
 *.log

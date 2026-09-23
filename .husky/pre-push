@@ -1,5 +1,15 @@
 npm run check
 # Browser truth from the signed-in laptop, once the end-to-end suite exists.
 if [ -f e2e/sweep.spec.ts ]; then
+  # The sweep needs the built app on :3001 and a saved session; say which is missing instead of timing out.
+  if ! curl -sf -o /dev/null --max-time 10 http://localhost:3001/admin-next/users; then
+    echo "pre-push: nothing answers on :3001. Run 'npm run build' then 'npm start' (not next dev) and push again." >&2
+    exit 1
+  fi
+  size=$(wc -c < e2e/.auth/admin-state.json 2>/dev/null || echo 0)
+  if [ "$size" -lt 1024 ]; then
+    echo "pre-push: e2e/.auth/admin-state.json is missing or empty. Sign in once (the sweep's first test does it) and push again." >&2
+    exit 1
+  fi
   npx playwright test e2e/sweep.spec.ts
 fi
