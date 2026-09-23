@@ -114,11 +114,24 @@ export async function fetchCustomStatement(
   return name !== '' && url !== null ? { name, url } : null
 }
 
+// The top bar and the sidebar each mount an AccountMenu; the second shares the first one's request.
+let helpUrlInFlight: Promise<string | null> | null = null
+
 // _Layout.cshtml:358-360 binds the Online Help href to this setting's value.
 export async function fetchOnlineHelpUrl(signal: AbortSignal): Promise<string | null> {
-  const setting = await api.get<SettingDto | null>(`SettingsApi/${SETTING_KEY.onlineHelpUrl}`, { signal })
-  // Admin-typed text becomes a menu link, so only an http(s) URL may be followed (same rule as the statement).
-  return safeHttpUrl(setting?.value)
+  if (!helpUrlInFlight) {
+    // No signal on the shared request: one menu unmounting must not cancel the answer for the other.
+    helpUrlInFlight = api
+      .get<SettingDto | null>(`SettingsApi/${SETTING_KEY.onlineHelpUrl}`)
+      // Admin-typed text becomes a menu link, so only an http(s) URL may be followed (same rule as the statement).
+      .then(setting => safeHttpUrl(setting?.value))
+      .finally(() => {
+        helpUrlInFlight = null
+      })
+  }
+  const url = await helpUrlInFlight
+  if (signal.aborted) throw new DOMException('Aborted', 'AbortError')
+  return url
 }
 
 // selectLanguageController.js:24-37: the cookie first, otherwise the server's UI culture.
