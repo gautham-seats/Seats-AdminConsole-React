@@ -47,7 +47,10 @@ export function rangeChipValue(range: {
   time?: string
   endTime?: string
 }): string {
-  if (range.time === undefined) return `${range.dateFilter} → ${range.endDate}`
+  const dates = `${range.dateFilter} → ${range.endDate}`
+  if (range.time === undefined) return dates
+  // Saying "All day" twice reads badly, so an unbounded range says it once after the dates.
+  if (!range.time && !range.endTime) return `${dates} · ${DEVICES_FALLBACK_ONLY.allDay}`
   const allDay = DEVICES_FALLBACK_ONLY.allDay
   return `${range.dateFilter} ${range.time || allDay} → ${range.endDate} ${range.endTime || allDay}`
 }

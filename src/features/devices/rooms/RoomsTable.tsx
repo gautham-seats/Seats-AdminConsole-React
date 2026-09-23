@@ -11,7 +11,7 @@ import { useRowWindow } from '@/shared/ui/use-row-window'
 import type { RoomListItemDto, RoomsSortColumn } from '@/types/devices'
 import { DEVICES_FALLBACK_ONLY, type DevicesText, type DevicesTextKey } from '../index/devices-text'
 import type { RoomsList } from './use-rooms-list'
-import { HEAD_FILL, HEAD_ROUND } from '@/shared/ui/HeadBackdrop'
+import { HEAD_CELL, HEAD_ROUND } from '@/shared/ui/HeadBackdrop'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { ScrollEdges } from '@/shared/ui/ScrollEdges'
 
@@ -34,7 +34,7 @@ const COLUMNS: readonly Column[] = [
 export const roomDetailsHref = (id: number) => `${ROOMS_ROUTE}/${id}`
 export const NEW_ROOM_HREF = `${ROOMS_ROUTE}/new`
 
-const HEAD = `sticky top-0 z-20 h-10 ${HEAD_FILL} px-3 text-left align-middle text-xs font-medium tracking-[0.02em] whitespace-nowrap text-white`
+const HEAD = cn(HEAD_CELL, 'z-20')
 const CELL =
   'border-b border-border bg-white px-3 py-2 align-middle text-slate-700 transition-colors duration-150'
 

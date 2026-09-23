@@ -230,6 +230,19 @@ describe('DeviceDetailsScreen', () => {
     expect(saveCalls()[0][1]).toEqual({ body: expect.objectContaining({ id: 7, serialNumber: 'SN-7' }) })
   })
 
+  it('sizes Cancel to match Save and keeps the pair in the page header', async () => {
+    setup('7')
+    const cancel = await screen.findByRole('link', { name: 'Cancel' })
+    const save = screen.getByRole('button', { name: 'Save' })
+    // add-button.ts gives both the same box; a mismatch here is the bug this guards.
+    for (const box of ['min-h-10', 'min-w-[8.5rem]', 'rounded-lg', 'px-7']) {
+      expect(cancel).toHaveClass(box)
+      expect(save).toHaveClass(box)
+    }
+    expect(cancel.parentElement).toBe(save.parentElement)
+    expect(cancel.compareDocumentPosition(save) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
   it('D-069 asks before leaving a device with unsaved changes', async () => {
     const confirm = jest.spyOn(window, 'confirm').mockReturnValue(false)
     try {

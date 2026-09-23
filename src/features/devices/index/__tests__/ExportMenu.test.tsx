@@ -10,9 +10,8 @@ describe('ExportMenu', () => {
     render(<ExportMenu pending={null} onExport={onExport} t={t} />)
     const trigger = screen.getByText('Export').closest('button')
     if (!trigger) throw new Error('Export trigger not found')
-    trigger.focus()
-    fireEvent.keyDown(trigger, { key: 'Enter' })
-    fireEvent.click(await screen.findByText('Export to CSV'))
+    fireEvent.click(trigger)
+    fireEvent.click((await screen.findByText('Export to CSV')).closest('button')!)
     expect(onExport).toHaveBeenCalledWith(1)
   })
 

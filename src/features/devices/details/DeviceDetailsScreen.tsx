@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { ArrowLeft, SearchX } from 'lucide-react'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useApiRead } from '@/shared/api'
 import { DEVICES_ROUTE } from '@/shared/shell/admin-menu'
 import { AreaWorkspace } from '@/shared/shell/AreaWorkspace'
@@ -25,6 +25,8 @@ export function DeviceDetailsScreen({ idParam }: { idParam: string }) {
 function DeviceDetailsWorkspace({ idParam }: { idParam: string }) {
   const t = useDevicesText()
   const sections = useDevicesSections()
+  // The form renders Save and Cancel into the page header through this slot.
+  const [actionsSlot, setActionsSlot] = useState<HTMLDivElement | null>(null)
   const id = parseDeviceIdParam(idParam)
   const load = useCallback(
     (signal: AbortSignal) => fetchDeviceDetails(id === 'invalid' ? null : id, signal),
@@ -75,7 +77,7 @@ function DeviceDetailsWorkspace({ idParam }: { idParam: string }) {
       </div>
     )
   } else {
-    body = <DeviceDetailsForm key={view.detail.id} view={view} t={t} />
+    body = <DeviceDetailsForm key={view.detail.id} view={view} t={t} actionsSlot={actionsSlot} />
   }
 
   return (
@@ -86,6 +88,7 @@ function DeviceDetailsWorkspace({ idParam }: { idParam: string }) {
       title={title}
       collapseLabel={t('Collapse')}
       expandLabel={DEVICES_FALLBACK_ONLY.expand}
+      actions={<div ref={setActionsSlot} className="contents" />}
     >
       {body}
     </AreaWorkspace>
