@@ -323,10 +323,10 @@ describe('UserDetailsScreen', () => {
   it('shows the password fields and policy only for a new user with our identity provider', async () => {
     setup({ id: 'new', actions: [1, 2], personasMode: false, identityProvider: true })
     const password = await screen.findByLabelText('Password')
-    expect(screen.queryByLabelText('Confirm Password')).not.toBeInTheDocument()
+    // Confirm sits beside Password from the start, so the pair never reflows as you type.
+    expect(screen.getByLabelText('Confirm Password')).toBeInTheDocument()
     fireEvent.focus(password)
     fireEvent.change(password, { target: { value: 'weak' } })
-    expect(screen.queryByLabelText('Confirm Password')).not.toBeInTheDocument()
     fireEvent.blur(password)
     expect(screen.getByLabelText('Confirm Password')).toBeInTheDocument()
     fireEvent.change(screen.getByLabelText('User Name'), { target: { value: 'maya' } })

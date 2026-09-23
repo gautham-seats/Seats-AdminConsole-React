@@ -1,6 +1,17 @@
 'use client'
 
-import { Contact, GraduationCap, KeyRound, Mail, ShieldCheck, Smartphone, Users } from 'lucide-react'
+import {
+  Check,
+  Circle,
+  Contact,
+  GraduationCap,
+  KeyRound,
+  ListChecks,
+  Mail,
+  ShieldCheck,
+  Smartphone,
+  Users,
+} from 'lucide-react'
 import type { ReactNode } from 'react'
 import { SettingsCard } from '@/features/settings/shared/SettingsCard'
 import { cn } from '@/shared/ui/cn'
@@ -55,6 +66,20 @@ export function UserPreviewCard({ form, view, creating, t }: Props) {
   const scopes = SECURITY_LEVELS.filter(level => form.levelOverview[level]).map(
     level => `${t(LEVEL_LABELS[level])}: ${form.levelOverview[level]}`,
   )
+  const hasAccess = detail.seatsAuthorisationByPersonas
+    ? personas.length > 0
+    : form.isSuperUser || form.isOwnClasses || scopes.length > 0
+  // A new user has nothing to preview yet, so the card shows what is still missing instead of blank space.
+  const steps = [
+    { label: USERS_FALLBACK_ONLY.previewStepUserName, done: form.userName.trim().length > 0 },
+    { label: USERS_FALLBACK_ONLY.previewStepFullName, done: form.fullName.trim().length > 0 },
+    { label: USERS_FALLBACK_ONLY.previewStepEmail, done: email.length > 0 },
+    { label: USERS_FALLBACK_ONLY.previewStepAccess, done: hasAccess },
+    ...(detail.seatsAuthenticationByOurIdentityProvider
+      ? [{ label: USERS_FALLBACK_ONLY.previewStepPassword, done: form.setPassword.length > 0 }]
+      : []),
+  ]
+  const stepsDone = steps.filter(step => step.done).length
 
   return (
     <SettingsCard
@@ -62,7 +87,8 @@ export function UserPreviewCard({ form, view, creating, t }: Props) {
       title={USERS_FALLBACK_ONLY.userPreview}
       hint={USERS_FALLBACK_ONLY.userPreviewHint}
       delay={80}
-      bodyClassName="divide-y-0"
+      className="flex h-full flex-col"
+      bodyClassName="divide-y-0 flex-1"
     >
       <div className="flex items-center gap-4 px-5 pt-5 pb-4">
         <span
@@ -147,6 +173,63 @@ export function UserPreviewCard({ form, view, creating, t }: Props) {
           </ul>
         )}
       </div>
+
+      {creating ? (
+        <div className="border-t border-border/70 px-5 py-4">
+          <p className="mb-2.5 flex items-center gap-2 text-[12px] font-semibold tracking-wide text-slate-600 uppercase">
+            <ListChecks aria-hidden className="size-3.5 text-brand" />
+            {USERS_FALLBACK_ONLY.previewSetup}
+            <span className="ml-auto rounded-full bg-slate-900/[.06] px-2 py-0.5 text-[11px] font-semibold text-slate-600 tabular-nums">
+              {USERS_FALLBACK_ONLY.previewSetupOf(stepsDone, steps.length)}
+            </span>
+          </p>
+          <ul className="flex flex-col gap-1.5">
+            {steps.map(step => (
+              <li
+                key={step.label}
+                className={cn(
+                  'flex items-center gap-2 text-[13px] leading-5 transition-colors duration-300',
+                  step.done ? 'text-slate-700' : 'text-muted-foreground',
+                )}
+              >
+                {step.done ? (
+                  <Check aria-hidden className="size-4 shrink-0 text-emerald-600" />
+                ) : (
+                  <Circle aria-hidden className="size-4 shrink-0 text-slate-300" />
+                )}
+                <span className="min-w-0 break-words">{step.label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {/* Facts about the account itself, below whatever fills the middle. */}
+      <dl className="mt-auto flex flex-col gap-1.5 border-t border-border/70 px-5 py-4 text-[13px] leading-5">
+        <div className="flex items-baseline justify-between gap-3">
+          <dt className="text-muted-foreground">{USERS_FALLBACK_ONLY.previewSignsInWith}</dt>
+          <dd className="min-w-0 truncate font-medium text-slate-700">
+            {detail.seatsAuthenticationByOurIdentityProvider
+              ? USERS_FALLBACK_ONLY.previewSignInSeats
+              : USERS_FALLBACK_ONLY.previewSignInCompany}
+          </dd>
+        </div>
+        {detail.id > 0 ? (
+          <div className="flex items-baseline justify-between gap-3">
+            <dt className="text-muted-foreground">{USERS_FALLBACK_ONLY.previewUserId}</dt>
+            <dd className="font-medium text-slate-700 tabular-nums">{detail.id}</dd>
+          </div>
+        ) : null}
+        {form.isSuperUser && !detail.seatsAuthorisationByPersonas ? (
+          <div className="flex items-baseline justify-between gap-3">
+            <dt className="text-muted-foreground">{t('SecurityLevelPermissions')}</dt>
+            <dd className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
+              <ShieldCheck aria-hidden className="size-3" />
+              {USERS_FALLBACK_ONLY.previewSuperUserBadge}
+            </dd>
+          </div>
+        ) : null}
+      </dl>
 
       {creating && detail.seatsAuthenticationByOurIdentityProvider ? (
         <p className="flex items-start gap-2 border-t border-border/70 bg-slate-50/80 px-5 py-3 text-[12px] leading-5 text-muted-foreground">

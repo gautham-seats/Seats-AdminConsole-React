@@ -34,3 +34,43 @@ export const BRIEFING_EN = {
   grantedOf: (granted: number, total: number) => `${granted} of ${total} actions granted`,
   count: (granted: number, total: number) => `${granted}/${total}`,
 } as const
+
+// The three visibility lenses reuse the Briefing panel; only the nouns change.
+export const VISIBILITY_EN = {
+  visibleHere: 'Visible',
+  hiddenHere: 'Hidden',
+  nothingHidden: 'Nothing is hidden here.',
+  moreVisible: (n: number) => `+${n} more visible`,
+  moreHidden: (n: number) => `+${n} more hidden`,
+  morePages: (n: number) => `+${n} more`,
+  tapHint: 'Every line here is a button. Tap to show or hide.',
+  events: {
+    hint: 'What shows on a student timeline.',
+    open: 'event types they see',
+    allowed: 'come with details',
+    shut: 'event types hidden',
+    lead: 'On a timeline they see ',
+    empty: 'No event type is visible yet. Turn one on to the left.',
+    shutTitle: 'Hidden from every timeline',
+    withComments: (n: number) => `, and comments on ${n}.`,
+    noComments: '.',
+  },
+  cases: {
+    hint: 'Which case types this profile may open.',
+    open: 'case types they open',
+    allowed: 'case types in total',
+    shut: 'case types closed',
+    lead: 'They can open ',
+    empty: 'No case type is open yet. Turn one on to the left.',
+    shutTitle: 'Cases they cannot open',
+  },
+  workflows: {
+    hint: 'Which workflows this profile may act in.',
+    open: 'workflows they act in',
+    allowed: 'workflows in total',
+    shut: 'workflows closed',
+    lead: 'They can act in ',
+    empty: 'No workflow is open yet. Turn one on to the left.',
+    shutTitle: 'Workflows they cannot touch',
+  },
+} as const

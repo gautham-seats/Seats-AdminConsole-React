@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/ui'
+import { EXPORT_BUTTON_CLASS, EXPORT_ICON_CLASS } from '@/shared/ui/add-button'
 import { cn } from '@/shared/ui/cn'
 import type { AuditItemDto } from '@/types/audit'
 import { StatusNotice, type Notice } from '../index/StatusNotice'
@@ -293,12 +294,11 @@ function ActivityWorkspace() {
       actions={
         <Button
           variant="outline"
-          size="sm"
           disabled={!hasRows}
           onClick={() => setExportOpen(true)}
-          className="bg-white shadow-sm"
+          className={EXPORT_BUTTON_CLASS}
         >
-          <Download aria-hidden className="size-4" />
+          <Download aria-hidden className={EXPORT_ICON_CLASS} />
           {t('Export')}
         </Button>
       }
@@ -358,8 +358,8 @@ function ActivityWorkspace() {
           className="@[40rem]:col-span-3 @[72rem]:col-span-1"
           labels={{
             dateRange: t('DateRange'),
-            startDate: F.startDate,
-            endDate: F.endDate,
+            startDate: t('StartDate'),
+            endDate: t('EndDate'),
             close: t('Close'),
             cancel: t('Cancel'),
             selectRange: t('SelectRange'),
