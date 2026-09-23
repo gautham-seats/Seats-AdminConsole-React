@@ -1,53 +1,84 @@
 'use client'
 
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { ChevronDown, Download, FileSpreadsheet, FileText, LoaderCircle } from 'lucide-react'
-import { buttonVariants } from '@/shared/ui'
+import { Check, Download, LoaderCircle } from 'lucide-react'
+import { useState } from 'react'
+import { buttonVariants, Dialog } from '@/shared/ui'
+import { EXPORT_BUTTON_CLASS, EXPORT_ICON_CLASS } from '@/shared/ui/add-button'
 import { cn } from '@/shared/ui/cn'
+import { FileGlyph } from '@/shared/ui/FileGlyph'
 import { ENGAGEMENT_FALLBACK_ONLY, type EngagementText } from '../engagement-text'
 import { EXPORT_TO_CSV, EXPORT_TO_PDF } from './history-query'
 
-const ITEM =
-  'flex w-full cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-[background-color,padding] duration-200 ease-out data-[highlighted]:bg-accent data-[highlighted]:pl-3 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset [&>svg]:size-4 [&>svg]:text-muted-foreground data-[highlighted]:[&>svg]:text-brand'
-
 type HistoryExportMenuProps = { busy: boolean; onExport: (exportTo: number) => void; t: EngagementText }
 
-// seats-admin-engagement-history.html:381-391: PDF and CSV, in the same header menu as Devices (ExportMenu.tsx).
+const CARD =
+  'group relative flex flex-col items-center gap-4 rounded-2xl border-2 bg-white px-5 py-7 text-center outline-none transition-[border-color,box-shadow,transform] duration-200 ease-premium hover:-translate-y-0.5 hover:shadow-card-lift focus-visible:ring-2 focus-visible:ring-ring'
+
+// seats-admin-engagement-history.html:381-391: PDF and CSV, offered as the same format dialog as the
+// device list, so every export on the console asks the same question the same way.
 export function HistoryExportMenu({ busy, onExport, t }: HistoryExportMenuProps) {
+  const [open, setOpen] = useState(false)
+
+  const choose = (exportTo: number) => {
+    setOpen(false)
+    onExport(exportTo)
+  }
+
+  const card = (kind: 'pdf' | 'csv', exportTo: number, label: string, hint: string) => (
+    <button
+      type="button"
+      onClick={() => choose(exportTo)}
+      className={cn(
+        CARD,
+        kind === 'pdf'
+          ? 'border-border hover:border-[var(--color-file-pdf)]'
+          : 'border-border hover:border-[var(--color-file-csv)]',
+      )}
+    >
+      <FileGlyph kind={kind} />
+      <span className="flex flex-col gap-1">
+        <span className="text-base font-semibold text-foreground">{label}</span>
+        <span className="text-[13px] text-muted-foreground">{hint}</span>
+      </span>
+      <span
+        aria-hidden
+        className="grid size-5 place-items-center rounded-full bg-brand text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+      >
+        <Check className="size-3" />
+      </span>
+    </button>
+  )
+
   return (
-    <DropdownMenu.Root modal={false}>
-      <DropdownMenu.Trigger
+    <>
+      <button
+        type="button"
         disabled={busy}
         aria-busy={busy}
-        className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'group bg-white shadow-sm')}
+        onClick={() => setOpen(true)}
+        className={cn(buttonVariants({ variant: 'outline' }), EXPORT_BUTTON_CLASS)}
       >
         {busy ? (
-          <LoaderCircle aria-hidden className="size-4 animate-spin motion-reduce:animate-none" />
+          <LoaderCircle aria-hidden className="size-[18px] animate-spin motion-reduce:animate-none" />
         ) : (
-          <Download aria-hidden className="size-4" />
+          <Download aria-hidden className={EXPORT_ICON_CLASS} />
         )}
         {busy ? ENGAGEMENT_FALLBACK_ONLY.exporting : t('Export')}
-        <ChevronDown
-          aria-hidden
-          className="size-3.5 opacity-70 transition-transform duration-300 ease-premium group-data-[state=open]:rotate-180"
-        />
-      </DropdownMenu.Trigger>
-      <DropdownMenu.Portal>
-        <DropdownMenu.Content
-          align="end"
-          sideOffset={6}
-          className="z-50 min-w-48 animate-menu-in overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-card-lift motion-reduce:animate-none"
-        >
-          <DropdownMenu.Item className={ITEM} onSelect={() => onExport(EXPORT_TO_PDF)}>
-            <FileText aria-hidden />
-            {t('ExportToPDF')}
-          </DropdownMenu.Item>
-          <DropdownMenu.Item className={ITEM} onSelect={() => onExport(EXPORT_TO_CSV)}>
-            <FileSpreadsheet aria-hidden />
-            {t('ExportToCSV')}
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Portal>
-    </DropdownMenu.Root>
+      </button>
+
+      <Dialog
+        open={open}
+        onOpenChange={setOpen}
+        title={t('Export')}
+        description={ENGAGEMENT_FALLBACK_ONLY.exportPrompt}
+        closeLabel={t('Close')}
+        className="max-w-2xl"
+      >
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          {card('pdf', EXPORT_TO_PDF, t('ExportToPDF'), ENGAGEMENT_FALLBACK_ONLY.exportPdfHint)}
+          {card('csv', EXPORT_TO_CSV, t('ExportToCSV'), ENGAGEMENT_FALLBACK_ONLY.exportCsvHint)}
+        </div>
+      </Dialog>
+    </>
   )
 }
