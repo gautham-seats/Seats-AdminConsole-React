@@ -2,9 +2,9 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Cpu, DoorOpen, LoaderCircle, Plus, Save, Trash2, X } from 'lucide-react'
+import { DoorOpen, LoaderCircle, Plus, Save, Trash2, X } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react'
-import { TabIndicator } from '@/shared/ui/TabIndicator'
+import { createPortal } from 'react-dom'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { HEAD_FILL } from '@/shared/ui/HeadBackdrop'
 import { ScrollEdges } from '@/shared/ui/ScrollEdges'
@@ -13,21 +13,15 @@ import { useRowWindow } from '@/shared/ui/use-row-window'
 import { toApiError } from '@/shared/api'
 import { DEVICES_ROUTE, legacyHref, PermissionAction, PermissionItem } from '@/shared/shell/admin-menu'
 import { useProfile } from '@/shared/shell/profile'
-import {
-  Button,
-  buttonVariants,
-  Checkbox,
-  GearworkLoader,
-  Input,
-  type CheckboxState,
-  type LookupOption,
-} from '@/shared/ui'
-import { ADD_BUTTON_CLASS } from '@/shared/ui/add-button'
+import { Button, Checkbox, GearworkLoader, Input, type CheckboxState, type LookupOption } from '@/shared/ui'
+import { ADD_BUTTON_CLASS, CANCEL_BUTTON_CLASS } from '@/shared/ui/add-button'
 import { cn } from '@/shared/ui/cn'
 import type { DeviceDetailsViewModel, DeviceRoomDto } from '@/types/devices'
 import { setDevicesFlash } from '../devices-flash'
 import { FormField } from '../FormField'
 import { DevicesNotice, type DevicesNoticeState } from '../index/DevicesNotice'
+import { TAB, TAB_BAR } from '../DetailHero'
+import { DeviceHero } from './DeviceHero'
 import { DEVICES_FALLBACK_ONLY, isSilentFailure, type DevicesText } from '../index/devices-text'
 import { fetchRoom, saveDevice } from './device-details-api'
 import {
@@ -78,11 +72,16 @@ type TabId = (typeof TABS)[number]
 
 const tabId = (id: TabId) => `device-tab-${id}`
 const panelId = (id: TabId) => `device-panel-${id}`
-const META_SEPARATOR = ' · '
 
-type DeviceDetailsFormProps = { view: DeviceDetailsViewModel; t: DevicesText }
+const FORM_ID = 'device-details-form'
 
-export function DeviceDetailsForm({ view, t }: DeviceDetailsFormProps) {
+type DeviceDetailsFormProps = {
+  view: DeviceDetailsViewModel
+  t: DevicesText
+  actionsSlot: HTMLElement | null
+}
+
+export function DeviceDetailsForm({ view, t, actionsSlot }: DeviceDetailsFormProps) {
   const router = useRouter()
   const profile = useProfile()
   const { detail } = view
@@ -237,8 +236,35 @@ export function DeviceDetailsForm({ view, t }: DeviceDetailsFormProps) {
     requestAnimationFrame(() => document.getElementById(tabId(next))?.focus())
   }
 
-  const headerTitle = form.description.trim() || form.serialNumber.trim() || DEVICES_FALLBACK_ONLY.newDevice
-  const headerMeta = [form.serialNumber.trim(), form.macAddress.trim()].filter(Boolean).join(META_SEPARATOR)
+  // Cancel and Save ride the page header, the same pair and the same sizes as every other detail page.
+  const actions = (
+    <div className="flex flex-wrap items-center justify-end gap-2">
+      <Link href={DEVICES_ROUTE} className={CANCEL_BUTTON_CLASS}>
+        <X aria-hidden className="size-[18px]" />
+        {t('Cancel')}
+      </Link>
+      {canSave ? (
+        <button
+          type="submit"
+          form={FORM_ID}
+          disabled={saving}
+          aria-busy={saving}
+          aria-keyshortcuts="Control+S"
+          className={ADD_BUTTON_CLASS}
+        >
+          {saving ? (
+            <LoaderCircle aria-hidden className="size-[18px] animate-spin motion-reduce:animate-none" />
+          ) : (
+            <Save
+              aria-hidden
+              className="size-[18px] transition-transform duration-500 ease-premium group-hover:-translate-y-px"
+            />
+          )}
+          {t('Save')}
+        </button>
+      ) : null}
+    </div>
+  )
 
   const textField = (
     field: DeviceTextField,
@@ -266,6 +292,7 @@ export function DeviceDetailsForm({ view, t }: DeviceDetailsFormProps) {
 
   return (
     <form
+      id={FORM_ID}
       noValidate
       onSubmit={event => {
         event.preventDefault()
@@ -278,83 +305,23 @@ export function DeviceDetailsForm({ view, t }: DeviceDetailsFormProps) {
       {/* Scroll padding keeps a focused field clear of the sticky device header. */}
       <div className="min-h-0 flex-1 scroll-pt-20 overflow-y-auto pr-1">
         <div className="flex flex-col gap-4 pb-2">
-          {/* The title and badges read from the fields below, so they redraw as the device is edited. */}
-          <header className="sticky top-0 z-20 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border border-border bg-white/95 px-4 py-3 shadow-sm backdrop-blur">
-            <span
-              aria-hidden
-              className="grid size-10 shrink-0 place-items-center rounded-lg bg-brand text-white shadow-sm"
-            >
-              <Cpu className="size-5" />
-            </span>
-            <div className="min-w-0 flex-1">
-              {/* Not a heading: the route already has one, and a second with the same text would collide. */}
-              <div className="flex min-w-0 flex-wrap items-center gap-2">
-                <p className="min-w-0 truncate text-sm font-semibold text-foreground">{headerTitle}</p>
-                <span
-                  className={cn(
-                    'inline-flex h-6 items-center gap-1.5 rounded-full border px-2.5 text-xs font-semibold',
-                    'transition-colors duration-300 ease-premium motion-reduce:transition-none',
-                    form.isActive
-                      ? 'border-brand/25 bg-brand/[0.08] text-brand'
-                      : 'border-border bg-secondary text-muted-foreground',
-                  )}
-                >
-                  <span
-                    aria-hidden
-                    className={cn(
-                      'size-1.5 rounded-full',
-                      form.isActive ? 'bg-brand' : 'bg-muted-foreground/50',
-                    )}
-                  />
-                  {form.isActive ? t('InService') : DEVICES_FALLBACK_ONLY.outOfService}
-                </span>
-                {form.isBeacon ? (
-                  <span className="inline-flex h-6 animate-fade-in items-center rounded-full border border-border bg-secondary px-2.5 text-xs font-semibold text-muted-foreground motion-reduce:animate-none">
-                    {t('IsBeacon')}
-                  </span>
-                ) : null}
-              </div>
-              {headerMeta ? (
-                <p className="mt-0.5 truncate font-mono text-xs text-muted-foreground">{headerMeta}</p>
-              ) : null}
-            </div>
-            <div className="ml-auto flex items-center gap-2">
-              <Link href={DEVICES_ROUTE} className={cn(buttonVariants({ variant: 'outline' }), 'h-10 px-4')}>
-                <X aria-hidden className="size-4" />
-                {t('Cancel')}
-              </Link>
-              {canSave ? (
-                <button
-                  type="submit"
-                  disabled={saving}
-                  aria-busy={saving}
-                  aria-keyshortcuts="Control+S"
-                  className={ADD_BUTTON_CLASS}
-                >
-                  {saving ? (
-                    <LoaderCircle
-                      aria-hidden
-                      className="size-[18px] animate-spin motion-reduce:animate-none"
-                    />
-                  ) : (
-                    <Save
-                      aria-hidden
-                      className="size-[18px] transition-transform duration-500 ease-premium group-hover:-translate-y-px"
-                    />
-                  )}
-                  {t('Save')}
-                </button>
-              ) : null}
-            </div>
-          </header>
+          {/* The blue band carries the whole device identity; nothing under it repeats those values. */}
+          <DeviceHero
+            serialNumber={form.serialNumber}
+            description={form.description}
+            assetTag={form.assetTag}
+            macAddress={form.macAddress}
+            ipAddress={form.ipAddress}
+            isBeacon={form.isBeacon}
+            isActive={form.isActive}
+            roomCount={form.rooms.length}
+            isNew={creating}
+            t={t}
+          />
 
-          <section className="rounded-lg border border-border bg-white shadow-sm">
+          <section className="overflow-hidden rounded-lg border border-border bg-white shadow-sm">
             {/* Tab order: visual — the tabs, then whatever the open panel holds. */}
-            <div
-              role="tablist"
-              aria-label={t('Device')}
-              className="relative flex gap-1 border-b border-border px-3"
-            >
+            <div role="tablist" aria-label={t('Device')} className={TAB_BAR}>
               {TABS.map(id => (
                 <button
                   key={id}
@@ -366,21 +333,21 @@ export function DeviceDetailsForm({ view, t }: DeviceDetailsFormProps) {
                   tabIndex={tab === id ? 0 : -1}
                   onClick={() => setTab(id)}
                   onKeyDown={onTabKeyDown}
-                  className={cn(
-                    'flex items-center gap-2 rounded-t-md px-3 py-2.5 text-sm font-semibold outline-none',
-                    'transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-ring',
-                    tab === id ? 'text-brand' : 'text-muted-foreground hover:text-foreground',
-                  )}
+                  className={cn(TAB.base, tab === id ? TAB.active : TAB.idle)}
                 >
                   {id === 'details' ? DEVICES_FALLBACK_ONLY.details : DEVICES_FALLBACK_ONLY.rooms}
                   {id === 'rooms' ? (
-                    <span className="rounded-full bg-brand/[0.1] px-1.5 text-[11px] font-semibold tabular-nums text-brand">
+                    <span
+                      className={cn(
+                        'rounded-full px-1.5 text-[11px] font-semibold tabular-nums',
+                        tab === id ? TAB.badgeActive : TAB.badgeIdle,
+                      )}
+                    >
                       {form.rooms.length}
                     </span>
                   ) : null}
                 </button>
               ))}
-              <TabIndicator activeKey={tab} />
             </div>
 
             {/* Both panels stay mounted so switching tabs never discards an edit. */}
@@ -390,14 +357,25 @@ export function DeviceDetailsForm({ view, t }: DeviceDetailsFormProps) {
               aria-labelledby={tabId('details')}
               tabIndex={0}
               hidden={tab !== 'details'}
-              className="grid grid-cols-1 gap-x-6 gap-y-4 rounded-b-lg px-5 py-5 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset md:grid-cols-2"
+              className="flex flex-col gap-6 rounded-b-lg px-5 py-5 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
             >
-              {textField('description', t('Description'))}
-              {textField('serialNumber', t('SerialNumber'), { required: true })}
-              {textField('macAddress', t('MacAddress'))}
-              {textField('assetTag', t('AssetTag'), { maxLength: ASSET_TAG_MAX })}
-              {textField('ipAddress', t('IPAddress'), { maxLength: IP_ADDRESS_MAX })}
-              <div className="flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-border pt-4 md:col-span-2">
+              {/* Identity first, then the two network addresses, so the five fields read as two ideas. */}
+              <div className="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
+                <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase md:col-span-2">
+                  {DEVICES_FALLBACK_ONLY.identification}
+                </p>
+                {textField('serialNumber', t('SerialNumber'), { required: true })}
+                {textField('assetTag', t('AssetTag'), { maxLength: ASSET_TAG_MAX })}
+                <div className="md:col-span-2">{textField('description', t('Description'))}</div>
+              </div>
+              <div className="grid grid-cols-1 gap-x-6 gap-y-4 border-t border-border pt-5 md:grid-cols-2">
+                <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase md:col-span-2">
+                  {DEVICES_FALLBACK_ONLY.network}
+                </p>
+                {textField('macAddress', t('MacAddress'))}
+                {textField('ipAddress', t('IPAddress'), { maxLength: IP_ADDRESS_MAX })}
+              </div>
+              <div className="flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-border pt-5">
                 <CheckField
                   id="device-is-beacon"
                   label={t('IsBeacon')}
@@ -475,6 +453,8 @@ export function DeviceDetailsForm({ view, t }: DeviceDetailsFormProps) {
           </section>
         </div>
       </div>
+
+      {actionsSlot ? createPortal(actions, actionsSlot) : null}
     </form>
   )
 }

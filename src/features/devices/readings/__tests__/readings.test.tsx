@@ -255,11 +255,11 @@ describe('ReadingsReportScreen', () => {
     expect(screen.getByPlaceholderText('Search...')).toHaveValue('S100')
   })
 
-  it('G2-05 captions the device and time selects [All] and [all day] (_IndexHeaderFilter.cshtml:32,53)', async () => {
+  it('G2-05 captions the device and time selects [All] and All day (_IndexHeaderFilter.cshtml:32,53)', async () => {
     setup(<ReadingsReportScreen />)
     await screen.findByText('15/09/2026 08:05:09')
     expect(screen.getByRole('combobox', { name: 'Device' })).toHaveTextContent('[All]')
-    expect(screen.getByRole('button', { name: 'Start Time' })).toHaveTextContent('[all day]')
+    expect(screen.getByRole('button', { name: 'Start Time' })).toHaveTextContent('All day')
   })
 
   it('P8 ReadingsReport export shows not-authorised on 401', async () => {
@@ -268,10 +268,13 @@ describe('ReadingsReportScreen', () => {
     const exportCsv = async () => {
       const trigger = screen.getByText('Export').closest('button')
       if (!trigger) throw new Error('Export trigger not found')
-      trigger.focus()
-      fireEvent.keyDown(trigger, { key: 'Enter' })
-      const csv = await screen.findByText('Export to CSV')
-      await act(async () => fireEvent.click(csv))
+      fireEvent.click(trigger)
+      const csv = (await screen.findByText('Export to CSV')).closest('button')
+      if (!csv) throw new Error('Export to CSV not found')
+      // Choosing a format closes the dialog and posts, so both updates settle inside act.
+      await act(async () => {
+        fireEvent.click(csv)
+      })
     }
     post.mockRejectedValueOnce(new ApiError('auth', '/api/ReadingsReportApi/Export', 403))
     await exportCsv()

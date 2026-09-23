@@ -12,8 +12,9 @@ jest.mock('next/navigation', () => ({ useRouter: () => ({ push }) }))
 
 jest.mock('next/link', () => ({
   __esModule: true,
+  // jsdom cannot navigate, so the stand-in keeps the href but swallows the click.
   default: ({ href, ...props }: AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) => (
-    <a href={href} {...props} />
+    <a href={href} {...props} onClick={event => event.preventDefault()} />
   ),
 }))
 
@@ -30,9 +31,32 @@ const buildings = [
   { id: 12, name: 'Science', siteId: 1 },
 ]
 
+const ROOM_DEVICES = [
+  {
+    id: 91,
+    serialNumber: 'S1002',
+    description: 'Door beacon',
+    isActive: true,
+    batteryPercent: 78,
+    displayLastReadDate: '15/09/2026 08:05:09',
+  },
+  {
+    id: 92,
+    serialNumber: 'S1044',
+    description: 'Ceiling beacon',
+    isActive: false,
+    batteryPercent: 9,
+    displayLastReadDate: '16/09/2026 07:10:00',
+  },
+]
+
 function setup(
   idParam: string,
-  { rooms = [1, 2, 3], missing = false }: { rooms?: number[]; missing?: boolean } = {},
+  {
+    rooms = [1, 2, 3],
+    missing = false,
+    devices = ROOM_DEVICES,
+  }: { rooms?: number[]; missing?: boolean; devices?: unknown[] } = {},
 ) {
   get.mockImplementation((path: string) => {
     if (path === 'UserApi/GetClaims') return Promise.resolve([{ id: 8, actions: rooms.map(id => ({ id })) }])
@@ -53,6 +77,8 @@ function setup(
     }
     if (path === 'RoomApi/0')
       return Promise.resolve({ detail: { id: 0, capacity: 0, buildingId: null }, buildings })
+    if (path === 'DeviceApi/GetDevices')
+      return Promise.resolve({ items: devices, totalRowCount: devices.length })
     return Promise.resolve(null)
   })
   post.mockImplementation((path: string) =>
@@ -123,7 +149,8 @@ describe('RoomDetailsScreen', () => {
   it('blocks save for a new room without a name', async () => {
     setup('new')
     expect(await screen.findByRole('heading', { name: 'New room' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Room details' })).toBeInTheDocument()
+    expect(screen.getByRole('tablist', { name: 'Room details' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Identification' })).toBeInTheDocument()
     fireEvent.click(await screen.findByRole('button', { name: 'Save' }))
     expect(await screen.findByText('Required')).toBeInTheDocument()
     expect(screen.getByText('There are fields with input validation errors.')).toBeInTheDocument()
@@ -178,18 +205,28 @@ describe('RoomDetailsScreen', () => {
     })
   })
 
+  it('sizes Cancel to match Save and keeps the pair in the page header', async () => {
+    setup('5')
+    const cancel = await screen.findByRole('link', { name: 'Cancel' })
+    const save = screen.getByRole('button', { name: 'Save' })
+    // add-button.ts gives both the same box; a mismatch here is the bug this guards.
+    for (const box of ['min-h-10', 'min-w-[8.5rem]', 'rounded-lg', 'px-7']) {
+      expect(cancel).toHaveClass(box)
+      expect(save).toHaveClass(box)
+    }
+    expect(cancel.parentElement).toBe(save.parentElement)
+    expect(cancel.compareDocumentPosition(save) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
   it('D-069 asks before leaving a room with unsaved changes', async () => {
     const confirm = jest.spyOn(window, 'confirm').mockReturnValue(false)
     try {
       setup('5')
       const name = await screen.findByLabelText('Name')
-      const cancel = screen.getByRole('link', { name: 'Cancel' })
-      // jsdom cannot follow the link; the leave guard's click handling still runs.
-      cancel.addEventListener('click', event => event.preventDefault())
-      fireEvent.click(cancel)
+      fireEvent.click(screen.getByRole('link', { name: 'Cancel' }))
       expect(confirm).not.toHaveBeenCalled()
       fireEvent.change(name, { target: { value: 'LIB 0.14' } })
-      fireEvent.click(cancel)
+      fireEvent.click(screen.getByRole('link', { name: 'Cancel' }))
       expect(confirm).toHaveBeenCalledWith('You have unsaved changes. Leave this page?')
     } finally {
       confirm.mockRestore()
@@ -204,5 +241,28 @@ describe('RoomDetailsScreen', () => {
     clearResourceCache()
     setup('5', { missing: true })
     expect(await screen.findByText('This room could not be found.')).toBeInTheDocument()
+  })
+
+  it('shows the room devices count and the newest reading in the hero', async () => {
+    setup('5')
+    expect(await screen.findByRole('tab', { name: /Devices/ })).toBeInTheDocument()
+    // The newest reading wins even though it is second in the list.
+    expect(await screen.findByText('16/09/2026 07:10:00')).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Devices 2' })).toBeInTheDocument()
+  })
+
+  it('lists the devices assigned to the room on the Devices tab', async () => {
+    setup('5')
+    fireEvent.click(await screen.findByRole('tab', { name: /Devices/ }))
+    expect(await screen.findByText('S1002')).toBeInTheDocument()
+    expect(screen.getByText('Ceiling beacon')).toBeInTheDocument()
+  })
+
+  it('says why Timetable and Activity are empty instead of inventing rows', async () => {
+    setup('5')
+    fireEvent.click(await screen.findByRole('tab', { name: 'Timetable' }))
+    expect(await screen.findByText('Timetable needs a backend endpoint')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('tab', { name: 'Activity' }))
+    expect(await screen.findByText('Activity needs a filter the audit API does not have')).toBeInTheDocument()
   })
 })
