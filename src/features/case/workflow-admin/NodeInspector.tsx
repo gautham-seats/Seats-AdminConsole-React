@@ -12,14 +12,13 @@ import type { InspectorTarget } from './use-structure-tree'
 const SEPARATOR = '›'
 
 const EN = {
-  pickNode: 'Select a node to edit it.',
   inspector: 'Inspector',
   branchHint: 'Open a rule or a trigger below this branch, or add a new one.',
 } as const
 
 type NodeInspectorProps = {
   workflowId: number
-  target: InspectorTarget | null
+  target: InspectorTarget
   crumbs: readonly string[]
   onSaved: () => void
   onDirtyChange: (dirty: boolean) => void
@@ -27,7 +26,6 @@ type NodeInspectorProps = {
 
 export function NodeInspector({ workflowId, target, crumbs, onSaved, onDirtyChange }: NodeInspectorProps) {
   const panel = (() => {
-    if (!target) return null
     const { path, id } = target
     switch (target.kind) {
       case 'stageGroup':
@@ -124,7 +122,7 @@ export function NodeInspector({ workflowId, target, crumbs, onSaved, onDirtyChan
       {crumbs.length > 0 ? (
         <p className="mb-3 text-xs break-words text-muted-foreground">{crumbs.join(` ${SEPARATOR} `)}</p>
       ) : null}
-      {panel ?? <p className="text-sm text-muted-foreground">{EN.pickNode}</p>}
+      {panel}
     </section>
   )
 }

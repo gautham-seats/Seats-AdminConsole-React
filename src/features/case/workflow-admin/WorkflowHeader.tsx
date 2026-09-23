@@ -196,13 +196,22 @@ export function WorkflowHeader({
         </div>
       </div>
       {stats.length > 0 ? (
-        <p className="flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-muted-foreground tabular-nums">
+        // Compact figures, not tiles: label over value, hairline between, wraps at 320px.
+        <dl className="flex flex-wrap items-stretch gap-x-6 gap-y-3">
           {stats.map(stat => (
-            <span key={stat.label}>
-              <span className="font-medium text-foreground">{stat.label}</span> {stat.value}
-            </span>
+            <div
+              key={stat.label}
+              className="flex min-w-[5.5rem] flex-col justify-center border-l border-border pl-3 first:border-l-0 first:pl-0"
+            >
+              <dt className="text-[11px] font-semibold tracking-[0.06em] text-muted-foreground uppercase">
+                {stat.label}
+              </dt>
+              <dd className="text-[15px] leading-6 font-semibold text-foreground tabular-nums">
+                {stat.value}
+              </dd>
+            </div>
           ))}
-        </p>
+        </dl>
       ) : null}
     </div>
   )

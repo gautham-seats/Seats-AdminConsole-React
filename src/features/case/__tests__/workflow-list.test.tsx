@@ -56,13 +56,7 @@ function setup(onSelect = jest.fn()) {
     onSelect,
     ...render(
       <ProfileProvider>
-        <WorkflowList
-          selectedId={null}
-          reloadToken={0}
-          onSelect={onSelect}
-          onAdd={jest.fn()}
-          onReloaded={jest.fn()}
-        />
+        <WorkflowList selectedId={null} reloadToken={0} onSelect={onSelect} onReloaded={jest.fn()} />
       </ProfileProvider>,
     ),
   }
@@ -104,13 +98,7 @@ describe('WorkflowList', () => {
     })
     render(
       <ProfileProvider>
-        <WorkflowList
-          selectedId={null}
-          reloadToken={0}
-          onSelect={jest.fn()}
-          onAdd={jest.fn()}
-          onReloaded={jest.fn()}
-        />
+        <WorkflowList selectedId={null} reloadToken={0} onSelect={jest.fn()} onReloaded={jest.fn()} />
       </ProfileProvider>,
     )
     expect(await screen.findByRole('row', { name: /Attendance Monitoring/i })).toBeInTheDocument()
@@ -173,13 +161,7 @@ describe('WorkflowList', () => {
     const onSelect = jest.fn()
     render(
       <ProfileProvider>
-        <WorkflowList
-          selectedId={null}
-          reloadToken={0}
-          onSelect={onSelect}
-          onAdd={jest.fn()}
-          onReloaded={jest.fn()}
-        />
+        <WorkflowList selectedId={null} reloadToken={0} onSelect={onSelect} onReloaded={jest.fn()} />
       </ProfileProvider>,
     )
     const first = await screen.findByRole('row', { name: /Attendance Monitoring/i })
@@ -213,13 +195,7 @@ describe('WorkflowList', () => {
     })
     render(
       <ProfileProvider>
-        <WorkflowList
-          selectedId={null}
-          reloadToken={0}
-          onSelect={jest.fn()}
-          onAdd={jest.fn()}
-          onReloaded={jest.fn()}
-        />
+        <WorkflowList selectedId={null} reloadToken={0} onSelect={jest.fn()} onReloaded={jest.fn()} />
       </ProfileProvider>,
     )
     await screen.findByRole('row', { name: /Attendance Monitoring/i })
@@ -249,13 +225,7 @@ describe('WorkflowList', () => {
     })
     render(
       <ProfileProvider>
-        <WorkflowList
-          selectedId={null}
-          reloadToken={0}
-          onSelect={jest.fn()}
-          onAdd={jest.fn()}
-          onReloaded={jest.fn()}
-        />
+        <WorkflowList selectedId={null} reloadToken={0} onSelect={jest.fn()} onReloaded={jest.fn()} />
       </ProfileProvider>,
     )
     await screen.findByRole('row', { name: /Flow 0/i })
@@ -284,7 +254,6 @@ describe('WorkflowList', () => {
           selectedId={7}
           reloadToken={0}
           onSelect={jest.fn()}
-          onAdd={jest.fn()}
           onReloaded={jest.fn()}
           onDeleted={onDeleted}
         />
@@ -320,13 +289,7 @@ describe('WorkflowList', () => {
     })
     render(
       <ProfileProvider>
-        <WorkflowList
-          selectedId={null}
-          reloadToken={0}
-          onSelect={jest.fn()}
-          onAdd={jest.fn()}
-          onReloaded={jest.fn()}
-        />
+        <WorkflowList selectedId={null} reloadToken={0} onSelect={jest.fn()} onReloaded={jest.fn()} />
       </ProfileProvider>,
     )
     expect(await screen.findByRole('status')).toHaveTextContent('There are no items to show.')

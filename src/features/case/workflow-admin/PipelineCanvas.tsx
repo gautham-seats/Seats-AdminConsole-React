@@ -56,7 +56,7 @@ function StageNode({
           'disabled:cursor-not-allowed disabled:opacity-60',
           selected
             ? 'border-brand bg-brand/[0.08] font-semibold text-brand'
-            : 'border-border bg-page text-foreground hover:border-brand/40 hover:bg-brand/[0.05] active:bg-brand/[0.1]',
+            : 'border-border bg-white text-foreground hover:border-brand/40 hover:bg-brand/[0.05] active:bg-brand/[0.1]',
         )}
       >
         {/* Fixed h-9 keeps the lane window exact, so the full label is offered as a title. */}
@@ -92,7 +92,7 @@ function Lane({
   return (
     <li className="relative flex min-w-[15rem] flex-1 flex-col lg:min-w-[13rem]">
       {connected ? <Connector /> : null}
-      <div className="flex h-full flex-col rounded-xl border border-border bg-white p-3 shadow-sm">
+      <div className="flex h-full flex-col rounded-xl border border-border bg-page p-3">
         <div className="mb-2 flex items-center gap-2">
           <button
             type="button"
@@ -191,7 +191,7 @@ export function PipelineCanvas({ workflowId, tree, canAdd }: PipelineCanvasProps
 
   if (tree.loadingRoots) {
     return (
-      <div className="grid min-h-[16rem] place-items-center rounded-xl border border-border bg-white shadow-sm">
+      <div className="grid min-h-[16rem] flex-1 place-items-center rounded-xl border border-border bg-white shadow-sm">
         <DelayedLoading active label={t('Loading')} />
       </div>
     )
@@ -199,7 +199,7 @@ export function PipelineCanvas({ workflowId, tree, canAdd }: PipelineCanvasProps
 
   if (tree.rootsError) {
     return (
-      <div className="rounded-xl border border-border bg-white p-4 shadow-sm">
+      <div className="flex min-h-0 flex-1 items-center rounded-xl border border-border bg-white p-4 shadow-sm">
         <ErrorState
           message={t('AlertGeneralErrorDefault')}
           retryLabel={t('Refresh')}
@@ -211,7 +211,7 @@ export function PipelineCanvas({ workflowId, tree, canAdd }: PipelineCanvasProps
 
   if (roots.length === 0) {
     return (
-      <div className="rounded-xl border border-border bg-white shadow-sm">
+      <div className="flex min-h-0 flex-1 rounded-xl border border-border bg-white shadow-sm">
         <EmptyState
           title={t('Empty')}
           icon={Workflow}
@@ -233,17 +233,21 @@ export function PipelineCanvas({ workflowId, tree, canAdd }: PipelineCanvasProps
   }
 
   return (
-    <div className="min-w-0 overflow-x-auto pb-1">
-      <ul aria-label={EN.canvas} className="flex min-w-0 flex-col items-stretch gap-4 lg:flex-row lg:gap-5">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-auto rounded-xl border border-border bg-white p-3 shadow-sm">
+      <ul
+        aria-label={EN.canvas}
+        className="flex min-w-0 flex-col items-stretch gap-4 lg:flex-row lg:items-start lg:gap-5"
+      >
         {roots.map((lane, index) => (
           <Lane key={lane.key} tree={tree} lane={lane} canAdd={canAdd} connected={index > 0} />
         ))}
         {canAdd ? (
-          <li className="flex min-w-[10rem] items-stretch lg:min-w-[9rem]">
+          // Sits at the top of the row rather than stretching: an empty box as tall as a lane reads as a fault.
+          <li className="flex shrink-0 self-start">
             <button
               type="button"
               onClick={() => tree.startDraft({ kind: 'stageGroup', path: { workflowId }, parentKey: null })}
-              className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-border px-3 py-6 text-xs font-medium text-muted-foreground transition-colors duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-brand/50 hover:text-brand active:bg-brand/[0.08] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+              className="flex h-11 items-center justify-center gap-1.5 rounded-xl border border-dashed border-border px-4 text-xs font-medium text-muted-foreground transition-colors duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-brand/50 hover:text-brand active:bg-brand/[0.08] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
             >
               <Plus aria-hidden className="size-4" />
               {EN.addStageGroup}

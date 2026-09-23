@@ -7,6 +7,8 @@ import { PermissionAction, PermissionItem } from '@/shared/shell/admin-menu'
 import { useApiRead } from '@/shared/api'
 import { useProfile } from '@/shared/shell/profile'
 import { Button, ConfirmDialog } from '@/shared/ui'
+import { ADD_BUTTON_CLASS, ADD_ICON_CLASS } from '@/shared/ui/add-button'
+import { CountUp } from '@/shared/ui/CountUp'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { FRAME_EN, SettingsGate, SettingsLayout } from '@/features/settings/shared/SettingsFrame'
 import { SaveToast, type Notice } from '@/features/settings/shared/SaveToast'
@@ -38,6 +40,7 @@ const EN = {
   emptyTitle: 'No workflows found',
   emptyHint: 'Create a workflow to start building its stage groups, stages and rules.',
   addWorkflow: 'Add workflow',
+  total: 'Total',
 } as const
 
 export function WorkflowAdminScreen() {
@@ -160,18 +163,36 @@ function WorkflowAdminWorkspace() {
   const noWorkflows = listLoaded && workflows.length === 0
 
   return (
-    <SettingsLayout area={area} sectionId="workflow-admin" title={title}>
+    <SettingsLayout
+      area={area}
+      sectionId="workflow-admin"
+      title={title}
+      meta={
+        listLoaded && workflows.length > 0 ? (
+          <span className="animate-fade-in rounded-full bg-brand/[0.08] px-2.5 py-0.5 text-xs font-semibold text-brand tabular-nums">
+            <CountUp text={`${EN.total} ${workflows.length}`} />
+          </span>
+        ) : null
+      }
+      actions={
+        canAdd ? (
+          <button type="button" onClick={openAdd} className={ADD_BUTTON_CLASS}>
+            <Plus aria-hidden className={ADD_ICON_CLASS} />
+            {EN.addWorkflow}
+          </button>
+        ) : null
+      }
+    >
       <SaveToast notice={notice} onDismiss={dismissNotice} dismissLabel={FRAME_EN.dismiss} />
-      <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
+      <div className="flex min-h-0 flex-1 flex-col items-stretch gap-4 lg:flex-row">
         <WorkflowList
           selectedId={selected?.id ?? null}
           reloadToken={reloadToken}
           onSelect={selectWorkflow}
-          onAdd={openAdd}
           onReloaded={onReloaded}
           onDeleted={onDeleted}
         />
-        <div className="flex min-w-0 flex-1 flex-col gap-4">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4">
           {selected ? (
             <>
               <WorkflowHeader
@@ -185,7 +206,10 @@ function WorkflowAdminWorkspace() {
                 onUpdated={bumpReload}
                 onNotice={notify}
               />
+              {/* Keyed by workflow: tree state (selected node, cache) must never survive a switch,
+                  or the inspector asks for another workflow's node and the API answers 404. */}
               <WorkflowStructure
+                key={selected.id}
                 workflowId={selected.id}
                 initialNodeKey={initialNodeKey}
                 onStatsReload={bumpReload}
@@ -195,7 +219,7 @@ function WorkflowAdminWorkspace() {
           ) : (
             <section
               aria-label={noWorkflows ? EN.emptyTitle : EN.pickTitle}
-              className="flex min-h-[28rem] flex-1 rounded-xl border border-border bg-white shadow-sm"
+              className="flex min-h-0 flex-1 rounded-xl border border-border bg-white shadow-sm"
             >
               {noWorkflows ? (
                 <EmptyState

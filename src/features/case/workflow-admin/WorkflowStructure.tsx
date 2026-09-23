@@ -117,6 +117,8 @@ export function WorkflowStructure({
     tree.invalidate(parent ? parent.key : null)
   }, [onStatsReload, tree])
 
+  const inspectorTarget = tree.inspectorTarget
+
   const crumbs = useMemo(() => {
     if (tree.draft) {
       return [
@@ -143,21 +145,25 @@ export function WorkflowStructure({
         <ViewButton active={listView} icon={ListTree} label={EN.list} onClick={() => setListView(true)} />
       </div>
 
-      <div className="flex min-h-[24rem] flex-1 flex-col gap-4 lg:flex-row">
+      {/* The inspector is mounted only for a node or a draft; otherwise the canvas takes the full
+          width instead of standing beside an empty panel. */}
+      <div className="flex min-h-0 flex-1 flex-col items-stretch gap-4 lg:flex-row">
         {listView ? (
           <StructureTree workflowId={workflowId} tree={guardedTree} canAdd={canAdd} />
         ) : (
-          <div className="min-w-0 flex-1 lg:max-w-[52%]">
+          <div className={cn('flex min-h-0 min-w-0 flex-1 flex-col', inspectorTarget && 'lg:max-w-[52%]')}>
             <PipelineCanvas workflowId={workflowId} tree={guardedTree} canAdd={canAdd} />
           </div>
         )}
-        <NodeInspector
-          workflowId={workflowId}
-          target={tree.inspectorTarget}
-          crumbs={crumbs}
-          onSaved={reloadParent}
-          onDirtyChange={setPanelDirty}
-        />
+        {inspectorTarget ? (
+          <NodeInspector
+            workflowId={workflowId}
+            target={inspectorTarget}
+            crumbs={crumbs}
+            onSaved={reloadParent}
+            onDirtyChange={setPanelDirty}
+          />
+        ) : null}
       </div>
 
       <ConfirmDialog
