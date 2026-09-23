@@ -45,6 +45,19 @@ function AccessProfileDetailsWorkspace({ idParam }: { idParam: string }) {
         ? USERS_FALLBACK_ONLY.newAccessProfile
         : t('AccessProfile')
 
+  const frame = {
+    areaLabel: t('Users'),
+    sections,
+    title,
+    collapseLabel: t('Collapse'),
+    expandLabel: USERS_FALLBACK_ONLY.expand,
+  }
+
+  // The loaded form owns the frame so Copy profile, Cancel and Save sit in the page header (D-018).
+  if (view && !notAuthorised && read.status !== 'error') {
+    return <AccessProfileForm key={view.details.id} view={view} t={t} frame={frame} />
+  }
+
   let body
   if (notAuthorised) {
     body = <NotAuthorisedScreen />
@@ -67,7 +80,7 @@ function AccessProfileDetailsWorkspace({ idParam }: { idParam: string }) {
       </div>
     )
   } else {
-    body = <AccessProfileForm key={view.details.id} view={view} t={t} />
+    body = null
   }
 
   return (

@@ -3,6 +3,8 @@
 import { ArrowDown, ArrowUp, ChevronRight, Plus, Trash2 } from 'lucide-react'
 import { Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
+import { ADD_BUTTON_CLASS, ADD_ICON_CLASS } from '@/shared/ui/add-button'
+import { NAV_BAND_ROW } from '@/shared/ui/nav-band'
 import type { SimpleListItemDto } from '@/types/users'
 import type { PersonaRow } from './user-form'
 
@@ -47,8 +49,8 @@ export function PersonasEditor({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-2">
-        <Button size="sm" onClick={onAdd}>
-          <Plus aria-hidden className="size-4" />
+        <Button onClick={onAdd} className={ADD_BUTTON_CLASS}>
+          <Plus aria-hidden className={ADD_ICON_CLASS} />
           {labels.add}
         </Button>
         <Button
@@ -74,18 +76,18 @@ export function PersonasEditor({
       </div>
       <div className="overflow-x-auto rounded-lg border border-border">
         <table className="w-full border-separate border-spacing-0 text-sm">
-          <thead>
+          <thead className={NAV_BAND_ROW}>
             <tr>
-              <th scope="col" className="h-10 w-12 bg-brand pl-4 text-left text-white">
+              <th scope="col" className="h-10 w-12 bg-transparent pl-4 text-left text-white">
                 <span className="sr-only">{labels.select}</span>
               </th>
               <th
                 scope="col"
-                className="h-10 bg-brand px-2 text-left text-xs font-medium tracking-[0.02em] text-white"
+                className="h-10 bg-transparent px-3 text-left text-[12.5px] font-bold tracking-[0.01em] text-white"
               >
                 {labels.accessProfile}
               </th>
-              <th scope="col" className="h-10 w-14 bg-brand pr-4 text-white">
+              <th scope="col" className="h-10 w-14 bg-transparent pr-4 text-white">
                 <span className="sr-only">{labels.delete}</span>
               </th>
             </tr>

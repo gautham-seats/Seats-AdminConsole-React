@@ -6,12 +6,13 @@ import { Info, Link2, Mail, Pencil, Plus, Save, Search, Trash2, UserPlus, Users,
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useResources } from '@/shared/resources'
 import { CONTACT_GROUPS_ROUTE, PermissionAction, PermissionItem } from '@/shared/shell/admin-menu'
+import { AreaWorkspace, type WorkspaceSection } from '@/shared/shell/AreaWorkspace'
+import { SettingsCard } from '@/features/settings/shared/SettingsCard'
 import { useProfile } from '@/shared/shell/profile'
 import { LEAVE_EN } from '@/shared/shell/LeaveDialog'
 import { useLeaveGuard } from '@/shared/shell/use-leave-guard'
 import {
   Button,
-  buttonVariants,
   Checkbox,
   Input,
   Label,
@@ -23,6 +24,8 @@ import {
   type CheckboxState,
 } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
+import { ADD_BUTTON_CLASS, ADD_ICON_CLASS, CANCEL_BUTTON_CLASS } from '@/shared/ui/add-button'
+import { NAV_BAND_CELL } from '@/shared/ui/nav-band'
 import { useRowWindow } from '@/shared/ui/use-row-window'
 import type { ContactGroupViewModel, FunctionDto } from '@/types/contact-groups'
 import type { SimpleListItemDto } from '@/types/users'
@@ -127,9 +130,19 @@ function Field({
   )
 }
 
-export type ContactGroupFormProps = { view: ContactGroupViewModel; t: (key: UsersTextKey) => string }
+export type ContactGroupFormProps = {
+  view: ContactGroupViewModel
+  t: (key: UsersTextKey) => string
+  frame: {
+    areaLabel: string
+    sections: readonly WorkspaceSection[]
+    title: string
+    collapseLabel: string
+    expandLabel: string
+  }
+}
 
-export function ContactGroupForm({ view, t }: ContactGroupFormProps) {
+export function ContactGroupForm({ view, t, frame }: ContactGroupFormProps) {
   const router = useRouter()
   const profile = useProfile()
   const { detail } = view
@@ -304,27 +317,53 @@ export function ContactGroupForm({ view, t }: ContactGroupFormProps) {
   const membersCount = `${form.members.length}`
   const functionButtonLabel = `${form.functionId === null ? t('Add') : t('Edit')} ${t('Function')}`
 
+  // Details.cshtml:29-165 keeps Save and Cancel together; they ride the page header so no page
+  // in the area puts them at the bottom.
+  const actions = (
+    <div className="flex flex-wrap items-center justify-end gap-2">
+      <Link href={CONTACT_GROUPS_ROUTE} className={CANCEL_BUTTON_CLASS}>
+        <X aria-hidden className="size-4" />
+        {t('Cancel')}
+      </Link>
+      {canSave ? (
+        <Button
+          type="button"
+          loading={saving}
+          className={ADD_BUTTON_CLASS}
+          onClick={() => {
+            if (!saving) void submit()
+          }}
+        >
+          <Save aria-hidden className={cn('size-[18px]', saving && 'animate-soft-pulse')} />
+          {t('Save')}
+        </Button>
+      ) : null}
+    </div>
+  )
+
   return (
-    <>
+    <AreaWorkspace
+      areaLabel={frame.areaLabel}
+      sections={frame.sections}
+      activeId="contact-group"
+      title={frame.title}
+      collapseLabel={frame.collapseLabel}
+      expandLabel={frame.expandLabel}
+      navigation="admin"
+      actions={actions}
+    >
       {/* Details.cshtml:29-165 has no form, so Enter never saves. */}
       <div className="flex min-h-0 flex-1 flex-col gap-4">
         <StatusNotice notice={notice} onDismiss={dismissNotice} dismissLabel={t('Clear')} />
 
         <div className="min-h-0 flex-1 scroll-pb-24 overflow-y-auto pr-1">
           <div className="flex flex-col gap-4 pb-2">
-            <section
-              aria-labelledby="contact-group-title"
-              className="rounded-lg border border-border bg-white shadow-sm"
+            <SettingsCard
+              icon={Users}
+              title={USERS_FALLBACK_ONLY.contactGroupDetails}
+              hint={USERS_FALLBACK_ONLY.contactGroupDetailsHint}
+              bodyClassName="divide-y-0"
             >
-              <header className="flex items-center gap-2 border-b border-border px-5 py-3.5">
-                <h2
-                  id="contact-group-title"
-                  className="flex items-center gap-2 text-sm font-semibold text-foreground"
-                >
-                  <Users aria-hidden className="size-4 text-brand" />
-                  {USERS_FALLBACK_ONLY.contactGroupDetails}
-                </h2>
-              </header>
               <div className="grid grid-cols-1 gap-x-6 gap-y-4 px-5 py-5 md:grid-cols-2">
                 <Field id="contact-group-name" label={t('Name')} error={message(errors.name)} required>
                   <Input
@@ -383,14 +422,12 @@ export function ContactGroupForm({ view, t }: ContactGroupFormProps) {
                     {canEditMembers ? (
                       <Button
                         type="button"
-                        variant="outline"
-                        size="sm"
-                        className="h-9"
+                        className={cn(ADD_BUTTON_CLASS, 'shrink-0')}
                         disabled={!pickedUser || addingUser}
                         aria-busy={addingUser}
                         onClick={() => void addPickedUser()}
                       >
-                        <Plus aria-hidden className="size-4" />
+                        <Plus aria-hidden className={ADD_ICON_CLASS} />
                         {t('Add')}
                       </Button>
                     ) : null}
@@ -496,16 +533,14 @@ export function ContactGroupForm({ view, t }: ContactGroupFormProps) {
                         </Select>
                         <Button
                           type="button"
-                          variant="outline"
-                          size="sm"
-                          className="h-9 shrink-0"
+                          className={cn(ADD_BUTTON_CLASS, 'shrink-0')}
                           aria-label={functionButtonLabel}
                           onClick={() => setFunctionOpen(true)}
                         >
                           {form.functionId === null ? (
-                            <Plus aria-hidden className="size-4" />
+                            <Plus aria-hidden className={ADD_ICON_CLASS} />
                           ) : (
-                            <Pencil aria-hidden className="size-4" />
+                            <Pencil aria-hidden className="size-[18px]" />
                           )}
                           {form.functionId === null ? t('Add') : t('Edit')}
                         </Button>
@@ -576,40 +611,37 @@ export function ContactGroupForm({ view, t }: ContactGroupFormProps) {
                   </>
                 ) : null}
               </div>
-            </section>
+            </SettingsCard>
 
-            <section
-              aria-labelledby="contact-group-members-title"
-              className="rounded-lg border border-border bg-white shadow-sm"
-            >
-              <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-3.5">
-                <h2
-                  id="contact-group-members-title"
-                  className="flex items-center gap-2 text-sm font-semibold text-foreground"
-                >
-                  <UserPlus aria-hidden className="size-4 text-brand" />
-                  {t('Users')}
-                  <span className="rounded-full bg-brand/[0.08] px-2 py-0.5 text-xs font-semibold tabular-nums text-brand">
+            <SettingsCard
+              icon={UserPlus}
+              title={t('Users')}
+              hint={USERS_FALLBACK_ONLY.contactGroupMembersHint}
+              bodyClassName="divide-y-0"
+              action={
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                  <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11.5px] font-semibold tabular-nums text-white ring-1 ring-white/25">
                     {membersCount}
                   </span>
-                </h2>
-                {canEditMembers && selected.size > 0 ? (
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    className="animate-slide-in motion-reduce:animate-none"
-                    onClick={() => {
-                      commit(removeMembers(form, selected))
-                      setSelected(NO_IDS)
-                      setSelectAll(false)
-                    }}
-                  >
-                    <Trash2 aria-hidden className="size-4" />
-                    {t('Delete')}
-                  </Button>
-                ) : null}
-              </header>
+                  {canEditMembers && selected.size > 0 ? (
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="animate-slide-in motion-reduce:animate-none"
+                      onClick={() => {
+                        commit(removeMembers(form, selected))
+                        setSelected(NO_IDS)
+                        setSelectAll(false)
+                      }}
+                    >
+                      <Trash2 aria-hidden className="size-4" />
+                      {t('Delete')}
+                    </Button>
+                  ) : null}
+                </div>
+              }
+            >
               <div className="flex flex-col gap-4 px-5 py-4">
                 {/* Details.cshtml:186-216 always shows the checkboxes and headers, even with no members. */}
                 {/* A capped scroll area so more than 100 members are windowed instead of all rendered. */}
@@ -621,7 +653,7 @@ export function ContactGroupForm({ view, t }: ContactGroupFormProps) {
                   <table className="w-full border-separate border-spacing-0 text-sm">
                     <thead>
                       <tr>
-                        <th scope="col" className="h-10 w-11 border-b border-border pl-3 text-left">
+                        <th scope="col" className={`h-10 w-11 pl-3 text-left ${NAV_BAND_CELL}`}>
                           <Checkbox
                             checked={allState}
                             onCheckedChange={() => {
@@ -635,7 +667,7 @@ export function ContactGroupForm({ view, t }: ContactGroupFormProps) {
                           <th
                             key={label}
                             scope="col"
-                            className="h-10 border-b border-border px-2 text-left font-medium text-muted-foreground"
+                            className={`h-10 px-2 text-left font-medium ${NAV_BAND_CELL}`}
                           >
                             {label}
                           </th>
@@ -695,30 +727,9 @@ export function ContactGroupForm({ view, t }: ContactGroupFormProps) {
                   </table>
                 </div>
               </div>
-            </section>
+            </SettingsCard>
           </div>
         </div>
-
-        <footer className="sticky bottom-0 flex items-center justify-end gap-2 rounded-lg border border-border bg-white/90 px-4 py-3 shadow-[0_-6px_16px_-12px_rgba(15,23,42,.35)] backdrop-blur">
-          <Link href={CONTACT_GROUPS_ROUTE} className={buttonVariants({ variant: 'outline', size: 'sm' })}>
-            <X aria-hidden className="size-4" />
-            {t('Cancel')}
-          </Link>
-          {canSave ? (
-            <Button
-              type="button"
-              size="sm"
-              loading={saving}
-              className="min-w-24"
-              onClick={() => {
-                if (!saving) void submit()
-              }}
-            >
-              <Save aria-hidden className={cn('size-4', saving && 'animate-soft-pulse')} />
-              {t('Save')}
-            </Button>
-          ) : null}
-        </footer>
       </div>
 
       {functionOpen ? (
@@ -750,6 +761,6 @@ export function ContactGroupForm({ view, t }: ContactGroupFormProps) {
           }}
         />
       ) : null}
-    </>
+    </AreaWorkspace>
   )
 }

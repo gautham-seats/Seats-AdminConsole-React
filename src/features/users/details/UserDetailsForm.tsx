@@ -16,7 +16,7 @@ import type { ApiError } from '@/shared/api'
 import { PermissionAction, PermissionItem, USERS_ROUTE } from '@/shared/shell/admin-menu'
 import { AreaWorkspace, type WorkspaceSection } from '@/shared/shell/AreaWorkspace'
 import { useProfile } from '@/shared/shell/profile'
-import { Button, buttonVariants, Checkbox, Input, Label, Switch } from '@/shared/ui'
+import { Button, Checkbox, Input, Label, Switch } from '@/shared/ui'
 import { SettingsCard } from '@/features/settings/shared/SettingsCard'
 import { SaveActions, useSaveShortcut } from '@/features/settings/shared/SettingsFrame'
 import { cn } from '@/shared/ui/cn'
@@ -53,6 +53,7 @@ import {
   type UserForm,
 } from './user-form'
 import { TabIndicator } from '@/shared/ui/TabIndicator'
+import { CANCEL_BUTTON_CLASS } from '@/shared/ui/add-button'
 
 const USERS_ADD = { item: PermissionItem.Users, action: PermissionAction.Add }
 const USERS_EDIT = { item: PermissionItem.Users, action: PermissionAction.Edit }
@@ -351,35 +352,47 @@ export function UserDetailsForm({ view, t, frame }: UserDetailsFormProps) {
   const rules = passwordRules(form.setPassword, form.passwordConfirmation, form.userName)
 
   // Details.cshtml:26-37: Set Password needs only our identity provider; the reset link also needs Users + Edit.
+  const canSetPassword = passwordActions
+  const canSendLink = passwordActions && profile.can(USERS_EDIT)
+
+  // The password actions read as buttons in their own card; only Cancel stays a header action.
+  const passwordButtons =
+    !canSetPassword && !canSendLink ? null : (
+      // Two ways to do one job, so each gets equal room and says what it does.
+      <div className="grid grid-cols-1 gap-3 px-5 py-5 sm:grid-cols-2">
+        {canSetPassword ? (
+          <div className="flex flex-col gap-1.5">
+            <Button type="button" onClick={() => setPasswordOpen(true)} className="w-full">
+              <LockKeyhole aria-hidden className="size-4" />
+              {t('SetPassword')}
+            </Button>
+            <p className="text-xs text-muted-foreground">{USERS_FALLBACK_ONLY.setPasswordHint}</p>
+          </div>
+        ) : null}
+        {canSendLink ? (
+          <div className="flex flex-col gap-1.5">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => void sendLink()}
+              disabled={sendingLink}
+              aria-busy={sendingLink}
+              className="w-full"
+            >
+              <Send aria-hidden className={cn('size-4', sendingLink && 'animate-soft-pulse')} />
+              {USERS_FALLBACK_ONLY.sendResetLink}
+            </Button>
+            <p className="text-xs text-muted-foreground">{USERS_FALLBACK_ONLY.sendResetLinkHint}</p>
+          </div>
+        ) : null}
+      </div>
+    )
+
   const secondaryActions = (
-    <>
-      {passwordActions ? (
-        <Button type="button" variant="ghost" size="sm" onClick={() => setPasswordOpen(true)}>
-          <LockKeyhole aria-hidden className="size-4" />
-          {t('SetPassword')}
-        </Button>
-      ) : null}
-      {passwordActions && profile.can(USERS_EDIT) ? (
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => void sendLink()}
-          disabled={sendingLink}
-          aria-busy={sendingLink}
-        >
-          <Send aria-hidden className={cn('size-4', sendingLink && 'animate-soft-pulse')} />
-          {USERS_FALLBACK_ONLY.sendResetLink}
-        </Button>
-      ) : null}
-      <Link
-        href={USERS_ROUTE}
-        className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'text-muted-foreground')}
-      >
-        <X aria-hidden className="size-4" />
-        {t('Cancel')}
-      </Link>
-    </>
+    <Link href={USERS_ROUTE} className={CANCEL_BUTTON_CLASS}>
+      <X aria-hidden className="size-4" />
+      {t('Cancel')}
+    </Link>
   )
 
   // Same header actions as Settings and Job Schedule (SaveActions): Save lights up when dirty, Discard beside it.
@@ -411,27 +424,30 @@ export function UserDetailsForm({ view, t, frame }: UserDetailsFormProps) {
       <div className="flex flex-col gap-4">
         <StatusNotice notice={notice} onDismiss={dismissNotice} dismissLabel={t('Clear')} />
 
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(19rem,0.62fr)] xl:items-start">
+        <div className="grid w-full max-w-[96rem] gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(19rem,0.62fr)] xl:items-stretch">
           <div className="flex min-w-0 flex-col gap-5">
             <SettingsCard
               icon={User}
               title={USERS_FALLBACK_ONLY.userDetails}
               hint={USERS_FALLBACK_ONLY.accountHint}
-              action={
-                <label
-                  htmlFor="user-account-active"
-                  className="flex cursor-pointer items-center gap-2.5 text-[12.5px] font-medium text-white"
-                >
-                  {t('AccountActive')}
-                  <Switch
-                    id="user-account-active"
-                    checked={form.accountActive}
-                    onCheckedChange={value => update('accountActive', value)}
-                    label={t('AccountActive')}
-                  />
-                </label>
-              }
             >
+              {/* The toggle reads as a row in the body; on the blue header it was white on blue. */}
+              <label
+                htmlFor="user-account-active"
+                className="flex cursor-pointer items-center justify-between gap-4 border-b border-border px-5 py-4"
+              >
+                <span className="flex flex-col gap-0.5">
+                  <span className="text-sm font-medium text-foreground">{t('AccountActive')}</span>
+                  <span className="text-xs text-muted-foreground">{USERS_FALLBACK_ONLY.accountHint}</span>
+                </span>
+                <Switch
+                  id="user-account-active"
+                  checked={form.accountActive}
+                  onCheckedChange={value => update('accountActive', value)}
+                  label={t('AccountActive')}
+                />
+              </label>
+
               {/* Details.cshtml:49-129 field order. */}
               <div className="grid grid-cols-1 gap-x-6 gap-y-4 px-5 py-5 md:grid-cols-2">
                 <Field id="user-name" label={t('UserName')} error={message(errors.userName)}>
@@ -511,43 +527,49 @@ export function UserDetailsForm({ view, t, frame }: UserDetailsFormProps) {
               </div>
             </SettingsCard>
 
-            {passwordVisible ? (
+            {passwordVisible || canSetPassword || canSendLink ? (
               <SettingsCard
                 icon={KeyRound}
                 title={t('Password')}
                 hint={USERS_FALLBACK_ONLY.passwordHint}
                 delay={40}
               >
-                <div className="grid grid-cols-1 gap-x-6 gap-y-4 px-5 py-5 md:grid-cols-2">
-                  <Field id="user-password" label={t('Password')} error={message(errors.setPassword)}>
-                    <div className="relative">
-                      <KeyRound
-                        aria-hidden
-                        className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-                      />
-                      <Input
-                        id="user-password"
-                        type="password"
-                        autoComplete="new-password"
-                        value={form.setPassword}
-                        aria-invalid={Boolean(errors.setPassword) || mismatch}
-                        aria-describedby={
-                          describedBy('user-password', errors.setPassword) ??
-                          (mismatch ? 'user-password-confirmation-error' : undefined)
-                        }
-                        {...fieldProps('setPassword')}
-                        className="h-9 bg-white pl-9"
-                      />
-                    </div>
-                  </Field>
-                  {/* Details.cshtml:81: the value binding writes setPassword only on change. */}
-                  {committed.setPassword ? (
+                {passwordButtons}
+                {passwordVisible ? (
+                  <div
+                    className={cn(
+                      'grid grid-cols-1 gap-x-6 gap-y-4 px-5 py-5 md:grid-cols-2',
+                      passwordButtons && 'border-t border-border',
+                    )}
+                  >
+                    <Field id="user-password" label={t('Password')} error={message(errors.setPassword)}>
+                      <div className="relative">
+                        <KeyRound
+                          aria-hidden
+                          className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+                        />
+                        <Input
+                          id="user-password"
+                          type="password"
+                          autoComplete="new-password"
+                          value={form.setPassword}
+                          aria-invalid={Boolean(errors.setPassword) || mismatch}
+                          aria-describedby={
+                            describedBy('user-password', errors.setPassword) ??
+                            (mismatch ? 'user-password-confirmation-error' : undefined)
+                          }
+                          {...fieldProps('setPassword')}
+                          className="h-9 bg-white pl-9"
+                        />
+                      </div>
+                    </Field>
+                    {/* Confirm sits beside Password from the start, so the pair never reflows. */}
                     <Field
                       id="user-password-confirmation"
                       label={t('ConfirmPassword')}
                       error={message(errors.passwordConfirmation)}
                     >
-                      <div className="relative animate-rise-in motion-reduce:animate-none">
+                      <div className="relative">
                         <KeyRound
                           aria-hidden
                           className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
@@ -567,111 +589,112 @@ export function UserDetailsForm({ view, t, frame }: UserDetailsFormProps) {
                         />
                       </div>
                     </Field>
-                  ) : (
-                    <div className="hidden md:block" />
-                  )}
-                  <div className="md:col-span-2">
-                    <PasswordChecklist rules={rules} />
+                    <div className="md:col-span-2">
+                      <PasswordChecklist rules={rules} />
+                    </div>
                   </div>
-                </div>
+                ) : null}
               </SettingsCard>
             ) : null}
-
-            <SettingsCard
-              icon={ShieldCheck}
-              title={USERS_FALLBACK_ONLY.accessCard}
-              hint={USERS_FALLBACK_ONLY.accessHint}
-              delay={passwordVisible ? 80 : 40}
-            >
-              <div
-                role="tablist"
-                aria-label={t('User')}
-                className="relative flex gap-1 border-b border-border px-3"
-              >
-                <TabIndicator activeKey={tab} />
-                {tabs.map((item, index) => {
-                  const Icon = item.icon
-                  const active = tab === item.id
-                  return (
-                    <button
-                      key={item.id}
-                      ref={element => {
-                        tabRefs.current[item.id] = element
-                      }}
-                      type="button"
-                      role="tab"
-                      id={`user-tab-${item.id}`}
-                      aria-selected={active}
-                      aria-controls="user-panel"
-                      tabIndex={active ? 0 : -1}
-                      onClick={() => setTab(item.id)}
-                      onKeyDown={event => onTabKeyDown(event, index)}
-                      className={cn(
-                        'relative flex items-center gap-2 px-3 py-3 text-sm font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
-                        active ? 'text-brand' : 'text-muted-foreground hover:text-foreground',
-                      )}
-                    >
-                      <Icon aria-hidden className="size-4" />
-                      {item.label}
-                    </button>
-                  )
-                })}
-              </div>
-              <div
-                role="tabpanel"
-                id="user-panel"
-                aria-labelledby={`user-tab-${tab}`}
-                className="animate-fade-in px-5 py-4 motion-reduce:animate-none"
-              >
-                {tab === 'personas' ? (
-                  <PersonasEditor
-                    rows={form.personas}
-                    selectedKey={selectedPersona}
-                    optionsFor={optionsFor}
-                    labels={personaLabels}
-                    rowErrors={personaErrors}
-                    onSelect={setSelectedPersona}
-                    onAdd={() => update('personas', addPersona(form.personas, view.defaultPersonToAdd))}
-                    onMove={direction =>
-                      selectedPersona
-                        ? update('personas', movePersona(form.personas, selectedPersona, direction))
-                        : undefined
-                    }
-                    onRemove={key => update('personas', removePersona(form.personas, key))}
-                    onChange={(key, accessProfileId) =>
-                      update(
-                        'personas',
-                        form.personas.map(row => (row.key === key ? { ...row, accessProfileId } : row)),
-                      )
-                    }
-                  />
-                ) : (
-                  <SecurityOverview
-                    isSuperUser={form.isSuperUser}
-                    isOwnClasses={form.isOwnClasses}
-                    levelOverview={form.levelOverview}
-                    showLecturerVisibility={profile.can(LECTURER_VISIBILITY)}
-                    t={t}
-                    onSuperUserChange={value => update('isSuperUser', value)}
-                    onOwnClassesChange={value =>
-                      form.isSuperUser
-                        ? undefined
-                        : setForm({
-                            ...form,
-                            isOwnClasses: value,
-                            toProcess: applyOwnClasses(form.toProcess ?? [], value, detail.id),
-                          })
-                    }
-                    onOpenLevel={setLevelOpen}
-                  />
-                )}
-              </div>
-            </SettingsCard>
           </div>
 
-          <aside className="min-w-0 xl:sticky xl:top-4">
+          <aside className="min-w-0">
             <UserPreviewCard form={form} view={view} creating={creating} t={t} />
           </aside>
+        </div>
+
+        {/* Layout B: Access spans the full width so its permission lists read in columns. */}
+        <div className="w-full max-w-[96rem]">
+          <SettingsCard
+            icon={ShieldCheck}
+            title={USERS_FALLBACK_ONLY.accessCard}
+            hint={USERS_FALLBACK_ONLY.accessHint}
+            delay={passwordVisible ? 80 : 40}
+          >
+            <div
+              role="tablist"
+              aria-label={t('User')}
+              className="relative flex gap-1 border-b border-border px-3"
+            >
+              <TabIndicator activeKey={tab} />
+              {tabs.map((item, index) => {
+                const Icon = item.icon
+                const active = tab === item.id
+                return (
+                  <button
+                    key={item.id}
+                    ref={element => {
+                      tabRefs.current[item.id] = element
+                    }}
+                    type="button"
+                    role="tab"
+                    id={`user-tab-${item.id}`}
+                    aria-selected={active}
+                    aria-controls="user-panel"
+                    tabIndex={active ? 0 : -1}
+                    onClick={() => setTab(item.id)}
+                    onKeyDown={event => onTabKeyDown(event, index)}
+                    className={cn(
+                      'relative flex items-center gap-2 px-3 py-3 text-sm font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
+                      active ? 'text-brand' : 'text-muted-foreground hover:text-foreground',
+                    )}
+                  >
+                    <Icon aria-hidden className="size-4" />
+                    {item.label}
+                  </button>
+                )
+              })}
+            </div>
+            <div
+              role="tabpanel"
+              id="user-panel"
+              aria-labelledby={`user-tab-${tab}`}
+              className="animate-fade-in px-5 py-4 motion-reduce:animate-none"
+            >
+              {tab === 'personas' ? (
+                <PersonasEditor
+                  rows={form.personas}
+                  selectedKey={selectedPersona}
+                  optionsFor={optionsFor}
+                  labels={personaLabels}
+                  rowErrors={personaErrors}
+                  onSelect={setSelectedPersona}
+                  onAdd={() => update('personas', addPersona(form.personas, view.defaultPersonToAdd))}
+                  onMove={direction =>
+                    selectedPersona
+                      ? update('personas', movePersona(form.personas, selectedPersona, direction))
+                      : undefined
+                  }
+                  onRemove={key => update('personas', removePersona(form.personas, key))}
+                  onChange={(key, accessProfileId) =>
+                    update(
+                      'personas',
+                      form.personas.map(row => (row.key === key ? { ...row, accessProfileId } : row)),
+                    )
+                  }
+                />
+              ) : (
+                <SecurityOverview
+                  isSuperUser={form.isSuperUser}
+                  isOwnClasses={form.isOwnClasses}
+                  levelOverview={form.levelOverview}
+                  showLecturerVisibility={profile.can(LECTURER_VISIBILITY)}
+                  t={t}
+                  onSuperUserChange={value => update('isSuperUser', value)}
+                  onOwnClassesChange={value =>
+                    form.isSuperUser
+                      ? undefined
+                      : setForm({
+                          ...form,
+                          isOwnClasses: value,
+                          toProcess: applyOwnClasses(form.toProcess ?? [], value, detail.id),
+                        })
+                  }
+                  onOpenLevel={setLevelOpen}
+                />
+              )}
+            </div>
+          </SettingsCard>
         </div>
       </div>
 

@@ -350,7 +350,7 @@ function LevelControl({
             'pointer-events-none absolute top-[3px] bottom-[3px] w-11 rounded-lg transition-[left,opacity,background-color] duration-500 ease-premium motion-reduce:transition-none',
             level === 'none' && 'bg-slate-400',
             level === 'full' && 'bg-gradient-to-b from-amber-400 to-amber-600',
-            (level === 'view' || level === 'edit') && 'bg-gradient-to-b from-[#2d84c4] to-brand',
+            (level === 'view' || level === 'edit') && 'bg-gradient-to-b from-brand-lift to-brand',
             index < 0 ? 'opacity-0' : 'opacity-100',
           )}
           style={{ left: `${3 + Math.max(index, 0) * 44}px` }}

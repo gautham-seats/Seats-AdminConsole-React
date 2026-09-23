@@ -2,11 +2,13 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Copy, Info, Save, ShieldCheck, X } from 'lucide-react'
+import { Copy, Info, KeyRound, Save, ShieldCheck, X } from 'lucide-react'
 import { useCallback, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { useApiRead } from '@/shared/api'
 import { useResources } from '@/shared/resources'
 import { ACCESS_PROFILES_ROUTE, PermissionAction, PermissionItem } from '@/shared/shell/admin-menu'
+import { AreaWorkspace, type WorkspaceSection } from '@/shared/shell/AreaWorkspace'
+import { SettingsCard } from '@/features/settings/shared/SettingsCard'
 import { useProfile } from '@/shared/shell/profile'
 import { LEAVE_EN } from '@/shared/shell/LeaveDialog'
 import { useLeaveGuard } from '@/shared/shell/use-leave-guard'
@@ -58,7 +60,10 @@ import { BRIEFING_EN } from './briefing-text'
 import { countActions, flattenPermissionGroups } from './permission-studio'
 import { ProfilePreview } from './ProfilePreview'
 import { EventVisibilityPanel, VisibilityListPanel } from './VisibilityPanels'
+import { VisibilityPreview } from './VisibilityPreview'
+import { buildVisibilityLens, type VisibilityCatalogue, type VisibilityTab } from './visibility-lens'
 import { TabIndicator } from '@/shared/ui/TabIndicator'
+import { ADD_BUTTON_CLASS, CANCEL_BUTTON_CLASS } from '@/shared/ui/add-button'
 
 const ADD = { item: PermissionItem.AccessProfiles, action: PermissionAction.Add }
 const EDIT = { item: PermissionItem.AccessProfiles, action: PermissionAction.Edit }
@@ -119,9 +124,16 @@ function Field({
 export type AccessProfileFormProps = {
   view: AccessProfileContainerViewModel
   t: (key: UsersTextKey) => string
+  frame: {
+    areaLabel: string
+    sections: readonly WorkspaceSection[]
+    title: string
+    collapseLabel: string
+    expandLabel: string
+  }
 }
 
-export function AccessProfileForm({ view, t }: AccessProfileFormProps) {
+export function AccessProfileForm({ view, t, frame }: AccessProfileFormProps) {
   const router = useRouter()
   const profile = useProfile()
   const loadedId = view.details.id
@@ -207,10 +219,40 @@ export function AccessProfileForm({ view, t }: AccessProfileFormProps) {
     setDetails(current => ({ ...current, selectedCases: selected }))
     setBaseline(current => ({ ...current, selectedCases: selected }))
   }, [])
+  const [catalogue, setCatalogue] = useState<VisibilityCatalogue>({
+    events: [],
+    cases: [],
+    workflows: [],
+  })
+  const eventsCatalogue = useCallback(
+    (rows: VisibilityCatalogue['events']) => setCatalogue(current => ({ ...current, events: rows })),
+    [],
+  )
+  const casesCatalogue = useCallback(
+    (items: VisibilityCatalogue['cases']) => setCatalogue(current => ({ ...current, cases: items })),
+    [],
+  )
+  const workflowsCatalogue = useCallback(
+    (items: VisibilityCatalogue['workflows']) => setCatalogue(current => ({ ...current, workflows: items })),
+    [],
+  )
   const workflowsLoaded = useCallback((selected: number[]) => {
     setDetails(current => ({ ...current, selectedWorkflows: selected }))
     setBaseline(current => ({ ...current, selectedWorkflows: selected }))
   }, [])
+
+  // A row the preview pointed at; the panel scrolls to it and rings it, then clears.
+  const [rowFlash, setRowFlash] = useState<{ area: VisibilityTab; id: number } | null>(null)
+  const clearRowFlash = useCallback(() => setRowFlash(null), [setRowFlash])
+  const flashFor = (area: VisibilityTab) => (rowFlash && rowFlash.area === area ? rowFlash.id : null)
+
+  // Tapping a line in the preview toggles the same list the panel does.
+  const toggleFromPreview = (area: 'cases' | 'workflows', id: number) =>
+    commit(
+      area === 'cases'
+        ? { ...details, selectedCases: toggleId(details.selectedCases ?? [], id) }
+        : { ...details, selectedWorkflows: toggleId(details.selectedWorkflows ?? [], id) },
+    )
 
   // accessProfileDetailsController.js:305-312: the landing page check runs before swapp.handleSaveEvent validates.
   const submit = async () => {
@@ -250,11 +292,23 @@ export function AccessProfileForm({ view, t }: AccessProfileFormProps) {
   }
 
   // AccessProfile/Details.cshtml:67-74: the extra tabs follow the visibility flags; each link's title is its label.
-  const tabs: { id: Tab; label: string }[] = [
+  const tabs: { id: Tab; label: string; count?: number }[] = [
     { id: 'site', label: t('SiteAccess') },
-    ...(details.isEventTypeVisible ? [{ id: 'events' as const, label: t('EventVisibility') }] : []),
-    ...(details.isCaseVisible ? [{ id: 'cases' as const, label: t('CaseVisibility') }] : []),
-    ...(details.isWorkflowVisible ? [{ id: 'workflows' as const, label: t('WorkflowVisibility') }] : []),
+    ...(details.isEventTypeVisible
+      ? [{ id: 'events' as const, label: t('EventVisibility'), count: (details.selectedEvents ?? []).length }]
+      : []),
+    ...(details.isCaseVisible
+      ? [{ id: 'cases' as const, label: t('CaseVisibility'), count: (details.selectedCases ?? []).length }]
+      : []),
+    ...(details.isWorkflowVisible
+      ? [
+          {
+            id: 'workflows' as const,
+            label: t('WorkflowVisibility'),
+            count: (details.selectedWorkflows ?? []).length,
+          },
+        ]
+      : []),
   ]
 
   // APG tabs: arrow keys, Home and End move focus and select (automatic activation).
@@ -296,71 +350,75 @@ export function AccessProfileForm({ view, t }: AccessProfileFormProps) {
         ? USERS_FALLBACK_ONLY.specialCharacters
         : null
 
-  return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4">
-      <StatusNotice notice={notice} onDismiss={dismissNotice} dismissLabel={t('Clear')} />
-
-      {/* AccessProfile/Details.cshtml:7-32 keeps Save, Cancel and Copy profile in one bar above the fields. */}
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-white px-4 py-2.5 shadow-[0_1px_2px_rgba(15,23,42,.05),0_10px_24px_-20px_rgba(15,23,42,.3)]">
-        {canSave ? (
-          <Button
-            type="button"
-            size="sm"
-            title={t('Save')}
-            onClick={() => void submit()}
-            loading={saving}
-            disabled={landingPagePending}
-            className="min-w-24"
-          >
-            <Save aria-hidden className={cn('size-4', saving && 'animate-soft-pulse')} />
-            {t('Save')}
-          </Button>
-        ) : null}
-        <Link
-          href={ACCESS_PROFILES_ROUTE}
-          title={t('Cancel')}
-          className={buttonVariants({ variant: 'outline', size: 'sm' })}
+  // AccessProfile/Details.cshtml:7-32 keeps Save, Cancel and Copy profile together; they ride the
+  // page header here so they stay visible and never share a bar with the granted counter.
+  const actions = (
+    <div className="flex flex-wrap items-center justify-end gap-2">
+      {details.id > 0 ? (
+        <Button
+          type="button"
+          variant="outline"
+          title={t('CopyProfile')}
+          className={CANCEL_BUTTON_CLASS}
+          onClick={() => {
+            commit(copyProfile(details))
+            touch('name')
+          }}
         >
-          <X aria-hidden className="size-4" />
-          {t('Cancel')}
-        </Link>
-        {details.id > 0 ? (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            title={t('CopyProfile')}
-            onClick={() => {
-              commit(copyProfile(details))
-              touch('name')
-            }}
-          >
-            <Copy aria-hidden className="size-4" />
-            {t('CopyProfile')}
-          </Button>
-        ) : null}
-        <p className="ml-auto flex items-center gap-2 text-xs text-muted-foreground tabular-nums">
-          <span aria-hidden className="size-1.5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/15" />
-          {BRIEFING_EN.grantedOf(details.selectedPermissions.length, totalActions)}
-        </p>
-      </div>
+          <Copy aria-hidden className="size-[18px]" />
+          {t('CopyProfile')}
+        </Button>
+      ) : null}
+      <Link
+        href={ACCESS_PROFILES_ROUTE}
+        title={t('Cancel')}
+        // Sized to the Save button beside it (add-button.ts): same height, minimum width and radius.
+        className={cn(
+          buttonVariants({ variant: 'outline' }),
+          'min-h-10 min-w-[8.5rem] gap-2.5 rounded-lg border-slate-300 bg-white px-7 text-sm font-semibold tracking-wide text-slate-700 shadow-sm hover:bg-slate-50',
+        )}
+      >
+        <X aria-hidden className="size-[18px]" />
+        {t('Cancel')}
+      </Link>
+      {canSave ? (
+        <Button
+          type="button"
+          title={t('Save')}
+          onClick={() => void submit()}
+          loading={saving}
+          disabled={landingPagePending}
+          className={ADD_BUTTON_CLASS}
+        >
+          <Save aria-hidden className={cn('size-[18px]', saving && 'animate-soft-pulse')} />
+          {t('Save')}
+        </Button>
+      ) : null}
+    </div>
+  )
 
-      <div className="min-h-0 flex-1 overflow-y-auto pr-1">
-        <div className="grid items-start gap-4 pb-2 xl:grid-cols-[minmax(0,1fr)_minmax(20rem,24rem)]">
+  return (
+    <AreaWorkspace
+      areaLabel={frame.areaLabel}
+      sections={frame.sections}
+      activeId="access-profile"
+      title={frame.title}
+      collapseLabel={frame.collapseLabel}
+      expandLabel={frame.expandLabel}
+      navigation="admin"
+      actions={actions}
+    >
+      <div className="flex min-h-0 flex-1 flex-col gap-4">
+        <StatusNotice notice={notice} onDismiss={dismissNotice} dismissLabel={t('Clear')} />
+
+        <div className="grid w-full max-w-[96rem] items-start gap-4 pb-2 xl:grid-cols-[minmax(0,1fr)_minmax(20rem,24rem)]">
           <div className="flex min-w-0 flex-col gap-4">
-            <section
-              aria-labelledby="access-profile-title"
-              className="rounded-xl border border-slate-200/80 bg-white shadow-[0_1px_2px_rgba(15,23,42,.04),0_12px_30px_-20px_rgba(15,23,42,.28)]"
+            <SettingsCard
+              icon={ShieldCheck}
+              title={USERS_FALLBACK_ONLY.accessProfileDetails}
+              hint={USERS_FALLBACK_ONLY.accessProfileDetailsHint}
+              bodyClassName="divide-y-0"
             >
-              <header className="flex items-center gap-2 border-b border-border px-5 py-3.5">
-                <h2
-                  id="access-profile-title"
-                  className="flex items-center gap-2 text-sm font-semibold text-foreground"
-                >
-                  <ShieldCheck aria-hidden className="size-4 text-brand" />
-                  {USERS_FALLBACK_ONLY.accessProfileDetails}
-                </h2>
-              </header>
               <div className="grid grid-cols-1 gap-x-6 gap-y-4 px-5 py-5 lg:grid-cols-3">
                 <Field id="access-profile-name" label={t('Name')} error={message(errors.name)}>
                   <Input
@@ -457,9 +515,23 @@ export function AccessProfileForm({ view, t }: AccessProfileFormProps) {
                   </span>
                 </div>
               </div>
-            </section>
+            </SettingsCard>
 
-            <section className="rounded-xl border border-slate-200/80 bg-white shadow-[0_1px_2px_rgba(15,23,42,.04),0_12px_30px_-20px_rgba(15,23,42,.28)]">
+            <SettingsCard
+              icon={KeyRound}
+              title={t('SiteAccess')}
+              hint={USERS_FALLBACK_ONLY.siteAccessHint}
+              bodyClassName="divide-y-0"
+              action={
+                <p className="flex items-center gap-2 text-[11.5px] font-medium text-white/95 tabular-nums">
+                  <span
+                    aria-hidden
+                    className="size-1.5 rounded-full bg-emerald-300 ring-3 ring-emerald-300/25"
+                  />
+                  {BRIEFING_EN.grantedOf(details.selectedPermissions.length, totalActions)}
+                </p>
+              }
+            >
               <div
                 role="tablist"
                 aria-label={t('AccessProfile')}
@@ -489,14 +561,16 @@ export function AccessProfileForm({ view, t }: AccessProfileFormProps) {
                       )}
                     >
                       {item.label}
-                      {item.id === 'site' ? (
-                        <span
-                          aria-hidden
-                          className="ml-2 rounded-full bg-slate-900/[.06] px-1.5 text-[11px] font-semibold text-slate-600 tabular-nums"
-                        >
-                          {details.selectedPermissions.length}
-                        </span>
-                      ) : null}
+                      {/* Every tab carries what is on inside it, so the shape of a profile reads from the strip. */}
+                      <span
+                        aria-hidden
+                        className={cn(
+                          'ml-2 rounded-full px-1.5 text-[11px] font-semibold tabular-nums transition-colors duration-200',
+                          active ? 'bg-brand text-white' : 'bg-slate-900/[.06] text-slate-600',
+                        )}
+                      >
+                        {item.id === 'site' ? details.selectedPermissions.length : (item.count ?? 0)}
+                      </span>
                     </button>
                   )
                 })}
@@ -540,7 +614,10 @@ export function AccessProfileForm({ view, t }: AccessProfileFormProps) {
                     load={loadEvents}
                     t={t}
                     onLoaded={eventsLoaded}
+                    onCatalogue={eventsCatalogue}
                     onChange={selected => commit({ ...details, selectedEvents: selected })}
+                    flashId={flashFor('events')}
+                    onFlashDone={clearRowFlash}
                   />
                 </div>
                 <div
@@ -557,6 +634,12 @@ export function AccessProfileForm({ view, t }: AccessProfileFormProps) {
                     load={loadCases}
                     t={t}
                     onLoaded={casesLoaded}
+                    onCatalogue={casesCatalogue}
+                    description={USERS_FALLBACK_ONLY.caseVisibilityHint}
+                    emptyTitle={USERS_FALLBACK_ONLY.noCaseTypes}
+                    flashId={flashFor('cases')}
+                    onFlashDone={clearRowFlash}
+                    onSetAll={ids => commit({ ...details, selectedCases: ids })}
                     onToggle={id =>
                       commit({ ...details, selectedCases: toggleId(details.selectedCases ?? [], id) })
                     }
@@ -576,19 +659,43 @@ export function AccessProfileForm({ view, t }: AccessProfileFormProps) {
                     load={loadWorkflows}
                     t={t}
                     onLoaded={workflowsLoaded}
+                    onCatalogue={workflowsCatalogue}
+                    description={USERS_FALLBACK_ONLY.workflowVisibilityHint}
+                    emptyTitle={USERS_FALLBACK_ONLY.noWorkflows}
+                    flashId={flashFor('workflows')}
+                    onFlashDone={clearRowFlash}
+                    onSetAll={ids => commit({ ...details, selectedWorkflows: ids })}
                     onToggle={id =>
                       commit({ ...details, selectedWorkflows: toggleId(details.selectedWorkflows ?? [], id) })
                     }
                   />
                 </div>
               </div>
-            </section>
+            </SettingsCard>
           </div>
           {/* dvh, not vh: inside a scrolling shell a vh height ignores the scrollbar and makes the panel wobble. */}
-          {/* A fixed height, not a max: the preview fills its column to the bottom instead of leaving a gap. */}
-          {/* 13.25rem is the fixed chrome above (title, action bar, padding); 13rem left the page 3-4px too tall. */}
-          <div className="xl:sticky xl:top-0 xl:h-[calc(100dvh-13.25rem)] xl:overflow-y-auto">
+          {/* Sticky below the page header, so the preview fills its column without a gap under it. */}
+          <div className="xl:sticky xl:top-20 xl:h-[calc(100dvh-9.5rem)]">
+            {tab === 'site' ? null : (
+              <VisibilityPreview
+                title={USERS_FALLBACK_ONLY.livePreview}
+                lens={buildVisibilityLens({
+                  tab,
+                  catalogue,
+                  selectedEvents: details.selectedEvents ?? [],
+                  selectedCases: details.selectedCases ?? [],
+                  selectedWorkflows: details.selectedWorkflows ?? [],
+                })}
+                landing={null}
+                onToggle={
+                  tab === 'events'
+                    ? id => setRowFlash({ area: 'events', id })
+                    : id => toggleFromPreview(tab, id)
+                }
+              />
+            )}
             <ProfilePreview
+              hidden={tab !== 'site'}
               groups={groups}
               selected={details.selectedPermissions}
               focusId={focusId}
@@ -612,6 +719,6 @@ export function AccessProfileForm({ view, t }: AccessProfileFormProps) {
           </div>
         </div>
       </div>
-    </div>
+    </AreaWorkspace>
   )
 }
