@@ -9,6 +9,7 @@ import {
   type ThHTMLAttributes,
 } from 'react'
 import { cn } from './cn'
+import { NAV_BAND_ROW } from './nav-band'
 
 export function Table({ className, ...props }: HTMLAttributes<HTMLTableElement>) {
   const scroller = useRef<HTMLDivElement>(null)
@@ -43,7 +44,8 @@ export function Table({ className, ...props }: HTMLAttributes<HTMLTableElement>)
 }
 
 export function TableHeader({ className, ...props }: HTMLAttributes<HTMLTableSectionElement>) {
-  return <thead className={cn('text-white [&_tr]:border-b', className)} {...props} />
+  // The band rides the row, not each cell, so the gradient runs across the table like the nav bar.
+  return <thead className={cn('text-white [&_tr]:border-b-0', NAV_BAND_ROW, className)} {...props} />
 }
 
 export function TableBody({ className, ...props }: HTMLAttributes<HTMLTableSectionElement>) {
@@ -63,7 +65,7 @@ export function TableHead({ className, ...props }: ThHTMLAttributes<HTMLTableCel
   return (
     <th
       className={cn(
-        'h-10 bg-brand px-2 text-left align-middle text-xs font-medium tracking-[0.02em] text-white',
+        'h-10 bg-transparent px-3 text-left align-middle text-[12.5px] font-bold tracking-[0.01em] text-white',
         className,
       )}
       {...props}

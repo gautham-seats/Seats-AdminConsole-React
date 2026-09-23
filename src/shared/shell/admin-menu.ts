@@ -112,7 +112,7 @@ const access = (item: number, action: number = PermissionAction.Access): Permiss
 export const USERS_ROUTE = '/users'
 export const ACCESS_PROFILES_ROUTE = '/users/access-profiles'
 export const CONTACT_GROUPS_ROUTE = '/users/contact-groups'
-const ACTIVITY_ROUTE = '/users/activity'
+export const ACTIVITY_ROUTE = '/users/activity'
 const DEVELOPER_KEYS_ROUTE = '/users/developer-keys'
 const SETTINGS_ROUTE = '/settings'
 const AUTHENTICATION_ROUTE = '/settings/authentication'
