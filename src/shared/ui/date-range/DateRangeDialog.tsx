@@ -4,6 +4,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '../cn'
+import { NAV_BAND } from '../nav-band'
 import { addDays, beforeDay, RangeCalendar, sameDay } from './RangeCalendar'
 
 export type DateRangeLabels = {
@@ -86,7 +87,12 @@ export function DateRangeDialog({
           onInteractOutside={event => event.preventDefault()}
           className="fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100vh-48px)] w-[min(1167px,calc(100vw-32px))] animate-dialog-in flex-col overflow-hidden rounded-2xl bg-white shadow-[0_11px_15px_-7px_var(--shadow-mat-1),0_24px_38px_3px_var(--shadow-mat-2),0_9px_46px_8px_var(--shadow-mat-3)] motion-reduce:animate-none"
         >
-          <DialogPrimitive.Title className="m-0 flex h-[60px] shrink-0 items-center bg-[var(--color-calendar-header)] pl-[30px] text-xl font-light tracking-[0.0075em] text-white">
+          <DialogPrimitive.Title
+            className={cn(
+              'relative m-0 flex shrink-0 items-center px-4 py-2.5 text-[14.5px] leading-[19px] font-bold tracking-[-.005em] text-white',
+              NAV_BAND,
+            )}
+          >
             {labels.dateRange}
           </DialogPrimitive.Title>
           <DialogPrimitive.Close

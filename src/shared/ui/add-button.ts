@@ -2,7 +2,7 @@
 export const ADD_BUTTON_CLASS = [
   'group relative isolate inline-flex min-h-10 min-w-[8.5rem] items-center justify-center gap-2.5 overflow-hidden rounded-lg px-7',
   'text-sm font-semibold tracking-wide text-white',
-  'bg-[linear-gradient(180deg,#2d84c4_0%,#1566a2_55%,#10568a_100%)]',
+  'bg-[linear-gradient(180deg,var(--color-brand-lift)_0%,var(--color-brand)_55%,var(--color-brand-deep)_100%)]',
   'shadow-[inset_0_1px_0_rgba(255,255,255,.35),inset_0_-1px_0_rgba(0,0,0,.14),0_1px_2px_rgba(15,23,42,.14),0_4px_10px_-2px_rgba(21,102,162,.28),0_12px_24px_-10px_rgba(21,102,162,.45)]',
   'transition-[transform,box-shadow,filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]',
   'hover:-translate-y-0.5 hover:brightness-[1.06] hover:shadow-[inset_0_1px_0_rgba(255,255,255,.4),inset_0_-1px_0_rgba(0,0,0,.14),0_2px_4px_rgba(15,23,42,.12),0_8px_16px_-4px_rgba(21,102,162,.35),0_20px_36px_-12px_rgba(21,102,162,.55)]',
@@ -16,3 +16,25 @@ export const ADD_BUTTON_CLASS = [
 
 export const ADD_ICON_CLASS =
   'size-[18px] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-90 motion-reduce:transition-none'
+
+// Cancel / Discard: the same box as ADD_BUTTON_CLASS (height, width, padding, type) so a pair of
+// buttons never looks mismatched. Quiet surface, since the primary action carries the colour.
+export const CANCEL_BUTTON_CLASS = [
+  'group relative inline-flex min-h-10 min-w-[8.5rem] items-center justify-center gap-2.5 rounded-lg px-7',
+  'text-sm font-semibold tracking-wide text-slate-700',
+  'border border-slate-300 bg-white',
+  'shadow-[0_1px_2px_rgba(15,23,42,.08),0_4px_10px_-6px_rgba(15,23,42,.18)]',
+  'transition-[transform,box-shadow,background-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]',
+  'hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-[0_2px_4px_rgba(15,23,42,.1),0_10px_20px_-10px_rgba(15,23,42,.28)]',
+  'active:translate-y-0 active:scale-[.98] active:duration-150',
+  'disabled:pointer-events-none disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+  'motion-reduce:transition-none motion-reduce:hover:translate-y-0',
+].join(' ')
+
+// Secondary header action (Export): the same box as ADD_BUTTON_CLASS so header buttons line up on
+// pages that have no Add button beside them. Combine with buttonVariants({ variant: 'outline' }).
+export const EXPORT_BUTTON_CLASS =
+  'group min-h-10 min-w-[8.5rem] gap-2.5 rounded-lg bg-white px-7 text-sm font-semibold tracking-wide shadow-sm'
+
+export const EXPORT_ICON_CLASS =
+  'size-[18px] shrink-0 transition-transform duration-300 group-hover:translate-y-px motion-reduce:transition-none'
