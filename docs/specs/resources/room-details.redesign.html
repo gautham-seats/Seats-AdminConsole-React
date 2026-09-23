@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Room Details Redesign</title>
+<style>
+:root{
+  --brand:#1566a2;--brand-dark:#0f4f7d;--brand-90:#2c75ab;--brand-soft:#e8f1f8;--accent:#56bdea;
+  --page:#eef1f6;--surface:#fff;--surface-2:#fbfcfe;--surface-3:#f5f7fa;
+  --fg:hsl(222.2 84% 4.9%);--muted:hsl(210 40% 96.1%);--muted-fg:hsl(215.4 16.3% 46.9%);
+  --border:hsl(214.3 31.8% 91.4%);--border-soft:hsl(214.3 31.8% 94.5%);
+  --destructive:hsl(0 84.2% 60.2%);--warn:#92400e;--warn-bg:#fef3c7;
+  --bat-ok:#34c759;--bat-mid:#ffcc00;--bat-low:#ff3b30;
+  --radius:.5rem;--ease:cubic-bezier(.16,1,.3,1);
+  --shadow-sm:0 1px 2px rgb(15 23 42/.06);
+  --shadow-card:0 1px 2px rgb(15 23 42/.06),0 1px 3px rgb(15 23 42/.04);
+  --shadow-lift:0 10px 15px -3px rgb(15 23 42/.08),0 4px 6px -4px rgb(15 23 42/.06);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0;background:#e3e7ee;color:var(--fg);font:14px/1.5 ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji";-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- doc chrome ---------- */
+.doc{max-width:1560px;margin:0 auto;padding:30px 22px 70px}
+.doc h1{margin:0 0 8px;font-size:26px;letter-spacing:-.01em}
+.doc>p.lead{margin:0 0 14px;color:#475569;max-width:980px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.tag{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:999px;background:#fff;border:1px solid var(--border);font-size:12px;font-weight:600;color:#334155}
+.tag.on{background:#dcfce7;border-color:#86efac;color:#166534}
+.tag.off{background:var(--warn-bg);border-color:#fcd34d;color:var(--warn)}
+.legend{margin:16px 0 0;padding:14px 16px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:13px;color:#334155}
+.legend b{color:var(--fg)}
+.legend ul{margin:8px 0 0;padding-left:18px}
+.legend li{margin:3px 0}
+
+/* ---------- browser frame, full height ---------- */
+.frame{margin-top:18px;border:1px solid #c9d1dc;border-radius:12px;overflow:hidden;box-shadow:0 24px 50px -22px rgba(15,23,42,.42);background:var(--page)}
+.chrome{display:flex;align-items:center;gap:12px;height:34px;padding:0 12px;background:#dde3ea;border-bottom:1px solid #c9d1dc}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:#b8c1cc;display:block}
+.url{flex:1;max-width:520px;height:22px;border-radius:6px;background:#f4f6f8;color:#475569;font-size:12px;display:flex;align-items:center;padding:0 10px;font-family:var(--mono)}
+.sample{margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--warn);background:var(--warn-bg);border:1px solid #fcd34d;border-radius:999px;padding:1px 9px}
+
+/* the app fills the viewport: nav + workspace, nothing scrolls but the panel */
+.app{height:min(860px,86vh);display:flex;flex-direction:column;background:var(--page)}
+
+.nav{flex:none;display:flex;align-items:center;height:50px;padding:0 16px;color:#fff;background:var(--brand) linear-gradient(180deg,rgba(255,255,255,.13) 0%,rgba(255,255,255,.04) 46%,rgba(255,255,255,0) 54%,rgba(0,0,0,.05) 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.12),0 2px 12px rgba(21,102,162,.28)}
+.nav b{font-size:15px;letter-spacing:.02em}
+.nav-div{margin:0 14px 0 16px;height:30px;width:1px;background:rgba(255,255,255,.3)}
+.nbtn{display:inline-flex;align-items:center;height:40px;padding:0 12px;border-radius:6px;font-size:14px;font-weight:500;color:#fff}
+.nbtn[aria-current=page]{background:rgba(255,255,255,.16);box-shadow:inset 0 -2px 0 #fff}
+.nav .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.avatar{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:12px;font-weight:700}
+
+.work{flex:1;min-height:0;display:flex}
+.side{width:208px;flex:none;background:var(--surface);border-right:1px solid var(--border);padding:14px 10px;display:flex;flex-direction:column;gap:2px}
+.side .cap{padding:6px 10px 10px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-fg)}
+.side a{display:flex;align-items:center;gap:10px;height:36px;padding:0 10px;border-radius:7px;text-decoration:none;font-size:13.5px;color:#334155;transition:background-color .2s}
+.side a:hover{background:var(--muted)}
+.side a[aria-current=page]{background:var(--brand-soft);color:var(--brand);font-weight:600}
+
+/* main column: header, hero, tab card — the card takes the rest and scrolls inside */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.phead{flex:none;display:flex;align-items:center;gap:14px;padding:13px 22px;background:var(--surface);border-bottom:1px solid var(--border)}
+.crumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted-fg)}
+.crumb a{text-decoration:none}
+.crumb a:hover{color:var(--brand)}
+.phead h1{margin:1px 0 0;font-size:18px;line-height:1.2}
+.phead .acts{margin-left:auto;display:flex;align-items:center;gap:8px}
+.stage{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;padding:16px 22px 18px}
+
+/* ---------- hero ---------- */
+.hero{flex:none;position:relative;overflow:hidden;border-radius:14px;padding:20px 26px;color:#fff;
+  background:linear-gradient(118deg,var(--brand-dark) 0%,var(--brand) 52%,#2f86c4 100%);
+  box-shadow:0 12px 28px -14px rgba(15,79,125,.75),inset 0 1px 0 rgba(255,255,255,.18)}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(720px 200px at 78% -40%,rgba(255,255,255,.3),transparent 68%)}
+.hero::after{content:"";position:absolute;right:-60px;bottom:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(86,189,234,.34),transparent 65%)}
+.hero .in{position:relative;z-index:1;display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+.hero .mark{display:grid;place-items:center;width:52px;height:52px;flex:none;border-radius:13px;background:rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.hero .mark svg{width:26px;height:26px}
+.hero h2{margin:0;font-size:27px;line-height:1.1;letter-spacing:-.015em}
+.hero .sub{margin:5px 0 0;display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:13px;color:rgba(255,255,255,.84)}
+.hero .sub .dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.5)}
+.chip{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border-radius:999px;background:rgba(255,255,255,.16);font-size:12px;font-weight:600;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+.chip i{width:6px;height:6px;border-radius:50%;background:#86efac;display:block}
+.hstats{margin-left:auto;display:flex;align-items:center;gap:12px}
+.hstat{min-width:104px;padding:10px 14px;border-radius:11px;background:rgba(255,255,255,.12);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
+.hstat b{display:block;font-size:24px;line-height:1.1;font-variant-numeric:tabular-nums}
+.hstat span{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.76)}
+
+/* ---------- tab card fills the rest ---------- */
+.card{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-card);overflow:hidden}
+.tabs{flex:none;position:relative;display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,var(--surface),var(--surface-2))}
+.tabs button{display:flex;align-items:center;gap:8px;height:44px;padding:0 16px;border-radius:8px 8px 0 0;font-size:14px;font-weight:600;color:var(--muted-fg);transition:background-color .2s,color .2s}
+.tabs button:hover{background:var(--surface-3);color:var(--fg)}
+.tabs button[aria-selected=true]{background:rgba(21,102,162,.08);color:var(--brand)}
+.tabs .ind{position:absolute;bottom:-1px;height:2px;border-radius:2px;background:var(--brand);box-shadow:0 0 10px rgba(21,102,162,.45);transition:left .45s var(--ease),width .45s var(--ease)}
+.count{min-width:20px;padding:0 6px;border-radius:999px;background:#e2e8f0;color:#475569;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;text-align:center;line-height:18px}
+button[aria-selected=true] .count{background:var(--brand);color:#fff}
+.panel{flex:1;min-height:0;overflow:auto;padding:20px 22px}
+.panel[hidden]{display:none}
+.panel::-webkit-scrollbar{width:10px}
+.panel::-webkit-scrollbar-thumb{background:#cbd5e1;border:3px solid var(--surface);border-radius:999px}
+
+/* ---------- details panel ---------- */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;align-items:start}
+.band{border:1px solid var(--border-soft);border-radius:11px;background:var(--surface-2);padding:16px 18px 18px}
+.band>h3{margin:0 0 3px;display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-fg)}
+.band>h3 svg{width:14px;height:14px;color:var(--brand)}
+.band>p.hint{margin:0 0 14px;font-size:12px;color:var(--muted-fg)}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px 18px}
+.f{display:flex;flex-direction:column;gap:6px;min-width:0}
+.f.wide{grid-column:1/-1}
+.f>label{font-size:13px;font-weight:500}
+.f>label .req{color:var(--destructive)}
+.inp{display:flex;align-items:center;gap:9px;height:38px;padding:0 11px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+.inp:hover{border-color:#94a3b8}
+.inp:focus-within{border-color:var(--brand);box-shadow:0 0 0 3px rgba(21,102,162,.16)}
+.inp>svg{color:var(--muted-fg)}
+.inp input{flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:14px}
+.inp .chev{margin-left:auto;color:var(--muted-fg)}
+.hint{font-size:12px;color:var(--muted-fg)}
+.readout{display:flex;align-items:baseline;gap:8px;margin-top:2px}
+.readout b{font-size:19px;font-variant-numeric:tabular-nums}
+.meter{height:8px;border-radius:999px;background:#e2e8f0;overflow:hidden;margin-top:9px}
+.meter i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--brand),var(--accent))}
+
+/* ---------- buttons / pills ---------- */
+.btn{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 15px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);font-size:14px;font-weight:500;box-shadow:var(--shadow-sm);transition:border-color .2s,background-color .2s,transform .2s var(--ease)}
+.btn:hover{border-color:#94a3b8}
+.btn.primary{border-color:transparent;color:#fff;background:linear-gradient(180deg,var(--brand-90),var(--brand));box-shadow:0 1px 2px rgba(21,102,162,.5),0 4px 12px -4px rgba(21,102,162,.5)}
+.btn.primary:hover{transform:translateY(-1px)}
+.btn.sm{height:32px;padding:0 11px;font-size:13px}
+.btn.danger{color:var(--destructive);border-color:#fecaca}
+.pill{display:inline-flex;align-items:center;gap:6px;height:23px;padding:0 9px;border-radius:999px;font-size:12px;font-weight:600}
+.pill.ok{background:#dcfce7;color:#166534}
+.pill.warn{background:var(--warn-bg);color:var(--warn)}
+
+/* ---------- tables ---------- */
+.bar{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.tablewrap{border:1px solid var(--border-soft);border-radius:11px;overflow:hidden;background:var(--surface)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{position:sticky;top:0;text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-fg);padding:10px 12px;background:var(--surface-2);border-bottom:1px solid var(--border)}
+td{padding:11px 12px;border-bottom:1px solid var(--border-soft)}
+tbody tr:hover td{background:var(--surface-3)}
+tbody tr:last-child td{border-bottom:0}
+.mono{font-family:var(--mono);font-size:12.5px}
+.bat{display:inline-flex;align-items:center;gap:7px;font-variant-numeric:tabular-nums}
+.shell{position:relative;width:30px;height:15px;border:1.5px solid rgba(15,23,42,.28);border-radius:3px;background:rgba(15,23,42,.05)}
+.shell::after{content:"";position:absolute;top:50%;right:-3.5px;width:2.5px;height:6px;transform:translateY(-50%);border-radius:0 2px 2px 0;background:rgba(15,23,42,.28)}
+.shell i{position:absolute;top:2px;bottom:2px;left:2px;border-radius:1.5px;display:block}
+
+/* ---------- not-yet-available panels ---------- */
+.gap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;height:100%;min-height:280px;text-align:center;padding:30px}
+.gap .ring{display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:var(--brand-soft);color:var(--brand)}
+.gap .ring svg{width:26px;height:26px}
+.gap h3{margin:0;font-size:16px}
+.gap p{margin:0;max-width:440px;color:var(--muted-fg);font-size:13.5px}
+.gap code{font-family:var(--mono);font-size:12.5px;background:var(--muted);padding:1px 6px;border-radius:4px}
+
+@media(max-width:1000px){.side{display:none}.hstats{margin-left:0;width:100%}.hero .in{gap:16px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="doc">
+
+<h1>Room details — Hero + tabs</h1>
+<p class="lead">Layout 3's hero with Layout 2's tabs, on one page that fills the screen: the hero is a fixed band
+   at the top, the tab card takes every pixel underneath it, and only the panel inside scrolls. All four fields
+   from the old Admin room page are here — Building, Room code, Room name, Capacity — nothing dropped.</p>
+<div class="tags">
+  <span class="tag">Seats-Admin-React</span>
+  <span class="tag">23 Sep 2026</span>
+  <span class="tag on">Details · real data</span>
+  <span class="tag on">Devices · real data</span>
+  <span class="tag off">Timetable · needs backend</span>
+  <span class="tag off">Activity · needs backend</span>
+</div>
+
+<div class="frame">
+  <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">/resources/rooms/204</div><span class="sample">redesign</span></div>
+  <div class="app">
+
+    <div class="nav"><b>SEAtS</b><span class="nav-div"></span>
+      <span class="nbtn">Users</span><span class="nbtn" aria-current="page">Devices</span><span class="nbtn">Settings</span>
+      <span class="right"><span class="avatar">GB</span></span></div>
+
+    <div class="work">
+      <nav class="side"><span class="cap">Devices</span>
+        <a href="#">Devices</a><a href="#" aria-current="page">Rooms</a><a href="#">Readings report</a><a href="#">Suspicious readings</a></nav>
+
+      <div class="main">
+        <div class="phead">
+          <div>
+            <div class="crumb"><a href="#">Devices</a> / <a href="#">Rooms</a></div>
+            <h1 data-title>Room 204</h1>
+          </div>
+          <div class="acts"><button class="btn">Cancel</button><button class="btn primary">
+            <svg viewBox="0 0 24 24"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7M7 3v4a1 1 0 0 0 1 1h7"/></svg>Save</button></div>
+        </div>
+
+        <div class="stage">
+
+          <!-- hero -->
+          <div class="hero">
+            <div class="in">
+              <span class="mark"><svg viewBox="0 0 24 24"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3M13 20h9M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5.442 20.2A1 1 0 0 1 4.7 19.23V5.562a2 2 0 0 1 1.517-1.94l4-1z"/></svg></span>
+              <div>
+                <h2 data-title>Room 204</h2>
+                <p class="sub">
+                  <span data-building>Science Block</span>
+                  <span class="dot"></span>
+                  <span class="mono" data-code>SCI-204</span>
+                  <span class="dot"></span>
+                  <span class="chip"><i></i>Active</span>
+                </p>
+              </div>
+              <div class="hstats">
+                <div class="hstat"><b data-cap-out>30</b><span>Seats</span></div>
+                <div class="hstat"><b>3</b><span>Devices</span></div>
+                <div class="hstat"><b>15 Sep</b><span>Last reading</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- tab card -->
+          <div class="card" data-tabs>
+            <div class="tabs" role="tablist" aria-label="Room">
+              <button role="tab" aria-selected="true"  aria-controls="p-det">Details</button>
+              <button role="tab" aria-selected="false" aria-controls="p-dev">Devices <span class="count">3</span></button>
+              <button role="tab" aria-selected="false" aria-controls="p-tim">Timetable</button>
+              <button role="tab" aria-selected="false" aria-controls="p-act">Activity</button>
+              <span class="ind" aria-hidden="true"></span>
+            </div>
+
+            <!-- DETAILS -->
+            <div class="panel" role="tabpanel" id="p-det">
+              <div class="cols">
+                <section class="band">
+                  <h3><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M8 10h.01M16 10h.01"/></svg>Location</h3>
+                  <p class="hint">Which building this room sits in.</p>
+                  <div class="fields">
+                    <div class="f wide"><label for="bld">Building</label>
+                      <div class="inp"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01"/></svg>
+                        <input id="bld" value="Science Block" data-bind="building">
+                        <svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div></div>
+                  </div>
+                </section>
+
+                <section class="band">
+                  <h3><svg viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg>Identification</h3>
+                  <p class="hint">How the room is named and referenced everywhere else.</p>
+                  <div class="fields">
+                    <div class="f"><label for="code">Room code</label>
+                      <div class="inp"><svg viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg>
+                        <input id="code" value="SCI-204" data-bind="code"></div></div>
+                    <div class="f"><label for="nm">Room name <span class="req">*</span></label>
+                      <div class="inp"><svg viewBox="0 0 24 24"><path d="M13 4h3a2 2 0 0 1 2 2v14M2 20h3M13 20h9M10 12v.01"/></svg>
+                        <input id="nm" value="Room 204" data-bind="title"></div></div>
+                  </div>
+                </section>
+
+                <section class="band">
+                  <h3><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>Capacity</h3>
+                  <p class="hint">Used to flag lectures booked beyond the room's seats.</p>
+                  <div class="fields">
+                    <div class="f"><label for="cap">Seats <span class="req">*</span></label>
+                      <div class="inp"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                        <input id="cap" value="30" data-bind="cap" style="font-variant-numeric:tabular-nums"></div></div>
+                    <div class="f"><label>Devices per seat</label>
+                      <div class="readout"><b>1 : 10</b><span class="hint">3 devices · 30 seats</span></div>
+                      <div class="meter"><i style="width:30%"></i></div></div>
+                  </div>
+                </section>
+              </div>
+            </div>
+
+            <!-- DEVICES -->
+            <div class="panel" role="tabpanel" id="p-dev" hidden>
+              <div class="bar">
+                <div class="f" style="flex:1;max-width:400px"><label for="adddev">Add device to this room</label>
+                  <div class="inp"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    <input id="adddev" placeholder="Search serial or description…"></div></div>
+                <button class="btn"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg>Add</button>
+                <button class="btn sm danger" style="margin-left:auto"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Remove selected</button>
+              </div>
+              <div class="tablewrap">
+                <table>
+                  <thead><tr><th style="width:38px"><input type="checkbox" aria-label="Select all"></th><th>Serial</th><th>Description</th><th>Battery</th><th>Last reading</th><th>Active</th></tr></thead>
+                  <tbody>
+                    <tr><td><input type="checkbox"></td><td class="mono">S1002</td><td>Door beacon</td>
+                        <td><span class="bat"><span class="shell"><i style="width:22px;background:var(--bat-ok)"></i></span>78%</span></td>
+                        <td class="mono">15/09/26 08:05</td><td><span class="pill ok">Yes</span></td></tr>
+                    <tr><td><input type="checkbox"></td><td class="mono">S1044</td><td>Ceiling beacon</td>
+                        <td><span class="bat"><span class="shell"><i style="width:9px;background:var(--bat-mid)"></i></span>34%</span></td>
+                        <td class="mono">15/09/26 08:04</td><td><span class="pill ok">Yes</span></td></tr>
+                    <tr><td><input type="checkbox"></td><td class="mono">S1090</td><td>Rear wall beacon</td>
+                        <td><span class="bat"><span class="shell"><i style="width:3px;background:var(--bat-low)"></i></span>9%</span></td>
+                        <td class="mono">12/09/26 16:20</td><td><span class="pill warn">No</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="hint" style="margin:12px 2px 0">Same list the Devices page shows when you filter by this room — no new endpoint needed.</p>
+            </div>
+
+            <!-- TIMETABLE -->
+            <div class="panel" role="tabpanel" id="p-tim" hidden>
+              <div class="gap">
+                <span class="ring"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+                <h3>Timetable needs a backend endpoint</h3>
+                <p>Nothing in the Admin API returns the lectures booked into one room. This tab stays empty until
+                   someone adds <code>GET RoomApi/{id}/Timetable</code> — the design is ready for it.</p>
+                <button class="btn sm">Open the Lectures page instead</button>
+              </div>
+            </div>
+
+            <!-- ACTIVITY -->
+            <div class="panel" role="tabpanel" id="p-act" hidden>
+              <div class="gap">
+                <span class="ring"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg></span>
+                <h3>Activity needs a filter the audit API does not have</h3>
+                <p><code>audit/GetAudit</code> filters by site, type, user and date — but not by one room's id,
+                   so it cannot show this room's history. Until it can, this links out to the full Activity Log.</p>
+                <button class="btn sm">Open Activity Log</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="legend">
+  <b>What is real and what is not</b>
+  <ul>
+    <li><b>Details</b> — all four legacy fields, from <code>GET RoomApi/{id}</code>. Real today.</li>
+    <li><b>Devices</b> — the device list filtered by this room, the same call the Devices page already makes. Real today.</li>
+    <li><b>Hero: Seats</b> — the capacity field. <b>Devices</b> — the count from that same device call. <b>Last reading</b> — the newest reading date across those devices. All three are real.</li>
+    <li><b>Hero: Active chip</b> — rooms have no active flag in the API; it would have to be dropped or added.</li>
+    <li><b>Timetable</b> and <b>Activity</b> — no endpoint exists. Shown as honest empty states rather than invented numbers.</li>
+  </ul>
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('[data-tabs]').forEach(function (root) {
+  var tabs = Array.prototype.slice.call(root.querySelectorAll('[role=tab]'))
+  var ind = root.querySelector('.ind')
+  function move(tab) {
+    ind.style.left = tab.offsetLeft + 8 + 'px'
+    ind.style.width = Math.max(0, tab.offsetWidth - 16) + 'px'
+  }
+  function select(tab) {
+    tabs.forEach(function (other) {
+      var on = other === tab
+      other.setAttribute('aria-selected', String(on))
+      other.tabIndex = on ? 0 : -1
+      document.getElementById(other.getAttribute('aria-controls')).hidden = !on
+    })
+    move(tab)
+  }
+  tabs.forEach(function (tab, i) {
+    tab.addEventListener('click', function () { select(tab) })
+    tab.addEventListener('keydown', function (event) {
+      var step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0
+      if (!step) return
+      event.preventDefault()
+      var next = tabs[(i + step + tabs.length) % tabs.length]
+      select(next); next.focus()
+    })
+  })
+  move(tabs[0])
+  window.addEventListener('resize', function () {
+    var on = root.querySelector('[role=tab][aria-selected=true]')
+    if (on) move(on)
+  })
+})
+
+// The hero reads from the fields, so editing shows up where people look first.
+document.querySelectorAll('[data-bind]').forEach(function (input) {
+  input.addEventListener('input', function () {
+    var key = input.getAttribute('data-bind')
+    var value = input.value || '—'
+    if (key === 'title') document.querySelectorAll('[data-title]').forEach(function (n) { n.textContent = value })
+    if (key === 'building') document.querySelector('[data-building]').textContent = value
+    if (key === 'code') document.querySelector('[data-code]').textContent = value
+    if (key === 'cap') document.querySelector('[data-cap-out]').textContent = value
+  })
+})
+</script>
+</body>
+</html>

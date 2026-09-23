@@ -1106,6 +1106,64 @@ Gautham took the recommendations on 2026-09-21.
 - **C5 closed, no change:** a field that was null on the server and was never touched stays null; a touched field posts its text. Legacy posts the KO model as-is, which is the same outcome for every field the user edited.
 - **I1 / I2 stay planned:** the live check on 2026-09-21 returned `null` from `SettingsApi/GetSettingByKeys` for every key on the local tenant (the Config service has no rows here), so the switch from the HTML scrape waits for a tenant with settings.
 
+## D-129 · Accepted · One export button and one date picker across the Admin console
+
+Gautham reported the Activity Log export button as the odd one out on 2026-09-23. It was, and the
+cause was that the header-button box only ever lived as a copy-pasted class string, applied on the
+pages where an Add button sat next to it and nowhere else.
+
+- **`EXPORT_BUTTON_CLASS` / `EXPORT_ICON_CLASS`** now sit in `add-button.ts` beside `ADD_BUTTON_CLASS`.
+  Activity, Devices, Readings and Engagement History all use them, so every export trigger is
+  `min-h-10 min-w-[8.5rem] rounded-lg px-7` with an 18px icon, like the Add button.
+  Activity was `size="sm"` (36px tall, ~96px wide, 6px radius, 16px icon); the 4px height gap is why
+  its top edge sat lower than every other header button under the header's `items-end`.
+- **`FileGlyph`** moved from `devices/index/ExportMenu.tsx` to `shared/ui/FileGlyph.tsx`. The Activity
+  export dialog now shows the same red PDF / green CSV document glyph instead of flat grey lucide
+  icons in 36px tiles. Activity keeps its radio-and-Save shape (`seats-website-export.html:30-75`);
+  only the glyph and the card are shared.
+- **`hidePresets` is gone.** The Activity date picker now shows the Quick and Academic rail like the
+  other five date ranges. This is a deliberate step away from legacy: `seats-admin-audit.html:177`
+  has no quick ranges. Reverting is one prop on `DateRangeField` in `ActivityScreen.tsx`.
+- **`StartDate` / `EndDate`** were added to `USERS_TEXT`, so the two boxes translate. They were
+  hard-coded English in `USERS_FALLBACK_ONLY` even though `Devices` already read the same resource keys.
+
+## D-127 · Accepted · Cases carries the Admin page furniture, and the inspector is conditional
+
+D-096 (Pipeline Canvas + Filter-first Table) stands. Built out on 2026-09-23 after Gautham reported
+"gaps everywhere" and an Add button that did not match the rest of Admin. Measured with
+`docs/pw/cases-probe.mjs`; the numbers below are from that run.
+
+- **Add workflow moved to the page header** with `ADD_BUTTON_CLASS`, beside a `Total n` pill, as on
+  Users, Activity Types and Resources. It used to be a flat `Button` at the foot of the list and a
+  second copy in the narrow bar; both are gone, so there is one Add at every width.
+- **The selection bar appears with the first tick.** It used to render whenever the list had rows, so
+  an empty "0 Selected / Delete / Clear" block sat above the list costing ~100 px.
+- **The list card stretches to the row height** (`lg:self-stretch`, was `lg:self-start`), and the
+  pipeline canvas is the right column's own surface. Deepest run of empty page inside `main` is now
+  **0 px** on every measured state, at 1440 px, 320 px and 200 % zoom.
+- **The inspector is mounted only for a selected node or a draft.** It used to stand there empty
+  saying "Select a node to edit it."; the canvas now takes the full width instead.
+- **Workflow stats are a label-over-value row**, not a run of grey text. Still figures, not tiles,
+  per the standing decision against big stat cards.
+- **Student Workflow's count moved into the page header** as the same pill, out of the toolbar.
+
+Accessibility fixed in the same pass, all three found by axe or by the probe, none of them cosmetic:
+
+- The selected workflow row's "15 students" and type text were `text-muted-foreground` on the row's
+  brand tint, under 4.5:1. Now `text-slate-600`.
+- The active stage tab's count was `text-brand` on `bg-brand/15`, under 4.5:1. Now `bg-brand text-white`.
+- **The Move panel's "Is On Hold" switch had no visible label** — only an `aria-label`, so a sighted
+  user saw a bare toggle. It now carries visible text beside it, `aria-hidden` because the switch
+  already owns the accessible name.
+
+## D-128 · Accepted · The structure tree is keyed by workflow
+
+`WorkflowStructure` is mounted with `key={workflow.id}`. Without it the tree kept the previous
+workflow's `selectedKey` and cache across a switch, so the inspector asked for a node the new
+workflow does not own: `GET caseapi/workflows/1/stageGroups/3` answered **404**, because stage group 3
+belongs to workflow 6. The API is correct — `workflows/6/stageGroups/3` is 200. Verified by switching
+away and back with a node open: **0 failed calls**.
+
 ## D-126 · Accepted · Battery gauge drawn as a status-bar cell with the number beside it
 
 Approved by Gautham on 2026-09-22 when he asked for this work to land. The design is Battery A ("iPhone Glass") and Picker A in `docs/specs/resources/battery.designs.html`.
