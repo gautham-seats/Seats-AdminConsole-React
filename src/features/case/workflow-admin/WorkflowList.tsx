@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowDownAZ, ArrowUpAZ, Plus, Trash2 } from 'lucide-react'
+import { ArrowDownAZ, ArrowUpAZ, Trash2 } from 'lucide-react'
 import {
   useCallback,
   useEffect,
@@ -46,7 +46,6 @@ import { FRAME_EN } from '@/features/settings/shared/SettingsFrame'
 import { useScreenText } from '@/features/settings/shared/use-screen-text'
 
 const ITEM = PermissionItem.Case
-const ADD = { item: ITEM, action: PermissionAction.Add }
 const DELETE = { item: ITEM, action: PermissionAction.Delete }
 
 const TEXT = {
@@ -87,7 +86,6 @@ const TEXT = {
 
 const EN = {
   clearSearch: 'Clear search',
-  addWorkflow: 'Add workflow',
   listLabel: 'Workflows',
   studentsUnit: 'students',
   sortAscending: 'Sort ascending',
@@ -137,7 +135,6 @@ type WorkflowListProps = {
   selectedId: number | null
   reloadToken: number
   onSelect: (workflow: CfcWorkflowDto) => void
-  onAdd: () => void
   onReloaded: (workflows: readonly CfcWorkflowDto[]) => void
   onDeleted?: (ids: readonly number[]) => void
 }
@@ -160,13 +157,11 @@ export function WorkflowList({
   selectedId,
   reloadToken,
   onSelect,
-  onAdd,
   onReloaded,
   onDeleted,
 }: WorkflowListProps) {
   const t = useScreenText(TEXT)
   const profile = useProfile()
-  const canAdd = profile.can(ADD)
   const canDelete = profile.can(DELETE)
 
   const [query, setQuery] = useState<WorkflowsQueryState>(INITIAL_QUERY)
@@ -203,8 +198,6 @@ export function WorkflowList({
 
   const rows = useMemo(() => read.data?.items ?? [], [read.data?.items])
   const filtered = useMemo(() => rows.filter(row => matchesName(row, search)), [rows, search])
-  // With no workflows at all the main panel owns the message and the Add action, so the list stays quiet.
-  const noWorkflows = read.status === 'success' && rows.length === 0
   const total = searching
     ? filtered.length
     : Math.max(read.data?.totalRowCount ?? 0, query.pageNumber * query.pageSize + rows.length)
@@ -382,12 +375,6 @@ export function WorkflowList({
             </SelectContent>
           </Select>
         </div>
-        {canAdd ? (
-          <Button size="sm" onClick={onAdd}>
-            <Plus aria-hidden className="size-4" />
-            {EN.addWorkflow}
-          </Button>
-        ) : null}
         {/* Search, sort, bulk delete and paging stay reachable below lg through this disclosure. */}
         <Button
           type="button"
@@ -406,14 +393,16 @@ export function WorkflowList({
       <aside
         id={panelId}
         className={cn(
-          'shrink-0 flex-col gap-2 overflow-hidden rounded-xl border border-border bg-white shadow-sm lg:sticky lg:top-0 lg:flex lg:max-h-[calc(100dvh-10.5rem)] lg:w-80 lg:self-start',
+          // lg: the card stretches to the row height, so no grey gap opens under a short list.
+          'shrink-0 flex-col gap-2 overflow-hidden rounded-xl border border-border bg-white shadow-sm lg:flex lg:max-h-[calc(100dvh-10.5rem)] lg:min-h-0 lg:w-80 lg:self-stretch',
           toolsOpen ? 'flex max-h-[70dvh] w-full' : 'hidden',
         )}
       >
         <SaveToast notice={notice} onDismiss={dismissNotice} dismissLabel={FRAME_EN.dismiss} />
 
-        {canDelete && filtered.length > 0 ? (
-          <div className="flex flex-wrap items-center gap-2 border-b border-border px-3 py-2">
+        {/* The bar costs 100px, so it appears with the first tick rather than sitting empty above the list. */}
+        {canDelete && selectedCount > 0 ? (
+          <div className="flex animate-rise-in flex-wrap items-center gap-2 border-b border-border px-3 py-2 motion-reduce:animate-none">
             <SelectionActions
               count={selectedCount}
               selectedLabel={selectedLabel}
@@ -625,16 +614,15 @@ export function WorkflowList({
                         </div>
                         <div className="mt-1 flex flex-wrap items-center gap-1.5">
                           {students ? (
-                            <span className="text-xs text-muted-foreground tabular-nums">{students}</span>
+                            // slate-600, not muted-foreground: the selected row tint drops muted under 4.5:1.
+                            <span className="text-xs text-slate-600 tabular-nums">{students}</span>
                           ) : null}
                           {live !== null ? (
                             <StatusBadge tone={live ? 'success' : 'neutral'} pulse={live}>
                               {live ? t('Live') : t('Disabled')}
                             </StatusBadge>
                           ) : null}
-                          {typeLabel ? (
-                            <span className="text-xs text-muted-foreground">{typeLabel}</span>
-                          ) : null}
+                          {typeLabel ? <span className="text-xs text-slate-600">{typeLabel}</span> : null}
                         </div>
                       </td>
                     </tr>
@@ -680,15 +668,6 @@ export function WorkflowList({
             }}
             className="border-t border-border px-2 py-2"
           />
-        ) : null}
-
-        {canAdd && !noWorkflows ? (
-          <div className="border-t border-border p-3">
-            <Button size="sm" className="w-full shadow-sm" onClick={onAdd}>
-              <Plus aria-hidden className="size-4" />
-              {EN.addWorkflow}
-            </Button>
-          </div>
         ) : null}
 
         <ConfirmDialog

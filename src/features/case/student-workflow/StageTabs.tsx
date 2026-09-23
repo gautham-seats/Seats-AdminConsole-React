@@ -80,7 +80,7 @@ export function StageTabs({ label, tabs, activeId, panelId, onSelect }: StageTab
               <span
                 className={cn(
                   'rounded-full px-1.5 py-0.5 text-xs font-semibold tabular-nums transition-colors duration-200',
-                  active ? 'bg-brand/15 text-brand' : 'bg-slate-100 text-slate-600',
+                  active ? 'bg-brand text-white' : 'bg-slate-100 text-slate-600',
                 )}
               >
                 {tab.count}

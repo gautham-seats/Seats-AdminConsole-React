@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
+import { NAV_BAND, NAV_ICON_BOX, NavBandGlow } from '@/shared/ui/nav-band'
 import type { CfcConstraintTypeDto, CfcWorkflowConstraintDto } from '@/types/case'
 import type { SimpleListItemDto } from '@/types/users'
 import { LookupField } from '@/features/operations/job-schedule/LookupField'
@@ -261,17 +262,18 @@ function SideDrawer({
           onInteractOutside={event => event.preventDefault()}
           className="fixed inset-y-0 right-0 z-50 flex w-full max-w-2xl flex-col border-l border-border bg-white shadow-dialog outline-none data-[state=open]:animate-slide-in motion-reduce:animate-none"
         >
-          <div className="flex items-center gap-3 border-b border-border px-5 py-4">
-            <span className="grid size-9 place-items-center rounded-lg bg-brand/[0.08] text-brand">
+          <div className={cn('relative flex items-center gap-2.5 px-4 py-2.5', NAV_BAND)}>
+            <NavBandGlow />
+            <span className={cn('grid size-7 shrink-0 place-items-center', NAV_ICON_BOX)}>
               <SlidersHorizontal aria-hidden className="size-4" />
             </span>
-            <DialogPrimitive.Title className="min-w-0 flex-1 text-base font-semibold break-words text-foreground">
+            <DialogPrimitive.Title className="min-w-0 flex-1 text-[14.5px] leading-[19px] font-bold break-words tracking-[-.005em] text-white">
               {title}
             </DialogPrimitive.Title>
             <DialogPrimitive.Close
               type="button"
               aria-label={closeLabel}
-              className="grid size-8 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-page hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="grid size-7 shrink-0 place-items-center rounded-lg text-white/85 transition-[background-color,color,rotate] duration-300 hover:rotate-90 hover:bg-white/15 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
             >
               <X aria-hidden className="size-4" />
             </DialogPrimitive.Close>
