@@ -42,6 +42,19 @@ function ContactGroupDetailsWorkspace({ idParam }: { idParam: string }) {
       : (view.detail.name ?? t('ContactGroup'))
     : t('ContactGroup')
 
+  const frame = {
+    areaLabel: t('Users'),
+    sections,
+    title,
+    collapseLabel: t('Collapse'),
+    expandLabel: USERS_FALLBACK_ONLY.expand,
+  }
+
+  // The loaded form owns the frame so Save and Cancel sit in the page header (D-018).
+  if (view && read.status !== 'error') {
+    return <ContactGroupForm key={view.detail.id} view={view} t={t} frame={frame} />
+  }
+
   let body
   if (notFound) {
     body = (
@@ -79,7 +92,7 @@ function ContactGroupDetailsWorkspace({ idParam }: { idParam: string }) {
       </div>
     )
   } else {
-    body = <ContactGroupForm key={view.detail.id} view={view} t={t} />
+    body = null
   }
 
   return (

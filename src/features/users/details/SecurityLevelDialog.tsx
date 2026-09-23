@@ -5,6 +5,8 @@ import { useCallback, useRef, useState } from 'react'
 import { useApiRead, type ApiError } from '@/shared/api'
 import { Button, Checkbox, DelayedLoading, Dialog, ErrorState } from '@/shared/ui'
 import { useRowWindow } from '@/shared/ui/use-row-window'
+import { ADD_BUTTON_CLASS, ADD_ICON_CLASS } from '@/shared/ui/add-button'
+import { NAV_BAND_CELL } from '@/shared/ui/nav-band'
 import type { SecurityLevel, SimpleListItemDto, UserSecurityLevelPermissionDto } from '@/types/users'
 import type { UsersTextKey } from '../index/users-text'
 import { addLevelPermission, removeLevelPermissions } from './security-levels'
@@ -108,8 +110,8 @@ export function SecurityLevelDialog({
           <Button variant="outline" size="sm" onClick={onClose}>
             {t('Cancel')}
           </Button>
-          <Button size="sm" disabled={!ready} onClick={() => onApply(items)}>
-            <Check aria-hidden className="size-4" />
+          <Button disabled={!ready} onClick={() => onApply(items)} className={ADD_BUTTON_CLASS}>
+            <Check aria-hidden className="size-[18px]" />
             {t('Apply')}
           </Button>
         </>
@@ -141,8 +143,8 @@ export function SecurityLevelDialog({
           />
         </div>
         {canAdd ? (
-          <Button variant="outline" size="sm" className="h-9" disabled={!picked || !ready} onClick={add}>
-            <Plus aria-hidden className="size-4" />
+          <Button disabled={!picked || !ready} onClick={add} className={ADD_BUTTON_CLASS}>
+            <Plus aria-hidden className={ADD_ICON_CLASS} />
             {t('Add')}
           </Button>
         ) : null}
@@ -183,15 +185,12 @@ export function SecurityLevelDialog({
           <table className="w-full border-separate border-spacing-0 text-sm">
             <thead>
               <tr>
-                <th
-                  scope="col"
-                  className="sticky top-0 h-10 w-11 border-b border-border bg-card pl-3 text-left"
-                >
+                <th scope="col" className={`sticky top-0 z-10 h-10 w-11 pl-3 text-left ${NAV_BAND_CELL}`}>
                   <Checkbox checked={selectAll} onCheckedChange={toggleAll} label={t('SelectAll')} />
                 </th>
                 <th
                   scope="col"
-                  className="sticky top-0 h-10 border-b border-border bg-card px-2 text-left font-medium text-muted-foreground"
+                  className={`sticky top-0 z-10 h-10 px-2 text-left font-medium ${NAV_BAND_CELL}`}
                 >
                   {t('Name')}
                 </th>

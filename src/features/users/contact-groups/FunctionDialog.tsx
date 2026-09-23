@@ -1,12 +1,13 @@
 'use client'
 
-import { Check, Trash2 } from 'lucide-react'
+import { Check, Trash2, X } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Button, Dialog, Input, Label } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
 import type { FunctionDto } from '@/types/contact-groups'
 import { toApiError } from '@/shared/api'
+import { ADD_BUTTON_CLASS, CANCEL_BUTTON_CLASS } from '@/shared/ui/add-button'
 import { useChangeCommit } from '../details/use-change-commit'
 import { isGeneralError } from '../index/general-error'
 import { StatusNotice, type Notice } from '../index/StatusNotice'
@@ -96,7 +97,8 @@ export function FunctionDialog({ current, t, onSaved, onDeleted, onClose }: Func
               {t('Delete')}
             </Button>
           ) : null}
-          <Button variant="outline" size="sm" disabled={pending} onClick={onClose}>
+          <Button variant="outline" disabled={pending} onClick={onClose} className={CANCEL_BUTTON_CLASS}>
+            <X aria-hidden className="size-4" />
             {t('Cancel')}
           </Button>
           <Button
@@ -106,8 +108,9 @@ export function FunctionDialog({ current, t, onSaved, onDeleted, onClose }: Func
             onClick={() => {
               if (!pending) void apply()
             }}
+            className={ADD_BUTTON_CLASS}
           >
-            <Check aria-hidden className="size-4" />
+            <Check aria-hidden className="size-[18px]" />
             {t('Apply')}
           </Button>
         </>

@@ -1,7 +1,7 @@
 'use client'
 
 import { Check, CircleCheck, Eye, Lock, TriangleAlert, X } from 'lucide-react'
-import { useRef } from 'react'
+import { useRef, type ReactNode } from 'react'
 import { CountUp } from '@/shared/ui/CountUp'
 import { cn } from '@/shared/ui/cn'
 import { BRIEFING_EN } from './briefing-text'
@@ -26,6 +26,8 @@ export type ProfilePreviewProps = {
   landing: { label: string; valid: boolean } | null
   text: ProfilePreviewText
   onToggle?: (actionId: number) => void
+  /** Kept mounted while another tab's lens is on screen, so its typing and FLIP state survive. */
+  hidden?: boolean
 }
 
 type Entry = { area: string; permission: StudioPermission }
@@ -37,7 +39,15 @@ const PAGE_LIMIT = 4
 const ELLIPSIS = '…'
 
 // A short briefing on the profile: what it opens, what it allows here, and what stays shut.
-export function ProfilePreview({ groups, selected, focusId, landing, text, onToggle }: ProfilePreviewProps) {
+export function ProfilePreview({
+  groups,
+  selected,
+  focusId,
+  landing,
+  text,
+  onToggle,
+  hidden,
+}: ProfilePreviewProps) {
   const entries: Entry[] = groupByArea(groups).flatMap(area =>
     area.permissions.map(permission => ({ area: area.area, permission })),
   )
@@ -56,51 +66,7 @@ export function ProfilePreview({ groups, selected, focusId, landing, text, onTog
   )
 
   return (
-    <aside
-      aria-label={text.title}
-      className="relative isolate flex h-full flex-col overflow-hidden rounded-2xl bg-[linear-gradient(162deg,#0d3a60_0%,#1566a2_58%,#1a6ea8_100%)] p-4 text-white shadow-[0_30px_60px_-30px_rgba(9,40,64,.85),inset_0_1px_0_rgba(255,255,255,.14)]"
-    >
-      <span
-        aria-hidden
-        className="absolute -inset-1/2 -z-10 animate-aurora rounded-full bg-[radial-gradient(closest-side,rgba(86,189,234,.16),transparent_70%)] motion-reduce:animate-none"
-      />
-      {/* A glossy top light plus the nav bar's diagonal sheen, sweeping every 18s instead of every 2 minutes. */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(255,255,255,.12)_0%,rgba(255,255,255,.04)_22%,transparent_42%)]"
-      />
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 animate-[sheen_18s_600ms_linear_infinite_both] bg-[linear-gradient(112deg,transparent_38%,rgba(255,255,255,.03)_45%,rgba(255,255,255,.12)_50%,rgba(255,255,255,.03)_55%,transparent_62%)] bg-[length:240%_100%] bg-no-repeat motion-reduce:animate-none"
-      />
-      {/* Light scrim over the glow layers keeps white text at 4.5:1 or more wherever the aurora and sheen pass. */}
-      <span aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-slate-950/16" />
-
-      <header className="flex items-center gap-2">
-        <h2 className="flex items-center gap-2 text-[10.5px] font-semibold tracking-[0.14em] uppercase">
-          <Eye aria-hidden className="size-3.5" />
-          {text.title}
-        </h2>
-        {/* At rest the preview is current, so it reads "updated"; a change briefly reads "updating…". */}
-        <span
-          key={changed.active ? `busy-${changed.pulse}` : 'current'}
-          className={cn(
-            'ml-auto inline-flex animate-fade-in items-center gap-1.5 text-[10px] motion-reduce:animate-none',
-            changed.active ? 'font-semibold text-white' : 'text-white',
-          )}
-        >
-          <span
-            aria-hidden
-            className={cn(
-              'size-1.5 rounded-full motion-reduce:animate-none',
-              changed.active
-                ? 'animate-pulse bg-sky-300 shadow-[0_0_8px_rgba(125,211,252,.95)]'
-                : 'animate-soft-pulse bg-emerald-300',
-            )}
-          />
-          {changed.active ? `${BRIEFING_EN.updating}${ELLIPSIS}` : BRIEFING_EN.updated}
-        </span>
-      </header>
+    <PreviewShell title={text.title} busy={changed.active} pulse={changed.pulse} hidden={hidden}>
       <p className="mt-1 text-[11.5px] leading-relaxed text-white">{text.hint}</p>
 
       <div className="mt-3 grid grid-cols-3 gap-1.5">
@@ -140,7 +106,7 @@ export function ProfilePreview({ groups, selected, focusId, landing, text, onTog
             {BRIEFING_EN.fullStop}
           </p>
 
-          <Section
+          <PreviewSection
             title={BRIEFING_EN.canDoHere}
             count={allowed.length}
             tone="good"
@@ -152,7 +118,7 @@ export function ProfilePreview({ groups, selected, focusId, landing, text, onTog
             onToggle={onToggle}
           />
 
-          <Section
+          <PreviewSection
             title={BRIEFING_EN.closedHere}
             count={closed.length}
             tone="bad"
@@ -233,6 +199,63 @@ export function ProfilePreview({ groups, selected, focusId, landing, text, onTog
           : text.landingNone}
       </p>
       {onToggle ? <p className="mt-2 text-center text-[10.5px] text-white">{BRIEFING_EN.tapHint}</p> : null}
+    </PreviewShell>
+  )
+}
+
+type ShellProps = { title: string; busy: boolean; pulse: number; children: ReactNode; hidden?: boolean }
+
+// The glass panel itself: aurora, sheen, scrim and the updated/updating header.
+// Every lens renders inside this, so all four tabs share one panel.
+export function PreviewShell({ title, busy, pulse, children, hidden }: ShellProps) {
+  return (
+    <aside
+      aria-label={title}
+      hidden={hidden}
+      className="relative isolate flex h-full flex-col overflow-hidden rounded-2xl bg-[linear-gradient(162deg,#0d3a60_0%,#1566a2_58%,#1a6ea8_100%)] p-4 text-white shadow-[0_30px_60px_-30px_rgba(9,40,64,.85),inset_0_1px_0_rgba(255,255,255,.14)]"
+    >
+      <span
+        aria-hidden
+        className="absolute -inset-1/2 -z-10 animate-aurora rounded-full bg-[radial-gradient(closest-side,rgba(86,189,234,.16),transparent_70%)] motion-reduce:animate-none"
+      />
+      {/* A glossy top light plus the nav bar's diagonal sheen, sweeping every 18s instead of every 2 minutes. */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(255,255,255,.12)_0%,rgba(255,255,255,.04)_22%,transparent_42%)]"
+      />
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 animate-[sheen_18s_600ms_linear_infinite_both] bg-[linear-gradient(112deg,transparent_38%,rgba(255,255,255,.03)_45%,rgba(255,255,255,.12)_50%,rgba(255,255,255,.03)_55%,transparent_62%)] bg-[length:240%_100%] bg-no-repeat motion-reduce:animate-none"
+      />
+      {/* Light scrim over the glow layers keeps white text at 4.5:1 or more wherever the aurora and sheen pass. */}
+      <span aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-slate-950/16" />
+
+      <header className="flex items-center gap-2">
+        <h2 className="flex items-center gap-2 text-[10.5px] font-semibold tracking-[0.14em] uppercase">
+          <Eye aria-hidden className="size-3.5" />
+          {title}
+        </h2>
+        {/* At rest the preview is current, so it reads "updated"; a change briefly reads "updating…". */}
+        <span
+          key={busy ? `busy-${pulse}` : 'current'}
+          className={cn(
+            'ml-auto inline-flex animate-fade-in items-center gap-1.5 text-[10px] motion-reduce:animate-none',
+            busy ? 'font-semibold text-white' : 'text-white',
+          )}
+        >
+          <span
+            aria-hidden
+            className={cn(
+              'size-1.5 rounded-full motion-reduce:animate-none',
+              busy
+                ? 'animate-pulse bg-sky-300 shadow-[0_0_8px_rgba(125,211,252,.95)]'
+                : 'animate-soft-pulse bg-emerald-300',
+            )}
+          />
+          {busy ? `${BRIEFING_EN.updating}${ELLIPSIS}` : BRIEFING_EN.updated}
+        </span>
+      </header>
+      {children}
     </aside>
   )
 }
@@ -257,7 +280,7 @@ const KPI_TONE = {
   },
 } as const
 
-function Kpi({ value, label, tone }: { value: number; label: string; tone: keyof typeof KPI_TONE }) {
+export function Kpi({ value, label, tone }: { value: number; label: string; tone: keyof typeof KPI_TONE }) {
   const style = KPI_TONE[tone]
   return (
     <div
@@ -276,7 +299,7 @@ type Action = { id: number; name: string }
 // More than this many rows and the list splits into two columns, filling the left one first.
 const ONE_COLUMN_MAX = 3
 
-function Section({
+export function PreviewSection({
   title,
   count,
   tone,

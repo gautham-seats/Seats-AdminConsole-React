@@ -1,9 +1,10 @@
 'use client'
 
-import { Check, FileSpreadsheet, FileText, LoaderCircle, Save, type LucideIcon } from 'lucide-react'
+import { Check, LoaderCircle, Save } from 'lucide-react'
 import { useId, useState } from 'react'
 import { Button, Dialog } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
+import { FileGlyph } from '@/shared/ui/FileGlyph'
 
 type ExportDialogLabels = {
   title: string
@@ -23,15 +24,19 @@ type ExportDialogProps = {
   labels: ExportDialogLabels
 }
 
-type Format = { value: 0 | 1; label: string; icon: LucideIcon }
+type Format = { value: 0 | 1; label: string; kind: 'pdf' | 'csv' }
+
+// The same card and file glyph as the Devices export (ExportMenu.tsx), so both dialogs read alike.
+const CARD =
+  'group relative flex flex-col items-center gap-4 rounded-2xl border-2 bg-white px-5 py-7 text-center outline-none transition-[border-color,background-color,box-shadow,transform] duration-200 ease-premium hover:-translate-y-0.5 hover:shadow-card-lift active:scale-[.98] focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-60 motion-reduce:transition-none'
 
 // seats-website-export.html:30-75: Export As (Pdf first) with Save and Cancel.
 export function ExportDialog({ open, pending, onOpenChange, onExport, labels }: ExportDialogProps) {
   const groupId = useId()
   const [exportTo, setExportTo] = useState<0 | 1>(0)
   const formats: Format[] = [
-    { value: 0, label: labels.pdf, icon: FileText },
-    { value: 1, label: labels.csv, icon: FileSpreadsheet },
+    { value: 0, label: labels.pdf, kind: 'pdf' },
+    { value: 1, label: labels.csv, kind: 'csv' },
   ]
 
   return (
@@ -42,7 +47,7 @@ export function ExportDialog({ open, pending, onOpenChange, onExport, labels }: 
       }}
       title={labels.title}
       closeLabel={labels.close}
-      className="max-w-md"
+      className="max-w-2xl"
       footer={
         <>
           <Button variant="outline" disabled={pending} onClick={() => onOpenChange(false)}>
@@ -59,14 +64,13 @@ export function ExportDialog({ open, pending, onOpenChange, onExport, labels }: 
         </>
       }
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         <span id={groupId} className="text-sm font-medium text-foreground">
           {labels.exportAs}
         </span>
-        <div role="radiogroup" aria-labelledby={groupId} className="grid grid-cols-2 gap-3">
+        <div role="radiogroup" aria-labelledby={groupId} className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {formats.map(format => {
             const checked = exportTo === format.value
-            const Icon = format.icon
             return (
               <button
                 key={format.value}
@@ -83,23 +87,16 @@ export function ExportDialog({ open, pending, onOpenChange, onExport, labels }: 
                 }}
                 tabIndex={checked ? 0 : -1}
                 className={cn(
-                  'lift-bloom group relative flex flex-col items-start gap-3 rounded-lg border p-4 text-left transition-[border-color,background-color,box-shadow,transform] duration-200 ease-premium active:scale-[.98] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:opacity-60 motion-reduce:transition-none',
+                  CARD,
                   checked
-                    ? 'border-brand bg-brand/[0.04] shadow-[0_0_0_1px_var(--color-brand),0_8px_20px_-12px_rgba(21,102,162,.55)]'
-                    : 'border-border bg-white hover:border-slate-300 hover:bg-page',
+                    ? 'border-brand bg-brand/[0.04] shadow-[0_8px_20px_-12px_rgba(21,102,162,.55)]'
+                    : format.kind === 'pdf'
+                      ? 'border-border hover:border-[var(--color-file-pdf)]'
+                      : 'border-border hover:border-[var(--color-file-csv)]',
                 )}
               >
-                <span
-                  className={cn(
-                    'grid size-9 place-items-center rounded-md transition-colors',
-                    checked
-                      ? 'bg-brand text-white'
-                      : 'bg-muted text-muted-foreground group-hover:text-foreground',
-                  )}
-                >
-                  <Icon aria-hidden className="size-4" />
-                </span>
-                <span className="text-sm font-semibold text-foreground">{format.label}</span>
+                <FileGlyph kind={format.kind} />
+                <span className="text-base font-semibold text-foreground">{format.label}</span>
                 <span
                   className={cn(
                     'absolute top-3 right-3 grid size-5 place-items-center rounded-full border transition-all duration-200',
