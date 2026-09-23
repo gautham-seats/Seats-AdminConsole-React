@@ -4,7 +4,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { CircleAlert, X, type LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { cn } from '@/shared/ui/cn'
-import { NAV_BAND, NAV_ICON_BOX } from './SettingsCard'
+import { NAV_BAND, NAV_ICON_BOX, NavBandGlow } from '@/shared/ui/nav-band'
 
 type FormDialogProps = {
   open: boolean
@@ -61,15 +61,23 @@ export function FormDialog({
               onSubmit()
             }}
           >
-            <div className={cn('flex shrink-0 items-center gap-3 px-5 py-3.5', NAV_BAND)}>
-              <span className={cn('grid size-8 shrink-0 place-items-center rounded-lg', NAV_ICON_BOX)}>
-                <Icon aria-hidden className="size-4" />
+            <div
+              className={cn(
+                'relative flex shrink-0 items-center gap-2.5 rounded-t-2xl px-4 py-2.5',
+                NAV_BAND,
+              )}
+            >
+              <NavBandGlow />
+              <span className={cn('grid size-7 shrink-0 place-items-center', NAV_ICON_BOX)}>
+                <Icon aria-hidden className="size-[13px]" />
               </span>
               <div className="min-w-0 flex-1">
-                <DialogPrimitive.Title className="text-[15px] leading-5 font-semibold text-white">
+                <DialogPrimitive.Title className="text-[14.5px] leading-[19px] font-bold tracking-[-.005em] text-white">
                   {title}
                 </DialogPrimitive.Title>
-                {hint ? <p className="text-xs text-white/90">{hint}</p> : null}
+                {hint ? (
+                  <p className="text-[11.5px] leading-[15px] font-medium text-white/85">{hint}</p>
+                ) : null}
               </div>
               <DialogPrimitive.Close
                 type="button"

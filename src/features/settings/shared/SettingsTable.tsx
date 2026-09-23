@@ -6,7 +6,7 @@ import type { ApiError, ReadStatus } from '@/shared/api'
 import { Button, Checkbox, DelayedLoading, ErrorState, type CheckboxState } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
 import type { SortDirection } from './list-model'
-import { HEAD_FILL, HEAD_ROUND } from '@/shared/ui/HeadBackdrop'
+import { HEAD_CELL, HEAD_ROUND } from '@/shared/ui/HeadBackdrop'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { ScrollEdges } from '@/shared/ui/ScrollEdges'
 import { useRowWindow } from '@/shared/ui/use-row-window'
@@ -40,46 +40,7 @@ type SettingsTableProps<T extends { id: RowKey }> = {
   text: { loading: string; error: string; retry: string; selectAll: string; select: (row: T) => string }
 }
 
-const HEAD = `sticky top-0 z-10 h-10 ${HEAD_FILL} px-2 text-left align-middle text-xs font-medium tracking-[0.02em] whitespace-nowrap text-white`
-
-// Placeholder rows in the real column layout, so the loaded rows land on the shapes the eye already holds.
-const SKELETON_ROWS = 7
-const SKELETON_WIDTHS = [72, 48, 60, 36, 84, 52, 66]
-
-function SkeletonRow({
-  index,
-  columns,
-  selectable,
-}: {
-  index: number
-  columns: number
-  selectable: boolean
-}) {
-  return (
-    <tr
-      aria-hidden
-      style={{ animationDelay: `${index * 40}ms` }}
-      className="animate-row-in motion-reduce:animate-none"
-    >
-      {selectable ? (
-        <td className="w-11 border-b border-border py-2.5 pl-4">
-          <span className="skeleton-bar block size-4 rounded-sm" />
-        </td>
-      ) : null}
-      {Array.from({ length: columns }, (_, column) => (
-        <td
-          key={column}
-          className={cn('border-b border-border px-2 py-2.5', !selectable && column === 0 && 'pl-4')}
-        >
-          <span
-            className={cn('skeleton-bar block h-3.5 rounded-full', column === 0 && 'h-4')}
-            style={{ width: `${SKELETON_WIDTHS[(index + column) % SKELETON_WIDTHS.length]}%` }}
-          />
-        </td>
-      ))}
-    </tr>
-  )
-}
+const HEAD = HEAD_CELL
 
 export function SettingsTable<T extends { id: RowKey }>({
   rows,
@@ -112,16 +73,12 @@ export function SettingsTable<T extends { id: RowKey }>({
 
   if (status === 'loading' || status === 'idle') {
     body = (
-      <>
-        {Array.from({ length: SKELETON_ROWS }, (_, index) => (
-          <SkeletonRow key={index} index={index} columns={columns.length} selectable={selectable} />
-        ))}
-        <tr>
-          <td colSpan={span} className="p-0">
-            <DelayedLoading active label={text.loading} className="min-h-24 py-4" />
-          </td>
-        </tr>
-      </>
+      <tr>
+        <td colSpan={span} className="h-full p-0">
+          {/* One loader for the whole area, as every other list in the app does. */}
+          <DelayedLoading surface="table" active label={text.loading} className="min-h-64" />
+        </td>
+      </tr>
     )
   } else if (status === 'error') {
     body = (

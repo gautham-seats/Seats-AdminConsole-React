@@ -13,8 +13,7 @@ import {
   SelectionClear,
   selectionButtonClass,
 } from '@/shared/ui'
-import { cn } from '@/shared/ui/cn'
-import { ADD_BUTTON_CLASS, ADD_ICON_CLASS } from '@/shared/ui/add-button'
+import { ADD_BUTTON_CLASS, ADD_ICON_CLASS, CANCEL_BUTTON_CLASS } from '@/shared/ui/add-button'
 import { FormDialog } from '../shared/FormDialog'
 import { SaveToast, type Notice } from '../shared/SaveToast'
 import { SettingsField } from '../shared/SettingsCard'
@@ -291,11 +290,16 @@ function ContactsWorkspace() {
         onSubmit={() => void save()}
         footer={
           <>
-            <Button variant="ghost" onClick={() => setDraft(null)} disabled={saving}>
+            <Button
+              variant="ghost"
+              onClick={() => setDraft(null)}
+              disabled={saving}
+              className={CANCEL_BUTTON_CLASS}
+            >
               {t('Cancel')}
             </Button>
-            <Button type="submit" loading={saving} className="active:scale-[.98]">
-              <Save aria-hidden className={cn('size-4', saving && 'animate-pulse')} />
+            <Button type="submit" loading={saving} className={ADD_BUTTON_CLASS}>
+              <Save aria-hidden className="size-[18px]" />
               {t('Save')}
             </Button>
           </>

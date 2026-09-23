@@ -21,6 +21,8 @@ type TemplateEditorProps = {
   onChange: () => void
   invalid?: boolean
   describedBy?: string
+  /** Shown in the empty editor. */
+  placeholder?: string
   className?: string
 }
 
@@ -43,13 +45,15 @@ const TOOLBAR = [
 ]
 
 export const TemplateEditor = forwardRef<TemplateEditorHandle, TemplateEditorProps>(function TemplateEditor(
-  { label, disabled, initialHtml, onChange, invalid = false, describedBy, className },
+  { label, disabled, initialHtml, onChange, invalid = false, describedBy, placeholder, className },
   ref,
 ) {
   const hostRef = useRef<HTMLDivElement>(null)
   const quillRef = useRef<Quill | null>(null)
   const onChangeRef = useRef(onChange)
   const initialRef = useRef(initialHtml)
+  // Read once: changing it later would mean rebuilding the editor.
+  const placeholderRef = useRef(placeholder)
   const fieldStateRef = useRef({ invalid, describedBy })
 
   useEffect(() => {
@@ -65,7 +69,11 @@ export const TemplateEditor = forwardRef<TemplateEditorHandle, TemplateEditorPro
     host.appendChild(surface)
     void import('quill').then(({ default: QuillEditor }) => {
       if (cancelled) return
-      const quill = new QuillEditor(surface, { theme: 'snow', modules: { toolbar: TOOLBAR } })
+      const quill = new QuillEditor(surface, {
+        theme: 'snow',
+        placeholder: placeholderRef.current,
+        modules: { toolbar: TOOLBAR },
+      })
       quill.root.setAttribute('role', 'textbox')
       quill.root.setAttribute('aria-multiline', 'true')
       quill.root.setAttribute('aria-label', label)
@@ -123,9 +131,12 @@ export const TemplateEditor = forwardRef<TemplateEditorHandle, TemplateEditorPro
     <div
       ref={hostRef}
       className={cn(
-        'template-editor flex min-h-[26rem] flex-col overflow-hidden rounded-lg border border-input bg-white shadow-sm transition-[border-color,box-shadow] focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/15',
-        '[&_.ql-toolbar]:border-0 [&_.ql-toolbar]:border-b [&_.ql-toolbar]:border-border [&_.ql-toolbar]:bg-slate-50',
-        '[&_.ql-container]:flex-1 [&_.ql-container]:border-0 [&_.ql-container]:text-sm [&_.ql-editor]:min-h-[22rem]',
+        'template-editor flex min-h-[26rem] flex-col overflow-hidden rounded-xl border border-input bg-white shadow-[0_1px_2px_rgba(15,23,42,.06),0_10px_24px_-18px_rgba(15,23,42,.35)] transition-[border-color,box-shadow] duration-300 focus-within:border-brand focus-within:shadow-[0_1px_2px_rgba(15,23,42,.06),0_12px_28px_-16px_rgba(21,102,162,.45)] focus-within:ring-2 focus-within:ring-brand/15',
+        // The toolbar stays put while a long template scrolls under it.
+        '[&_.ql-toolbar]:sticky [&_.ql-toolbar]:top-0 [&_.ql-toolbar]:z-10 [&_.ql-toolbar]:border-0 [&_.ql-toolbar]:border-b [&_.ql-toolbar]:border-border [&_.ql-toolbar]:bg-linear-to-b [&_.ql-toolbar]:from-white [&_.ql-toolbar]:to-slate-50',
+        '[&_.ql-container]:flex-1 [&_.ql-container]:overflow-auto [&_.ql-container]:border-0 [&_.ql-container]:text-sm',
+        '[&_.ql-editor]:min-h-[22rem] [&_.ql-editor]:px-5 [&_.ql-editor]:py-4 [&_.ql-editor]:leading-relaxed',
+        '[&_.ql-editor.ql-blank::before]:left-5 [&_.ql-editor.ql-blank::before]:text-muted-foreground [&_.ql-editor.ql-blank::before]:not-italic',
         disabled && 'opacity-70',
         className,
       )}
