@@ -92,6 +92,9 @@ describe('import helpers', () => {
   })
 })
 
+// The idle result panel is a live region too, so a notice is found by its own text.
+const noticeText = (text: string) => screen.getByText(text).closest('[role="status"],[role="alert"]')
+
 describe('ImportScreen', () => {
   it('asks for an import type before sending anything', async () => {
     setup()
@@ -196,7 +199,7 @@ describe('ImportScreen', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
     })
     expect(signal?.aborted).toBe(true)
-    expect(screen.getByRole('status')).toHaveTextContent('Upload cancelled. Nothing was imported.')
+    expect(noticeText('Upload cancelled. Nothing was imported.')).toBeInTheDocument()
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
     put.mockResolvedValueOnce(undefined)
     await act(async () => {
@@ -204,9 +207,7 @@ describe('ImportScreen', () => {
     })
     expect(put).toHaveBeenCalledTimes(2)
     expect(put.mock.calls[1][0]).toBe('ImportApi/UploadFile')
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'The file has been uploaded and will be processed soon',
-    )
+    expect(noticeText('The file has been uploaded and will be processed soon')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Retry' })).not.toBeInTheDocument()
   })
 

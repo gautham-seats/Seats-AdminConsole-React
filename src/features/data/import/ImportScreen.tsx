@@ -58,6 +58,8 @@ import {
 } from './import-file'
 import { IMPORT_FALLBACK_ONLY, useImportText } from './import-text'
 import { StatusBadge } from '@/shared/ui/StatusBadge'
+import { NAV_BAND_CELL } from '@/shared/ui/nav-band'
+import { EmptyState } from '@/shared/ui/EmptyState'
 
 export const IMPORT_ACCESS = { item: PermissionItem.Import, action: PermissionAction.Access }
 export const IMPORT_ADD = { item: PermissionItem.Import, action: PermissionAction.Add }
@@ -123,15 +125,22 @@ function StepCard({
   step,
   done,
   title,
+  className,
   children,
 }: {
   step: number
   done: boolean
   title: string
+  className?: string
   children: ReactNode
 }) {
   return (
-    <section className="flex flex-col gap-4 rounded-lg border border-border bg-white p-5 shadow-sm">
+    <section
+      className={cn(
+        'flex h-full min-h-64 flex-col gap-4 rounded-lg border border-border bg-white p-5 shadow-sm',
+        className,
+      )}
+    >
       <header className="flex items-center gap-2.5">
         <span
           className={cn(
@@ -257,6 +266,7 @@ function ImportWorkspace() {
   const pageRows = sorted.slice(pageIndex * pageSize, pageIndex * pageSize + pageSize)
   // ImportApiController.cs:277 returns ErrorDetails.Take(100), so a full page of errors may not be all of them.
   const capped = errors !== null && errors.length >= IMPORT_ERROR_CAP
+  const hasErrors = errors !== null && errors.length > 0
   const errorBadge = `${errors?.length ?? 0}${capped ? '+' : ''} ${IMPORT_FALLBACK_ONLY.errorCount}`
   const SortIcon = (column: ImportErrorSort['column']) =>
     sort.column !== column ? ArrowUpDown : sort.dir === 'asc' ? ArrowUp : ArrowDown
@@ -281,7 +291,7 @@ function ImportWorkspace() {
           key={notice.id}
           role={notice.tone === 'error' ? 'alert' : 'status'}
           className={cn(
-            'flex animate-rise-in items-center gap-3 rounded-lg border px-4 py-2.5 text-sm shadow-sm motion-reduce:animate-none',
+            'flex shrink-0 animate-rise-in items-center gap-3 rounded-lg border px-4 py-2.5 text-sm shadow-sm motion-reduce:animate-none',
             notice.tone === 'success' && 'border-emerald-200 bg-emerald-50 text-emerald-900',
             notice.tone === 'error' && 'border-red-200 bg-red-50 text-red-900',
             notice.tone === 'info' && 'border-sky-200 bg-sky-50 text-sky-900',
@@ -317,281 +327,318 @@ function ImportWorkspace() {
         </div>
       ) : null}
 
-      <div className="grid gap-3 lg:grid-cols-3">
-        <StepCard step={1} done={typeId !== null} title={IMPORT_FALLBACK_ONLY.importType}>
-          <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor="import-type"
-              className="text-[13px] font-medium text-slate-700 after:ml-0.5 after:text-destructive after:content-['*']"
-            >
-              {IMPORT_FALLBACK_ONLY.importType}
-            </label>
-            {types.status === 'error' ? (
-              <ErrorState
-                message={t('AlertGeneralErrorDefault')}
-                retryLabel={t('Refresh')}
-                onRetry={types.reload}
-                error={types.error}
-                className="p-4"
-              />
-            ) : (
-              <Select
-                value={typeId === null ? undefined : String(typeId)}
-                onValueChange={value => {
-                  setTypeId(Number(value))
-                  setErrors(null)
-                }}
-                disabled={types.status !== 'success' || busy !== null}
+      {/* A container query, not lg:, because the section sidebar makes the content much narrower
+          than the window. Two columns first, then the full row of three. */}
+      <div className="@container shrink-0">
+        <div className="grid gap-3 @[34rem]:grid-cols-2 @[56rem]:grid-cols-3">
+          <StepCard step={1} done={typeId !== null} title={IMPORT_FALLBACK_ONLY.importType}>
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="import-type"
+                className="text-[13px] font-medium text-slate-700 after:ml-0.5 after:text-destructive after:content-['*']"
               >
-                <SelectTrigger
-                  id="import-type"
-                  className="h-10 bg-white"
-                  aria-invalid={typeProblem}
-                  aria-describedby={typeProblem ? 'import-type-error' : undefined}
+                {IMPORT_FALLBACK_ONLY.importType}
+              </label>
+              {types.status === 'error' ? (
+                <ErrorState
+                  message={t('AlertGeneralErrorDefault')}
+                  retryLabel={t('Refresh')}
+                  onRetry={types.reload}
+                  error={types.error}
+                  className="p-4"
+                />
+              ) : (
+                <Select
+                  value={typeId === null ? undefined : String(typeId)}
+                  onValueChange={value => {
+                    setTypeId(Number(value))
+                    setErrors(null)
+                  }}
+                  disabled={types.status !== 'success' || busy !== null}
                 >
-                  <SelectValue placeholder={IMPORT_FALLBACK_ONLY.select} />
-                </SelectTrigger>
-                <SelectContent>
-                  {(types.data ?? []).map(type => (
-                    <SelectItem key={type.id} value={String(type.id)}>
-                      {type.description}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-            {typeProblem ? (
-              <p id="import-type-error" className="text-xs font-medium text-destructive">
-                {problemText('typeRequired')}
+                  <SelectTrigger
+                    id="import-type"
+                    className="h-10 bg-white"
+                    aria-invalid={typeProblem}
+                    aria-describedby={typeProblem ? 'import-type-error' : undefined}
+                  >
+                    <SelectValue placeholder={IMPORT_FALLBACK_ONLY.select} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(types.data ?? []).map(type => (
+                      <SelectItem key={type.id} value={String(type.id)}>
+                        {type.description}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+              {typeProblem ? (
+                <p id="import-type-error" className="text-xs font-medium text-destructive">
+                  {problemText('typeRequired')}
+                </p>
+              ) : null}
+            </div>
+            {typeId !== null ? (
+              <a
+                href={importSampleUrl(typeId)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-fit animate-fade-in items-center gap-1.5 text-sm font-semibold text-brand underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+              >
+                <Download aria-hidden className="size-4" />
+                {IMPORT_FALLBACK_ONLY.sample}
+              </a>
+            ) : null}
+          </StepCard>
+
+          <StepCard step={2} done={file !== null} title={IMPORT_FALLBACK_ONLY.file}>
+            <label
+              htmlFor={inputId}
+              onDragOver={event => {
+                event.preventDefault()
+                setDragging(true)
+              }}
+              onDragLeave={() => setDragging(false)}
+              onDrop={onDrop}
+              className={cn(
+                'flex min-h-24 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border-[1.5px] border-dashed px-4 py-4 text-center transition-[border-color,background-color] duration-300 focus-within:ring-2 focus-within:ring-ring',
+                fileProblem && !dragging && 'border-destructive',
+                dragging
+                  ? 'border-brand bg-brand/[0.06]'
+                  : 'border-slate-300 bg-slate-50/70 hover:border-brand/60 hover:bg-brand/[0.03]',
+              )}
+            >
+              <span className="grid size-9 place-items-center rounded-xl bg-brand/[0.08] text-brand">
+                <Upload aria-hidden className="size-[18px]" />
+              </span>
+              <span className="text-sm font-semibold text-foreground">{IMPORT_FALLBACK_ONLY.dropText}</span>
+              <span className="text-xs text-muted-foreground">{IMPORT_FALLBACK_ONLY.csvOnly}</span>
+              <input
+                ref={inputRef}
+                id={inputId}
+                type="file"
+                accept=".csv"
+                className="sr-only"
+                aria-invalid={fileProblem !== null}
+                aria-describedby={fileProblem ? 'import-file-error' : undefined}
+                disabled={busy !== null}
+                onChange={event => pickFile(event.target.files?.[event.target.files.length - 1] ?? null)}
+              />
+            </label>
+            {fileProblem ? (
+              <p id="import-file-error" className="text-xs font-medium text-destructive">
+                {problemText(fileProblem)}
               </p>
             ) : null}
-          </div>
-          {typeId !== null ? (
-            <a
-              href={importSampleUrl(typeId)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex w-fit animate-fade-in items-center gap-1.5 text-sm font-semibold text-brand underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-            >
-              <Download aria-hidden className="size-4" />
-              {IMPORT_FALLBACK_ONLY.sample}
-            </a>
-          ) : null}
-        </StepCard>
-
-        <StepCard step={2} done={file !== null} title={IMPORT_FALLBACK_ONLY.file}>
-          <label
-            htmlFor={inputId}
-            onDragOver={event => {
-              event.preventDefault()
-              setDragging(true)
-            }}
-            onDragLeave={() => setDragging(false)}
-            onDrop={onDrop}
-            className={cn(
-              'flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-[1.5px] border-dashed px-4 py-5 text-center transition-[border-color,background-color] duration-300 focus-within:ring-2 focus-within:ring-ring',
-              fileProblem && !dragging && 'border-destructive',
-              dragging
-                ? 'border-brand bg-brand/[0.06]'
-                : 'border-slate-300 bg-slate-50/70 hover:border-brand/60 hover:bg-brand/[0.03]',
-            )}
-          >
-            <span className="grid size-11 place-items-center rounded-xl bg-brand/[0.08] text-brand">
-              <Upload aria-hidden className="size-5" />
-            </span>
-            <span className="text-sm font-semibold text-foreground">{IMPORT_FALLBACK_ONLY.dropText}</span>
-            <span className="text-xs text-muted-foreground">{IMPORT_FALLBACK_ONLY.csvOnly}</span>
-            <input
-              ref={inputRef}
-              id={inputId}
-              type="file"
-              accept=".csv"
-              className="sr-only"
-              aria-invalid={fileProblem !== null}
-              aria-describedby={fileProblem ? 'import-file-error' : undefined}
-              disabled={busy !== null}
-              onChange={event => pickFile(event.target.files?.[event.target.files.length - 1] ?? null)}
-            />
-          </label>
-          {fileProblem ? (
-            <p id="import-file-error" className="text-xs font-medium text-destructive">
-              {problemText(fileProblem)}
-            </p>
-          ) : null}
-          {file ? (
-            <div className="flex animate-rise-in items-center gap-3 rounded-lg border border-border bg-white px-3 py-2 motion-reduce:animate-none">
-              <span className="grid size-9 place-items-center rounded-md bg-emerald-50 text-emerald-700">
-                <FileSpreadsheet aria-hidden className="size-4" />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span title={file.name} className="block truncate text-sm font-semibold text-foreground">
-                  {file.name}
+            {file ? (
+              <div className="flex animate-rise-in items-center gap-3 rounded-lg border border-border bg-white px-3 py-2 motion-reduce:animate-none">
+                <span className="grid size-9 place-items-center rounded-md bg-emerald-50 text-emerald-700">
+                  <FileSpreadsheet aria-hidden className="size-4" />
                 </span>
-                <span className="block text-xs text-muted-foreground">{formatFileSize(file.size)}</span>
-              </span>
-              <button
-                type="button"
-                disabled={busy !== null}
-                onClick={() => {
-                  pickFile(null)
-                  if (inputRef.current) inputRef.current.value = ''
-                }}
-                aria-label={IMPORT_FALLBACK_ONLY.removeFile}
-                className="grid size-7 place-items-center rounded-md text-muted-foreground hover:bg-slate-100 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-              >
-                <X aria-hidden className="size-4" />
-              </button>
-            </div>
-          ) : null}
-        </StepCard>
-
-        <StepCard step={3} done={false} title={IMPORT_FALLBACK_ONLY.checkAndImport}>
-          <p className="text-sm text-muted-foreground">{IMPORT_FALLBACK_ONLY.checkHelp}</p>
-          <div className="mt-auto flex flex-col gap-2">
-            <Button
-              variant="outline"
-              className="h-10 rounded-lg"
-              disabled={busy !== null}
-              aria-busy={busy === 'validate'}
-              onClick={() => void run('validate')}
-            >
-              {busy === 'validate' ? (
-                <GearworkLoader className="h-5 w-6" />
-              ) : (
-                <ShieldCheck aria-hidden className="size-4" />
-              )}
-              {IMPORT_FALLBACK_ONLY.validate}
-            </Button>
-            {busy !== null ? (
-              <div className="flex items-center gap-2" aria-live="polite">
-                <div
-                  role="progressbar"
-                  aria-label={IMPORT_FALLBACK_ONLY.uploading}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-valuenow={Math.round(progress * 100)}
-                  className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100"
+                <span className="min-w-0 flex-1">
+                  <span title={file.name} className="block truncate text-sm font-semibold text-foreground">
+                    {file.name}
+                  </span>
+                  <span className="block text-xs text-muted-foreground">{formatFileSize(file.size)}</span>
+                </span>
+                <button
+                  type="button"
+                  disabled={busy !== null}
+                  onClick={() => {
+                    pickFile(null)
+                    if (inputRef.current) inputRef.current.value = ''
+                  }}
+                  aria-label={IMPORT_FALLBACK_ONLY.removeFile}
+                  className="grid size-7 place-items-center rounded-md text-muted-foreground hover:bg-slate-100 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 >
-                  <div
-                    className="h-full rounded-full bg-brand transition-[width] duration-200 motion-reduce:transition-none"
-                    style={{ width: `${Math.round(progress * 100)}%` }}
-                  />
-                </div>
-                <span className="w-9 text-right text-xs text-muted-foreground tabular-nums">
-                  {progressText}
-                </span>
-                <Button size="sm" variant="ghost" className="h-7" onClick={() => requestRef.current?.abort()}>
-                  {IMPORT_FALLBACK_ONLY.cancel}
-                </Button>
+                  <X aria-hidden className="size-4" />
+                </button>
               </div>
             ) : null}
-            {canProcess ? (
-              <button
-                type="button"
+          </StepCard>
+
+          <StepCard
+            step={3}
+            done={false}
+            title={IMPORT_FALLBACK_ONLY.checkAndImport}
+            className="@[34rem]:col-span-2 @[56rem]:col-span-1"
+          >
+            <p className="text-sm text-muted-foreground">{IMPORT_FALLBACK_ONLY.checkHelp}</p>
+            <div className="mt-auto flex flex-col gap-2">
+              <Button
+                variant="outline"
+                className="h-10 rounded-lg"
                 disabled={busy !== null}
-                aria-busy={busy === 'process'}
-                onClick={() => void run('process')}
-                className={cn(
-                  'lift-bloom inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-60',
-                  GLOSSY,
-                )}
+                aria-busy={busy === 'validate'}
+                onClick={() => void run('validate')}
               >
-                {busy === 'process' ? (
+                {busy === 'validate' ? (
                   <GearworkLoader className="h-5 w-6" />
                 ) : (
-                  <Upload aria-hidden className="size-4" />
+                  <ShieldCheck aria-hidden className="size-4" />
                 )}
-                {IMPORT_FALLBACK_ONLY.process}
-              </button>
-            ) : null}
-          </div>
-        </StepCard>
+                {IMPORT_FALLBACK_ONLY.validate}
+              </Button>
+              {busy !== null ? (
+                <div className="flex items-center gap-2" aria-live="polite">
+                  <div
+                    role="progressbar"
+                    aria-label={IMPORT_FALLBACK_ONLY.uploading}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={Math.round(progress * 100)}
+                    className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100"
+                  >
+                    <div
+                      className="h-full rounded-full bg-brand transition-[width] duration-200 motion-reduce:transition-none"
+                      style={{ width: `${Math.round(progress * 100)}%` }}
+                    />
+                  </div>
+                  <span className="w-9 text-right text-xs text-muted-foreground tabular-nums">
+                    {progressText}
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-7"
+                    onClick={() => requestRef.current?.abort()}
+                  >
+                    {IMPORT_FALLBACK_ONLY.cancel}
+                  </Button>
+                </div>
+              ) : null}
+              {canProcess ? (
+                <button
+                  type="button"
+                  disabled={busy !== null}
+                  aria-busy={busy === 'process'}
+                  onClick={() => void run('process')}
+                  className={cn(
+                    'lift-bloom inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-60',
+                    GLOSSY,
+                  )}
+                >
+                  {busy === 'process' ? (
+                    <GearworkLoader className="h-5 w-6" />
+                  ) : (
+                    <Upload aria-hidden className="size-4" />
+                  )}
+                  {IMPORT_FALLBACK_ONLY.process}
+                </button>
+              ) : null}
+            </div>
+          </StepCard>
+        </div>
       </div>
 
-      {errors && errors.length > 0 ? (
-        <section className="flex min-h-0 animate-rise-in flex-col overflow-hidden rounded-lg border border-border bg-white shadow-sm motion-reduce:animate-none">
-          <header className="flex flex-wrap items-center gap-3 border-b border-border px-4 py-3">
-            <StatusBadge tone="danger" className="tabular-nums">
-              {errorBadge}
-            </StatusBadge>
-            <h2 className="text-sm font-semibold text-foreground">{IMPORT_FALLBACK_ONLY.errorsTitle}</h2>
-          </header>
-          <div className="overflow-auto">
-            <table className="w-full border-separate border-spacing-0 text-sm">
-              <thead>
-                <tr>
-                  {(['lineNumber', 'exceptionInfo'] as const).map(column => {
-                    const Icon = SortIcon(column)
-                    const active = sort.column === column
-                    return (
-                      <th
-                        key={column}
-                        scope="col"
-                        aria-sort={active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'}
-                        className={cn(
-                          'h-10 border-b border-border px-4 text-left font-medium text-muted-foreground',
-                          column === 'lineNumber' && 'w-40',
-                        )}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSort(current => nextErrorSort(current, column))
-                            setPageIndex(0)
-                          }}
-                          className="inline-flex items-center gap-1.5 rounded-sm hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      {/* The result panel is always here, so the page fills its height before anything has been checked.
+          flex-1 + min-h-0: the table takes whatever height is left and scrolls inside itself. */}
+      <section className="flex min-h-0 flex-1 animate-rise-in flex-col overflow-hidden rounded-lg border border-border bg-white shadow-sm motion-reduce:animate-none">
+        <header className="flex flex-wrap items-center gap-3 border-b border-border px-4 py-3">
+          {hasErrors ? (
+            <>
+              <StatusBadge tone="danger" className="tabular-nums">
+                {errorBadge}
+              </StatusBadge>
+              <h2 className="text-sm font-semibold text-foreground">{IMPORT_FALLBACK_ONLY.errorsTitle}</h2>
+            </>
+          ) : (
+            <>
+              {errors ? <StatusBadge tone="success">{IMPORT_FALLBACK_ONLY.resultClean}</StatusBadge> : null}
+              <h2 className="text-sm font-semibold text-foreground">{IMPORT_FALLBACK_ONLY.resultTitle}</h2>
+            </>
+          )}
+        </header>
+        {hasErrors ? (
+          <>
+            <div className="min-h-0 flex-1 overflow-auto">
+              <table className="w-full border-separate border-spacing-0 text-sm">
+                <thead>
+                  <tr>
+                    {(['lineNumber', 'exceptionInfo'] as const).map(column => {
+                      const Icon = SortIcon(column)
+                      const active = sort.column === column
+                      return (
+                        <th
+                          key={column}
+                          scope="col"
+                          aria-sort={active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'}
+                          className={cn(
+                            'sticky top-0 z-10 h-10 px-4 text-left font-medium',
+                            NAV_BAND_CELL,
+                            column === 'lineNumber' && 'w-40',
+                          )}
                         >
-                          {column === 'lineNumber'
-                            ? IMPORT_FALLBACK_ONLY.lineNumber
-                            : IMPORT_FALLBACK_ONLY.exceptionInfo}
-                          <Icon
-                            aria-hidden
-                            className={cn('size-3.5', active ? 'text-brand' : 'opacity-50')}
-                          />
-                        </button>
-                      </th>
-                    )
-                  })}
-                </tr>
-              </thead>
-              <tbody>
-                {pageRows.map((row, index) => (
-                  <tr
-                    key={`${row.lineNumber}-${index}-${row.exceptionInfo ?? ''}`}
-                    style={{ animationDelay: `${Math.min(index, 12) * 18}ms` }}
-                    className="animate-row-in hover:bg-slate-50 motion-reduce:animate-none"
-                  >
-                    <td className="border-b border-border px-4 py-2.5 font-semibold tabular-nums text-foreground">
-                      {row.lineNumber}
-                    </td>
-                    <td className="border-b border-border px-4 py-2.5 text-slate-700">{row.exceptionInfo}</td>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSort(current => nextErrorSort(current, column))
+                              setPageIndex(0)
+                            }}
+                            className="inline-flex items-center gap-1.5 rounded-sm hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                          >
+                            {column === 'lineNumber'
+                              ? IMPORT_FALLBACK_ONLY.lineNumber
+                              : IMPORT_FALLBACK_ONLY.exceptionInfo}
+                            <Icon
+                              aria-hidden
+                              className={cn('size-3.5', active ? 'text-brand' : 'opacity-50')}
+                            />
+                          </button>
+                        </th>
+                      )
+                    })}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <Pagination
-            id="import-errors-page-size"
-            pageIndex={pageIndex}
-            pageSize={pageSize}
-            total={sorted.length}
-            pageSizes={IMPORT_ERROR_PAGE_SIZES}
-            onPageChange={setPageIndex}
-            onPageSizeChange={size => {
-              setPageSize(size)
-              setPageIndex(0)
-            }}
-            labels={{
-              itemsPerPage: t('NumberOfItemsPerPage'),
-              of: t('Of'),
-              first: IMPORT_FALLBACK_ONLY.first,
-              previous: t('Previous'),
-              next: t('Next'),
-              last: IMPORT_FALLBACK_ONLY.last,
-            }}
+                </thead>
+                <tbody>
+                  {pageRows.map((row, index) => (
+                    <tr
+                      key={`${row.lineNumber}-${index}-${row.exceptionInfo ?? ''}`}
+                      style={{ animationDelay: `${Math.min(index, 12) * 18}ms` }}
+                      className="animate-row-in hover:bg-slate-50 motion-reduce:animate-none"
+                    >
+                      <td className="border-b border-border px-4 py-2.5 font-semibold tabular-nums text-foreground">
+                        {row.lineNumber}
+                      </td>
+                      <td className="border-b border-border px-4 py-2.5 text-slate-700">
+                        {row.exceptionInfo}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Pagination
+              id="import-errors-page-size"
+              pageIndex={pageIndex}
+              pageSize={pageSize}
+              total={sorted.length}
+              pageSizes={IMPORT_ERROR_PAGE_SIZES}
+              onPageChange={setPageIndex}
+              onPageSizeChange={size => {
+                setPageSize(size)
+                setPageIndex(0)
+              }}
+              labels={{
+                itemsPerPage: t('NumberOfItemsPerPage'),
+                of: t('Of'),
+                first: IMPORT_FALLBACK_ONLY.first,
+                previous: t('Previous'),
+                next: t('Next'),
+                last: IMPORT_FALLBACK_ONLY.last,
+              }}
+            />
+          </>
+        ) : (
+          <EmptyState
+            icon={errors ? ShieldCheck : FileSpreadsheet}
+            title={errors ? IMPORT_FALLBACK_ONLY.resultClean : IMPORT_FALLBACK_ONLY.resultIdle}
+            description={errors ? IMPORT_FALLBACK_ONLY.resultCleanHint : IMPORT_FALLBACK_ONLY.resultIdleHint}
+            className="min-h-0 flex-1"
           />
-        </section>
-      ) : null}
+        )}
+      </section>
     </AreaWorkspace>
   )
 }
