@@ -10,6 +10,8 @@ jest.mock('@/shared/api', () => ({
 }))
 
 const post = jest.mocked(api.post)
+// Keys leave as one POST after a one-frame window, so a test that counts POSTs waits past it first.
+const nextTick = () => new Promise<void>(resolve => setTimeout(resolve, 40))
 
 beforeEach(() => {
   clearResourceCache()
@@ -80,12 +82,68 @@ describe('SF-09 / SF-10', () => {
     post.mockReturnValueOnce(new Promise(r => (resolve = r)))
     const first = loadScreenResources(['Save', 'Cancel'])
     const second = loadScreenResources(['Cancel', 'Save'])
+    await nextTick()
     expect(post).toHaveBeenCalledTimes(1)
     resolve({ 'en-GB': { Save: 'Save', Cancel: 'Cancel' } })
     await expect(first).resolves.toEqual({ Save: 'Save', Cancel: 'Cancel' })
     await expect(second).resolves.toEqual({ Cancel: 'Cancel', Save: 'Save' })
     await loadScreenResources(['Save'])
     expect(post).toHaveBeenCalledTimes(1)
+  })
+
+  it('SF-53 merges the keys every component asks for in one tick into a single POST', async () => {
+    let resolve!: (value: unknown) => void
+    post.mockReturnValueOnce(new Promise(r => (resolve = r)))
+    const shell = loadScreenResources(['Collapse', 'Expand'])
+    const nav = loadScreenResources(['Users', 'Devices'])
+    const page = loadScreenResources(['Save', 'Cancel'])
+    const dialog = loadScreenResources(['Cancel', 'Delete'])
+    await nextTick()
+    expect(post).toHaveBeenCalledTimes(1)
+    expect(post).toHaveBeenCalledWith('ResourceApi/GetResourcesForScreen', {
+      body: ['Collapse', 'Expand', 'Users', 'Devices', 'Save', 'Cancel', 'Delete'],
+      signal: undefined,
+    })
+    resolve({
+      'en-GB': {
+        Collapse: 'Collapse',
+        Expand: 'Expand',
+        Users: 'Users',
+        Devices: 'Devices',
+        Save: 'Save',
+        Cancel: 'Cancel',
+        Delete: 'Delete',
+      },
+    })
+    await expect(shell).resolves.toEqual({ Collapse: 'Collapse', Expand: 'Expand' })
+    await expect(nav).resolves.toEqual({ Users: 'Users', Devices: 'Devices' })
+    await expect(page).resolves.toEqual({ Save: 'Save', Cancel: 'Cancel' })
+    await expect(dialog).resolves.toEqual({ Cancel: 'Cancel', Delete: 'Delete' })
+    // Everything is cached now: a later mount asks for nothing.
+    await loadScreenResources(['Save', 'Users'])
+    expect(post).toHaveBeenCalledTimes(1)
+  })
+
+  it('SF-53 keeps a batch per culture, so a culture switch mid-tick never mixes languages', async () => {
+    setUiCulture('en-GB')
+    post
+      .mockResolvedValueOnce({ 'en-GB': { Save: 'Save' } })
+      .mockResolvedValueOnce({ 'fr-FR': { Cancel: 'Annuler' } })
+    const english = loadScreenResources(['Save'])
+    setUiCulture('fr-FR')
+    const french = loadScreenResources(['Cancel'])
+    await nextTick()
+    expect(post).toHaveBeenCalledTimes(2)
+    expect(post).toHaveBeenNthCalledWith(1, 'ResourceApi/GetResourcesForScreen', {
+      body: ['Save'],
+      signal: undefined,
+    })
+    expect(post).toHaveBeenNthCalledWith(2, 'ResourceApi/GetResourcesForScreen', {
+      body: ['Cancel'],
+      signal: undefined,
+    })
+    await english
+    await expect(french).resolves.toEqual({ Cancel: 'Annuler' })
   })
 
   it('SF-10 ignores a late answer for a culture the user has already left', async () => {

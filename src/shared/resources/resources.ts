@@ -6,6 +6,8 @@ import type { ScreenResourcesResponse } from '@/types/resources'
 const caches = new Map<string, Map<string, string | null>>()
 // Keys already on the wire, so components mounting together share one POST instead of repeating it.
 const inFlight = new Map<string, Promise<Record<string, string>>>()
+// Keys asked for in the current tick, per culture; they leave as one POST when the tick ends.
+const pending = new Map<string, { keys: string[]; request: Promise<Record<string, string>> }>()
 
 function cacheFor(culture: string): Map<string, string | null> {
   let cache = caches.get(culture)
@@ -14,6 +16,16 @@ function cacheFor(culture: string): Map<string, string | null> {
     caches.set(culture, cache)
   }
   return cache
+}
+
+function deferred<T>() {
+  let resolve: (value: T) => void = () => {}
+  let reject: (reason: unknown) => void = () => {}
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res
+    reject = rej
+  })
+  return { promise, resolve, reject }
 }
 
 export function unwrapScreenResources(response: unknown, requested?: string): Record<string, string> {
@@ -31,42 +43,67 @@ export function unwrapScreenResources(response: unknown, requested?: string): Re
   return values
 }
 
+function postBatch(culture: string, keys: readonly string[]): Promise<Record<string, string>> {
+  // No signal: the answer is shared and cached, so one component's unmount must not cancel it for the rest.
+  return api
+    .post<ScreenResourcesResponse>('ResourceApi/GetResourcesForScreen', { body: keys })
+    .then(response => {
+      const stillCurrent = culture === getUiCulture()
+      const values = unwrapScreenResources(response, culture)
+      // Cached under the culture the answer belongs to: the server's name when this request was still
+      // current, otherwise the one that was asked for, never a culture chosen after the request went out.
+      const cache = cacheFor(stillCurrent ? getUiCulture() : culture)
+      // A key the server did not return is remembered as a miss, so it is not asked for on every mount.
+      for (const key of keys) cache.set(key, values[key] ?? null)
+      return values
+    })
+}
+
+// The shell and the page mount in separate render commits, and React yields to the event loop between
+// them, so a microtask or a zero-delay timer fires in the gap and each commit posts its own list. A
+// one-frame window outlives that yield and collects every commit into one list and one POST.
+const BATCH_WINDOW_MS = 16
+
+function enqueue(culture: string, missing: readonly string[]): Promise<Record<string, string>> {
+  let batch = pending.get(culture)
+  if (!batch) {
+    const keys: string[] = []
+    const { promise, resolve, reject } = deferred<Record<string, string>>()
+    setTimeout(() => {
+      pending.delete(culture)
+      postBatch(culture, keys)
+        .then(resolve, reject)
+        .finally(() => {
+          for (const key of keys)
+            if (inFlight.get(`${culture}|${key}`) === promise) inFlight.delete(`${culture}|${key}`)
+        })
+    }, BATCH_WINDOW_MS)
+    batch = { keys, request: promise }
+    pending.set(culture, batch)
+  }
+  for (const key of missing) {
+    batch.keys.push(key)
+    inFlight.set(`${culture}|${key}`, batch.request)
+  }
+  return batch.request
+}
+
 export async function loadScreenResources(
   keys: readonly string[],
   signal?: AbortSignal,
 ): Promise<Record<string, string>> {
   const culture = getUiCulture()
-  let cache = cacheFor(culture)
+  const cache = cacheFor(culture)
   const wanted = [...new Set(keys)].filter(key => !cache.has(key))
   const shared = wanted.map(key => inFlight.get(`${culture}|${key}`)).filter(Boolean) as Promise<unknown>[]
   const missing = wanted.filter(key => !inFlight.has(`${culture}|${key}`))
-  if (missing.length > 0) {
-    // No signal: the answer is shared and cached, so one component's unmount must not cancel it for the rest.
-    const request = api
-      .post<ScreenResourcesResponse>('ResourceApi/GetResourcesForScreen', { body: missing })
-      .then(response => {
-        const stillCurrent = culture === getUiCulture()
-        const values = unwrapScreenResources(response, culture)
-        // Cached under the culture the answer belongs to: the server's name when this request was still
-        // current, otherwise the one that was asked for, never a culture chosen after the request went out.
-        cache = cacheFor(stillCurrent ? getUiCulture() : culture)
-        // A key the server did not return is remembered as a miss, so it is not asked for on every mount.
-        for (const key of missing) cache.set(key, values[key] ?? null)
-        return values
-      })
-      .finally(() => {
-        for (const key of missing)
-          if (inFlight.get(`${culture}|${key}`) === request) inFlight.delete(`${culture}|${key}`)
-      })
-    for (const key of missing) inFlight.set(`${culture}|${key}`, request)
-    shared.push(request)
-  }
+  if (missing.length > 0) shared.push(enqueue(culture, missing))
   await Promise.all(shared)
   if (signal?.aborted) throw new DOMException('Aborted', 'AbortError')
-  cache = cacheFor(getUiCulture())
+  const current = cacheFor(getUiCulture())
   const result: Record<string, string> = {}
   for (const key of keys) {
-    const value = cache.get(key)
+    const value = current.get(key)
     if (typeof value === 'string') result[key] = value
   }
   return result
