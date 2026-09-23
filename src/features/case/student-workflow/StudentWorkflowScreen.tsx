@@ -3,6 +3,7 @@
 import { ArrowRightLeft, ListFilter, Search, Trash2 } from 'lucide-react'
 import { useCallback, useId, useMemo, useState } from 'react'
 import { toApiError, useApiRead } from '@/shared/api'
+import { CountUp } from '@/shared/ui/CountUp'
 import { PermissionAction, PermissionItem } from '@/shared/shell/admin-menu'
 import { useProfile } from '@/shared/shell/profile'
 import {
@@ -312,7 +313,21 @@ function StudentWorkflowWorkspace() {
   const activeTabExists = tabs.some(tab => tab.id === activeTabId)
 
   return (
-    <SettingsLayout area={area} sectionId="student-workflow" title={t('Title')}>
+    <SettingsLayout
+      area={area}
+      sectionId="student-workflow"
+      title={t('Title')}
+      meta={
+        loaded && total > 0 ? (
+          <span
+            aria-live="polite"
+            className="animate-fade-in rounded-full bg-brand/[0.08] px-2.5 py-0.5 text-xs font-semibold text-brand tabular-nums"
+          >
+            <CountUp text={countLabel} />
+          </span>
+        ) : null
+      }
+    >
       {/* Legacy toasts a failed workflows / stages read; here the list stays usable with a retry. */}
       {workflowsRead.status === 'error' || stagesRead.status === 'error' ? (
         <ErrorState
@@ -382,15 +397,6 @@ function StudentWorkflowWorkspace() {
             <Search aria-hidden className="size-4" />
             {t('Search')}
           </Button>
-
-          {loaded && total > 0 ? (
-            <span
-              aria-live="polite"
-              className="ml-auto inline-flex h-8 shrink-0 items-center rounded-full bg-brand/[0.08] px-3 text-xs font-semibold text-brand tabular-nums shadow-[inset_0_0_0_1px_rgba(21,102,162,.25)]"
-            >
-              {countLabel}
-            </span>
-          ) : null}
         </div>
 
         {removeError ? (
