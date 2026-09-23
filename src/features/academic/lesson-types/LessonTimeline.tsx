@@ -79,7 +79,7 @@ export function LessonTimeline({ early, late, absence, basedOnStart, labels }: L
   ]
 
   return (
-    <div className="flex flex-col gap-3" aria-live="polite">
+    <div className="flex flex-col gap-2" aria-live="polite">
       <div className="relative h-10">
         <div className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 overflow-hidden rounded-full bg-slate-100">
           <div
@@ -114,10 +114,10 @@ export function LessonTimeline({ early, late, absence, basedOnStart, labels }: L
           />
         ))}
       </div>
-      <p className="text-center text-[11px] font-semibold tracking-wide text-slate-500 uppercase">
+      <p className="text-center text-[10.5px] font-semibold tracking-wide text-slate-500 uppercase">
         {labels.start}
       </p>
-      <ul className="flex flex-col gap-1.5 text-sm">
+      <ul className="flex flex-col gap-0.5 text-[12.5px]">
         {markers.map(marker => (
           <li key={marker.key} className="flex items-center justify-between gap-3">
             <span className="flex items-center gap-2 text-slate-600">

@@ -22,6 +22,7 @@ import {
 } from '@/shared/ui'
 import { SettingsCard } from '@/features/settings/shared/SettingsCard'
 import { FormStatusPill, SaveActions, useSaveShortcut } from '@/features/settings/shared/SettingsFrame'
+import { CANCEL_BUTTON_CLASS } from '@/shared/ui/add-button'
 import { cn } from '@/shared/ui/cn'
 import type { LessonTypeTenantFlags, LessonTypeViewModel } from '@/types/lesson-types'
 import { fetchLessonType, fetchLessonTypeFlags, saveLessonType } from './lesson-type-api'
@@ -46,6 +47,8 @@ import {
 } from './LessonTypeFrame'
 import { LESSON_TYPE_FALLBACK_ONLY, useLessonTypeText, type LessonTypeTextKey } from './lesson-type-text'
 import { LessonTimeline } from './LessonTimeline'
+import { CutoffStepper } from './CutoffStepper'
+import { AllSettingsList, buildMeaning, MeaningList, type SummaryRow } from './LessonTypeSummary'
 
 const NONE = 'none'
 const REQUIRED_MARK = '*'
@@ -319,23 +322,17 @@ function LessonTypeEditor({
     const error = errorText(field)
     return (
       <Field key={field} id={id} label={t(label)} required={REQUIRED_FIELDS.includes(field)} error={error}>
-        <div className="relative">
-          <Input
-            id={id}
-            type="number"
-            inputMode="numeric"
-            step={1}
-            value={form[field]}
-            disabled={locked}
-            aria-invalid={Boolean(error)}
-            aria-describedby={error ? `${id}-error` : undefined}
-            onChange={event => update(field, event.target.value)}
-            className="h-9 bg-white pr-14 tabular-nums"
-          />
-          <span className="pointer-events-none absolute top-1/2 right-8 -translate-y-1/2 text-xs font-medium text-slate-500">
-            {UNIT[field]}
-          </span>
-        </div>
+        <CutoffStepper
+          id={id}
+          value={form[field]}
+          unit={UNIT[field]}
+          disabled={locked}
+          invalid={Boolean(error)}
+          describedBy={error ? `${id}-error` : undefined}
+          increaseLabel={LESSON_TYPE_FALLBACK_ONLY.increase.replace('{label}', t(label))}
+          decreaseLabel={LESSON_TYPE_FALLBACK_ONLY.decrease.replace('{label}', t(label))}
+          onChange={next => update(field, next)}
+        />
       </Field>
     )
   }
@@ -390,6 +387,64 @@ function LessonTypeEditor({
     view.attendanceBasedOnCheckoutAvailables.find(option => String(option.id) === checkoutValue)
       ?.description ?? LESSON_TYPE_FALLBACK_ONLY.disabledCaption
 
+  const scalingLabel =
+    showScaling && form.attendanceScaling !== null && form.attendanceScaling !== 0
+      ? (view.attendanceScalingAvailables.find(option => option.id === form.attendanceScaling)?.description ??
+        null)
+      : null
+
+  const meaningLines = buildMeaning({
+    early: form.earlyCutoff,
+    late: form.lateCutoff,
+    absence: form.absenceCutoff,
+    percentage: form.percentageCutoff,
+    checkoutCutoff: form.checkoutCutoff,
+    absenceBasedOnStart: form.isAbsenceBasedOnStart,
+    isActive: form.isActive,
+    gpsEnabled: form.isGPSEnabled,
+    checkout: form.isAttendanceBasedOnCheckout,
+    showCheckout,
+    scalingLabel,
+    consecutive: form.isConsecutiveAttendanceUpdate,
+    showConsecutive,
+  })
+
+  const E = LESSON_TYPE_FALLBACK_ONLY
+
+  const minutes = (raw: string) =>
+    raw.trim() ? `${raw.trim()} ${LESSON_TYPE_FALLBACK_ONLY.minutesUnit}` : LESSON_TYPE_FALLBACK_ONLY.dash
+
+  // Short labels: the form beside this panel carries the full resource labels (see AllSettingsList).
+  const summaryRows: SummaryRow[] = [
+    { label: E.shortEarly, value: minutes(form.earlyCutoff), muted: !form.earlyCutoff.trim() },
+    { label: E.shortLate, value: minutes(form.lateCutoff), muted: !form.lateCutoff.trim() },
+    { label: E.shortAbsence, value: minutes(form.absenceCutoff), muted: !form.absenceCutoff.trim() },
+    {
+      label: E.shortPercentage,
+      value: form.percentageCutoff.trim() ? `${form.percentageCutoff.trim()}${E.percentUnit}` : E.dash,
+      muted: !form.percentageCutoff.trim(),
+    },
+    ...(showCheckout
+      ? [
+          {
+            label: E.shortCheckoutCutoff,
+            value: minutes(form.checkoutCutoff),
+            muted: !form.checkoutCutoff.trim(),
+          },
+          { label: E.shortCheckoutPolicy, value: checkoutLabel },
+        ]
+      : []),
+    { label: E.shortFromStart, value: form.isAbsenceBasedOnStart ? t('Yes') : t('No') },
+    ...(showScaling
+      ? [{ label: E.shortScaling, value: scalingLabel ?? t('None'), muted: !scalingLabel }]
+      : []),
+    ...(showConsecutive
+      ? [{ label: E.shortConsecutive, value: form.isConsecutiveAttendanceUpdate ? t('Yes') : t('No') }]
+      : []),
+    { label: E.shortGps, value: gpsText },
+    { label: E.shortStatus, value: form.isActive ? E.statusActive : E.statusInactive },
+  ]
+
   const gpsPill = (
     <span
       className={cn(
@@ -423,21 +478,16 @@ function LessonTypeEditor({
               <Link
                 href={LESSON_TYPES_ROUTE}
                 aria-disabled={saving}
-                className={cn(
-                  buttonVariants({ variant: 'ghost', size: 'sm' }),
-                  'text-muted-foreground',
-                  saving && 'pointer-events-none opacity-50',
-                )}
+                className={cn(CANCEL_BUTTON_CLASS, saving && 'pointer-events-none opacity-50')}
               >
+                <X aria-hidden className="size-[18px]" />
                 {t('Cancel')}
               </Link>
             }
           />
         ) : (
-          <Link
-            href={LESSON_TYPES_ROUTE}
-            className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'text-muted-foreground')}
-          >
+          <Link href={LESSON_TYPES_ROUTE} className={CANCEL_BUTTON_CLASS}>
+            <X aria-hidden className="size-[18px]" />
             {t('Cancel')}
           </Link>
         )
@@ -550,7 +600,7 @@ function LessonTypeEditor({
                 hint={LESSON_TYPE_FALLBACK_ONLY.summaryHint}
                 delay={80}
               >
-                <div className="flex flex-col gap-4 px-5 py-4">
+                <div className="flex flex-col gap-2 px-4 py-2.5">
                   <LessonTimeline
                     early={form.earlyCutoff}
                     late={form.lateCutoff}
@@ -566,21 +616,13 @@ function LessonTypeEditor({
                       incomplete: LESSON_TYPE_FALLBACK_ONLY.timelineIncomplete,
                     }}
                   />
-                  <dl className="grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-2 border-t border-border pt-4 text-sm">
-                    <dt className="text-slate-500">{t('IsGPSEnabled')}</dt>
-                    <dd className="justify-self-end">{gpsPill}</dd>
-                    {showCheckout ? (
-                      <>
-                        <dt className="text-slate-500">{t('IsAttendanceBasedOnCheckout')}</dt>
-                        <dd className="justify-self-end font-semibold text-slate-800">{checkoutLabel}</dd>
-                      </>
-                    ) : null}
-                    <dt className="text-slate-500">{t('PercentageCutoff')}</dt>
-                    <dd className="justify-self-end font-semibold text-slate-800 tabular-nums">
-                      {form.percentageCutoff.trim() || LESSON_TYPE_FALLBACK_ONLY.dash}
-                      {form.percentageCutoff.trim() ? LESSON_TYPE_FALLBACK_ONLY.percentUnit : null}
-                    </dd>
-                  </dl>
+                  <MeaningList lines={meaningLines} />
+                  <AllSettingsList rows={summaryRows} />
+                  {dirty ? (
+                    <p className="border-t border-border pt-3 text-[12px] text-slate-500">
+                      {LESSON_TYPE_FALLBACK_ONLY.unsavedNote}
+                    </p>
+                  ) : null}
                 </div>
               </SettingsCard>
             </aside>
