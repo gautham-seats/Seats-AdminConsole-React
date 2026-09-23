@@ -78,6 +78,48 @@ export const LESSON_TYPE_FALLBACK_ONLY = {
   dash: '-',
   timelineIncomplete: 'Enter the early, late and absence cut-offs to see the timeline.',
   flagsFailed: 'Some tenant settings could not be loaded, so scaling and consecutive update are hidden.',
+
+  // Summary panel: the cut-off numbers restated as the rule they actually produce, because the
+  // field labels alone do not say what happens to a student's attendance.
+  meaning: 'What these settings do',
+  meaningEarly: 'A student may register from {n} minutes before the lesson starts.',
+  meaningEarlyUnset: 'No early cut-off is set, so early registration has no window.',
+  meaningLate: 'Registering up to {n} minutes after the start still counts as present.',
+  meaningLateUnset: 'No late cut-off is set, so late registration has no window.',
+  meaningAbsenceStart: 'After {n} minutes from the start, the student is marked absent.',
+  meaningAbsenceEnd: 'After {n} minutes from the end, the student is marked absent.',
+  meaningAbsenceUnset: 'No absence cut-off is set.',
+  meaningPercentage: 'At least {n}% of the lesson must be attended.',
+  meaningPercentageUnset: 'No minimum attended percentage is set.',
+  meaningCheckoutMandatory: 'Students must check out; attendance depends on it.',
+  meaningCheckoutOptional: 'Students may check out; attendance does not depend on it.',
+  meaningCheckoutDisabled: 'Check-out is turned off for this lesson type.',
+  meaningCheckoutCutoff: 'Check-out is accepted up to {n} minutes from the end.',
+  meaningScaling: 'Attendance is scaled by duration: {value}.',
+  meaningConsecutive: 'Consecutive absences update the student record automatically.',
+  meaningInactive: 'This lesson type is inactive and is not offered for new lessons.',
+  meaningGpsOn: 'Registration is checked against the room location (GPS).',
+  meaningGpsOff: 'Registration is not location-checked.',
+
+  allSettings: 'All settings',
+  // Short labels for the summary's two-column list. The full resource labels are on the form
+  // beside it; repeating them here wrapped every row and pushed the panel off the screen.
+  shortEarly: 'Early',
+  shortLate: 'Late',
+  shortAbsence: 'Absence',
+  shortPercentage: 'Percentage',
+  shortCheckoutCutoff: 'Check-out',
+  shortCheckoutPolicy: 'Check-out policy',
+  shortFromStart: 'From start',
+  shortScaling: 'Scaling',
+  shortConsecutive: 'Consecutive',
+  shortGps: 'GPS',
+  shortStatus: 'Status',
+  statusActive: 'Active',
+  statusInactive: 'Inactive',
+  increase: 'Increase {label}',
+  decrease: 'Decrease {label}',
+  unsavedNote: 'Showing your unsaved changes.',
 } as const
 
 export type LessonTypeTextKey = keyof typeof LESSON_TYPE_TEXT

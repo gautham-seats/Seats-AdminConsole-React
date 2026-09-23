@@ -37,7 +37,7 @@ import { LESSON_TYPE_FALLBACK_ONLY, useLessonTypeText, type LessonTypeTextKey } 
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { CountUp } from '@/shared/ui/CountUp'
 import { ScrollEdges } from '@/shared/ui/ScrollEdges'
-import { HEAD_FILL, HEAD_ROUND } from '@/shared/ui/HeadBackdrop'
+import { HEAD_CELL, HEAD_ROUND } from '@/shared/ui/HeadBackdrop'
 
 type Column = {
   key: LessonTypeSortColumn
@@ -46,7 +46,7 @@ type Column = {
   render: (item: LessonTypeDto) => ReactNode
 }
 
-const HEAD = `sticky top-0 z-10 h-10 ${HEAD_FILL} px-2 align-middle text-xs font-medium tracking-[0.02em] whitespace-nowrap text-white transition-shadow duration-300`
+const HEAD = HEAD_CELL
 
 const FLAGS_NOTICE_ID = -1
 const FLAGS_NOTICE_MS = 6000
