@@ -6,6 +6,7 @@ import { clearResourceCache } from '@/shared/resources'
 import { ProfileProvider } from '@/shared/shell/profile'
 import { LessonTypeDetailsScreen } from '../LessonTypeDetailsScreen'
 import { LessonTypesScreen } from '../LessonTypesScreen'
+import { clearLessonTypeFlagsCache } from '../lesson-type-api'
 
 const push = jest.fn()
 
@@ -97,6 +98,7 @@ const saved = () => post.mock.calls.find(([path]) => path === 'LessonTypeApi/')?
 beforeEach(() => {
   jest.clearAllMocks()
   clearResourceCache()
+  clearLessonTypeFlagsCache()
 })
 
 describe('LessonTypesScreen', () => {
@@ -108,7 +110,8 @@ describe('LessonTypesScreen', () => {
       '/resources/lesson-types/7',
     )
     expect(get).toHaveBeenCalledWith('LessonTypeApi/', expect.anything())
-    expect(view).toHaveBeenCalledWith('LessonType/Index', expect.anything())
+    // The flags fetch shares one request across screens, so it carries no per-mount signal (perf).
+    expect(view).toHaveBeenCalledWith('LessonType/Index')
     const headers = screen.getAllByRole('columnheader').map(cell => cell.textContent)
     expect(headers).toEqual([
       'Name',
@@ -203,7 +206,8 @@ describe('LessonTypeDetailsScreen', () => {
     setup()
     renderIn(<LessonTypeDetailsScreen idParam="4" />)
     expect(await screen.findByLabelText(/^Late Cut Off/)).toHaveValue(15)
-    expect(view).toHaveBeenCalledWith('LessonType/Details', expect.anything())
+    // The flags fetch shares one request across screens, so it carries no per-mount signal (perf).
+    expect(view).toHaveBeenCalledWith('LessonType/Details')
     expect(screen.getByLabelText('Name')).toBeDisabled()
     expect(screen.getByLabelText('Description')).toBeDisabled()
     expect(screen.getAllByText('On')[0]).toBeInTheDocument()
