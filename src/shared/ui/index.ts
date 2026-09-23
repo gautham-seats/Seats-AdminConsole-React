@@ -42,4 +42,4 @@ export type {
   FilterView,
   FilterViewTone,
 } from './filter-panel/FilterPanel'
-export { sameDraft, sameFilters } from './filter-panel/use-filter-draft'
+export { sameDraft } from './filter-panel/use-filter-draft'

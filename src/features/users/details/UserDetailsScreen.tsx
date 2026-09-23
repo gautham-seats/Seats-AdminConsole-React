@@ -13,7 +13,7 @@ import { useUsersSections } from '../use-users-sections'
 import { fetchUserDetails } from './user-details-api'
 import { UserDetailsForm } from './UserDetailsForm'
 
-export const NEW_USER_PARAM = 'new'
+const NEW_USER_PARAM = 'new'
 
 // /users/new and /users/{id} (spec user-details.md Route table).
 export function parseUserIdParam(param: string): number | null | 'invalid' {

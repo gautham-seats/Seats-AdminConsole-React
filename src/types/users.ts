@@ -53,12 +53,6 @@ export type UserSecurityLevelPermissionDto = {
   isOwnClasses: boolean
 }
 
-// ViewModels/User/UserSecurityLevelPermissionViewModel from GET api/UserSecurityLevelPermissionApi.
-export type UserSecurityLevelPermissionViewModel = {
-  securityLevel: string | null
-  userSecurityLevelPermissions: UserSecurityLevelPermissionDto[] | null
-}
-
 // Seats.Trunk.Contracts UserSecurityLevelPermissionToProcessDto.
 export type UserSecurityLevelPermissionToProcessDto = {
   securityLevel: string

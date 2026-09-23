@@ -15,7 +15,7 @@ export type ServerQuery<K extends string> = {
   search: string
 }
 
-export type ServerPage<T> = { items: T[]; totalRowCount: number }
+type ServerPage<T> = { items: T[]; totalRowCount: number }
 
 type ServerListOptions<T, K extends string> = {
   name: string

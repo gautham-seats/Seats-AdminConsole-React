@@ -1,8 +1,6 @@
 /** All App Router pages under src/app (every page.tsx). */
 
 export type RouteBucket = 'data' | 'empty' | 'not-authorised' | 'server-error'
-export type FailureBucket = 'our-bug' | 'service-missing' | 'empty-data' | 'mock-data' | 'unknown'
-
 export interface RouteEntry {
   /** Path after basePath, e.g. `/resources/devices`. */
   path: string

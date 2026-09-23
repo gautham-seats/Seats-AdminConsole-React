@@ -24,7 +24,7 @@ import { CARD_PANEL, ICON, ICON_HUES, ITEM } from './NavMenuCards'
 import { useProfile } from './profile'
 import { useSessionHeader } from './use-shell-data'
 
-export const PROFILE_LABEL = 'Profile Menu'
+const PROFILE_LABEL = 'Profile Menu'
 // Views/Login/_GetDeveloperKeyButton.cshtml:4.
 const DEVELOPER_KEY_PERMISSION = { item: PermissionItem.AdminUserMenu, action: PermissionAction.DeveloperKey }
 

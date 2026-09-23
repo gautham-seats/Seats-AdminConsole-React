@@ -18,18 +18,17 @@ import {
 export type AuditHeader = AuditSortColumn | 'icon'
 
 type SortDir = AuditQuery['sortDir']
-export type HeaderSort = { header: AuditHeader; orders: Partial<Record<AuditHeader, SortDir>> }
+type HeaderSort = { header: AuditHeader; orders: Partial<Record<AuditHeader, SortDir>> }
 
-export const INITIAL_HEADER_SORT: HeaderSort = { header: 'accessDate', orders: {} }
+const INITIAL_HEADER_SORT: HeaderSort = { header: 'accessDate', orders: {} }
 
 // seats-grid-sortable-behaviour.html:10-30: each header remembers its own last order and starts ascending.
-export function nextHeaderSort(sort: HeaderSort, header: AuditHeader): HeaderSort {
+function nextHeaderSort(sort: HeaderSort, header: AuditHeader): HeaderSort {
   const dir: SortDir = sort.orders[header] === 'asc' ? 'desc' : 'asc'
   return { header, orders: { ...sort.orders, [header]: dir } }
 }
 
-export const headerColumn = (header: AuditHeader): AuditSortColumn =>
-  header === 'icon' ? 'auditType' : header
+const headerColumn = (header: AuditHeader): AuditSortColumn => (header === 'icon' ? 'auditType' : header)
 
 export type AuditList = ListState<AuditItemDto, AuditHeader> & {
   query: AuditQuery

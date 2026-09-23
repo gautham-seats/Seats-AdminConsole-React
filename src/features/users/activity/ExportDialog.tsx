@@ -6,7 +6,7 @@ import { Button, Dialog } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
 import { FileGlyph } from '@/shared/ui/FileGlyph'
 
-export type ExportDialogLabels = {
+type ExportDialogLabels = {
   title: string
   exportAs: string
   pdf: string

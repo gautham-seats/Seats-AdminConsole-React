@@ -72,7 +72,7 @@ import { StatusBadge } from '@/shared/ui/StatusBadge'
 import { NAV_BAND, NAV_ICON_BOX, NavBandGlow } from '@/shared/ui/nav-band'
 
 // Save needs Engagement + Edit (Details.cshtml:26-31, EngagementApiController.cs:841).
-export const ENGAGEMENT_EDIT = { item: PermissionItem.Engagement, action: PermissionAction.Edit }
+const ENGAGEMENT_EDIT = { item: PermissionItem.Engagement, action: PermissionAction.Edit }
 
 export function EngagementModelDetailsScreen({ idParam }: { idParam: string }) {
   return (

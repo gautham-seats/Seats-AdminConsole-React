@@ -31,7 +31,7 @@ const COLUMNS: readonly Column[] = [
 ]
 
 // swgrid.js:252-264 row click and Room/Index.cshtml:30 Add open the room details screen.
-export const roomDetailsHref = (id: number) => `${ROOMS_ROUTE}/${id}`
+const roomDetailsHref = (id: number) => `${ROOMS_ROUTE}/${id}`
 export const NEW_ROOM_HREF = `${ROOMS_ROUTE}/new`
 
 const HEAD = cn(HEAD_CELL, 'z-20')

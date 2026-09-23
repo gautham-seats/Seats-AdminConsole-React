@@ -1,5 +1,5 @@
 // Fallback names for the Quill toolbar; Quill itself only sets raw format keys such as "bold".
-export const TOOLBAR_EN = {
+const TOOLBAR_EN = {
   toolbar: 'Formatting',
   header: 'Heading',
   headerValues: { '1': 'Heading 1', '2': 'Heading 2', '3': 'Heading 3', '': 'Normal text' },

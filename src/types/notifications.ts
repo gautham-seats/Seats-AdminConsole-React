@@ -1,5 +1,5 @@
 // UserNotificationDto from Seats.Trunk.Contracts.DataContracts.UserNotification (UserNotificationApiController.cs).
-export type UserNotificationFileDto = {
+type UserNotificationFileDto = {
   url: string | null
 }
 

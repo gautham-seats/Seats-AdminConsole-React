@@ -65,7 +65,7 @@ const EN = {
   activeFilters: 'Active filters',
 } as const
 
-export type StudentAction = {
+type StudentAction = {
   permission: Permission
   label: string
   icon: LucideIcon
@@ -93,7 +93,7 @@ type StudentListScreenProps<T extends { id: string }> = {
   intro?: ReactNode
 }
 
-export type StudentFilters = {
+type StudentFilters = {
   chips: readonly FilterChip[]
   canReset: boolean
   onReset: () => void

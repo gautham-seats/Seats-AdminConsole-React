@@ -9,7 +9,7 @@ import { TIME_OPTIONS } from './readings-query'
 
 export type DateTimeRange = { dateFilter: string; endDate: string; time?: string; endTime?: string }
 
-export function devicesRangeLabels(t: DevicesText): DateRangeFieldLabels {
+function devicesRangeLabels(t: DevicesText): DateRangeFieldLabels {
   return {
     dateRange: t('DateRange'),
     startDate: t('StartDate'),
@@ -38,7 +38,7 @@ export function timeRangeInverted(value: DateTimeRange): boolean {
   return Boolean(dateFilter && endDate && time && endTime && dateFilter === endDate && endTime <= time)
 }
 
-export const timeRangeErrorId = (id: string) => `${id}-time-error`
+const timeRangeErrorId = (id: string) => `${id}-time-error`
 
 const TIME_SUFFIXES = ['start-time', 'end-time'] as const
 

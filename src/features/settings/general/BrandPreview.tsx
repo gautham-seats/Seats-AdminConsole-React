@@ -13,7 +13,7 @@ import { cn } from '@/shared/ui/cn'
 import { contrastGrade, contrastRatio, previewColor } from './settings-form'
 import { SETTINGS_FALLBACK_ONLY as EN } from './settings-text'
 
-export type PreviewBrand = {
+type PreviewBrand = {
   menuColor: string
   tableColor: string
   tableTextColor: string

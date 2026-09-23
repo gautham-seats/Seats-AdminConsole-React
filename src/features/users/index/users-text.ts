@@ -4,7 +4,7 @@ import { useCallback } from 'react'
 import { useResources } from '@/shared/resources'
 
 // Keys checked in GeneralResources.resx; the value is the English fallback when a key is missing or still loading.
-export const USERS_TEXT = {
+const USERS_TEXT = {
   Users: 'Users',
   User: 'User',
   AccessProfile: 'Access Profile',

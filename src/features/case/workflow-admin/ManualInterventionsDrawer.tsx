@@ -158,12 +158,12 @@ export type StepDraft = CfcManualInterventionStepDto & {
 }
 
 let stepKeySeed = 0
-export function newStepKey(): string {
+function newStepKey(): string {
   stepKeySeed += 1
   return `new:${stepKeySeed}`
 }
 
-export function toStepDraft(step: CfcManualInterventionStepDto, typeDescription?: string | null): StepDraft {
+function toStepDraft(step: CfcManualInterventionStepDto, typeDescription?: string | null): StepDraft {
   return {
     ...step,
     key: step.id > 0 ? `id:${step.id}` : newStepKey(),

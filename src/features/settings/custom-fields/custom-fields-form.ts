@@ -1,6 +1,6 @@
 import type { CustomFieldGroupBody, CustomFieldGroupDto, SchemaFieldDto } from '@/types/custom-fields'
 
-export const EMPTY_GUID = '00000000-0000-0000-0000-000000000000'
+const EMPTY_GUID = '00000000-0000-0000-0000-000000000000'
 export const STUDENT_DATA_TABLE = 'STUDENT DATA TABLE'
 export const GROUP_PAGE_SIZES = [10, 20, 30, 50, 100, 200] as const
 
@@ -18,8 +18,8 @@ export const DATA_TYPES = [
   { value: 4, label: 'Date' },
   { value: 7, label: 'Link' },
 ] as const
-export const DATE_TYPE = 4
-export const TEXT_TYPE = 1
+const DATE_TYPE = 4
+const TEXT_TYPE = 1
 
 export const SENSITIVITY_LEVELS = [
   { value: 0, label: 'None' },
@@ -66,7 +66,7 @@ const ENTITIES: Record<string, string> = {
 }
 
 // Names are HTML-encoded by the server on save; show them decoded so they are not encoded again.
-export function decodeName(value: string | null): string {
+function decodeName(value: string | null): string {
   return (value ?? '').replace(/&(amp|lt|gt|quot|#39);/g, entity => ENTITIES[entity] ?? entity)
 }
 

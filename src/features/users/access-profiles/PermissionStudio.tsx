@@ -19,7 +19,7 @@ import {
 } from './permission-studio'
 import { togglePermission } from './access-profile-form'
 
-export type PermissionStudioText = {
+type PermissionStudioText = {
   search: string
   levels: Record<PermissionLevel, string>
   noMatches: string

@@ -21,7 +21,7 @@ export type TreeNodeKind =
   | 'ruleAttribute'
   | 'triggerAttribute'
 
-export type TreePath = {
+type TreePath = {
   workflowId: number
   stageGroupId?: number
   stageId?: number
@@ -42,7 +42,7 @@ export type TreeNode = {
   expanded?: boolean
 }
 
-export function nodeKey(kind: TreeNodeKind, id: number | string): string {
+function nodeKey(kind: TreeNodeKind, id: number | string): string {
   return `${kind}:${id}`
 }
 
@@ -218,7 +218,7 @@ function findNode(nodes: TreeNode[], cache: ReadonlyMap<string, TreeNode[]>, key
 }
 
 // The URL carries the whole trail (stageGroup:5/stage:20/…) so a deep link is one walk, not a search.
-export function trailKeys(trail: readonly TreeNode[]): string {
+function trailKeys(trail: readonly TreeNode[]): string {
   return trail.map(node => node.key).join('/')
 }
 

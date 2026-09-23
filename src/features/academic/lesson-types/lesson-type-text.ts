@@ -4,7 +4,7 @@ import { useCallback } from 'react'
 import { useResources } from '@/shared/resources'
 
 // GeneralResources.resx values; keys missing there (checkout, percentage, scaling, consecutive) come from localisation.
-export const LESSON_TYPE_TEXT = {
+const LESSON_TYPE_TEXT = {
   LessonType: 'Lesson Type',
   Name: 'Name',
   Description: 'Description',
@@ -136,5 +136,3 @@ export function useLessonTypeText() {
     [text],
   )
 }
-
-export type LessonTypeText = ReturnType<typeof useLessonTypeText>

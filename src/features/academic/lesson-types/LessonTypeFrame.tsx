@@ -15,7 +15,7 @@ import { DelayedLoading, ErrorState } from '@/shared/ui'
 import { cn } from '@/shared/ui/cn'
 import { LESSON_TYPE_FALLBACK_ONLY, useLessonTypeText } from './lesson-type-text'
 
-export const LESSON_TYPE_ACCESS = { item: PermissionItem.LessonType, action: PermissionAction.Access }
+const LESSON_TYPE_ACCESS = { item: PermissionItem.LessonType, action: PermissionAction.Access }
 export const LESSON_TYPE_EDIT = { item: PermissionItem.LessonType, action: PermissionAction.Edit }
 export const LESSON_TYPE_CHECKOUT = {
   item: PermissionItem.LessonType,

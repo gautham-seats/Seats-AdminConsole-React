@@ -5,7 +5,7 @@ import type { VisibilityItem, VisibilityLens } from './VisibilityPreview'
 
 export type VisibilityTab = 'events' | 'cases' | 'workflows'
 
-export type SimpleItem = { id: number; description: string | null }
+type SimpleItem = { id: number; description: string | null }
 
 export type VisibilityCatalogue = {
   events: readonly ItemTypeViewModel[]

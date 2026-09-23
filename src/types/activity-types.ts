@@ -40,7 +40,7 @@ export type ActivityTypeDto = {
   attendanceStatus: unknown
 }
 
-export type IdDescriptionDto = { id: number; description: string }
+type IdDescriptionDto = { id: number; description: string }
 
 export type ActivityTypeDetailsDto = {
   detail: ActivityTypeDto

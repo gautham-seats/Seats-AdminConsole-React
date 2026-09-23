@@ -5,8 +5,3 @@ export type ContactDto = {
   mail: string | null
   globalId: string | null
 }
-
-export type ContactsPageDto = {
-  items: ContactDto[]
-  totalRowCount: number
-}

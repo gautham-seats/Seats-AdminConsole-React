@@ -6,11 +6,7 @@ export const COMMENT_MAX = 200
 export const TITLE_MAX = 200
 export const SUBJECT_MAX = 250
 export const TEMPLATE_ACCEPT = '.html,.cshtml,.txt,.csv'
-export const SYSTEM_WILDCARDS = [
-  'DateTime.Now.ToShortDateString()',
-  'DateTime.Today',
-  'DateTime.Now',
-] as const
+const SYSTEM_WILDCARDS = ['DateTime.Now.ToShortDateString()', 'DateTime.Today', 'DateTime.Now'] as const
 const ALLOWED_TYPES = ['text/html', 'text/plain', 'text/csv', 'application/vnd.ms-excel']
 const ALLOWED_EXTENSIONS = ['.html', '.cshtml', '.txt', '.csv']
 // Types 12, 14 and 20-23 have no subject wildcard dropdown (:794).
@@ -59,7 +55,7 @@ export function extractTitle(content: string): string {
     : ''
 }
 
-export function extractBody(content: string): string {
+function extractBody(content: string): string {
   return content.replace(/^[\S\s]*<body[^>]*?>/i, '').replace(/<\/body[\S\s]*$/i, '')
 }
 

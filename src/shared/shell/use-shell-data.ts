@@ -58,7 +58,7 @@ export function refreshNotificationCount() {
 }
 
 // Bumps on every count change: a user action, or a server push through the hub.
-export function useNotificationRefresh(): number {
+function useNotificationRefresh(): number {
   return useSyncExternalStore(subscribeNotificationRefresh, getNotificationRefresh, getNotificationRefresh)
 }
 
@@ -96,7 +96,7 @@ function joinLiveNotifications(userId: string) {
   }
 }
 
-export function useLiveNotifications(enabled: boolean, userId: string | null) {
+function useLiveNotifications(enabled: boolean, userId: string | null) {
   useEffect(() => (enabled && userId ? joinLiveNotifications(userId) : undefined), [enabled, userId])
 }
 

@@ -15,7 +15,7 @@ import { AccessProfileForm } from './AccessProfileForm'
 const ACCESS = { item: PermissionItem.AccessProfiles, action: PermissionAction.Access }
 
 // swapp.js:466-482: anything but a positive whole number opens a blank new profile (id 0).
-export function accessProfileRequestId(idParam: string): number {
+function accessProfileRequestId(idParam: string): number {
   return /^[1-9]\d*$/.test(idParam) ? Number(idParam) : 0
 }
 

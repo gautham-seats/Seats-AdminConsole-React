@@ -1,4 +1,4 @@
-export type WorkflowNodePath = {
+type WorkflowNodePath = {
   workflowId: number
   stageGroupId: number
   stageId: number

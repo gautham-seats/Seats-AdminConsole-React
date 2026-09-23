@@ -15,14 +15,14 @@ export const SECURITY_LEVELS: readonly SecurityLevel[] = [
   'student',
 ]
 
-export const OWN_CLASSES = 'isOwnClasses'
+const OWN_CLASSES = 'isOwnClasses'
 
 const OVERVIEW_LIMIT = 40
 
 const asNumberOrNull = (value: unknown): number | null => (typeof value === 'number' ? value : null)
 const asText = (value: unknown): string | null => (typeof value === 'string' ? value : null)
 
-export function parseLevelPermission(raw: unknown): UserSecurityLevelPermissionDto | null {
+function parseLevelPermission(raw: unknown): UserSecurityLevelPermissionDto | null {
   if (!raw || typeof raw !== 'object') return null
   const record = raw as Record<string, unknown>
   if (typeof record.id !== 'number') return null
@@ -66,7 +66,7 @@ export function parseToProcess(raw: unknown): UserSecurityLevelPermissionToProce
   })
 }
 
-export const levelIdField = (level: SecurityLevel) => `${level}Id` as const
+const levelIdField = (level: SecurityLevel) => `${level}Id` as const
 
 export function findLevelEntry(
   toProcess: readonly UserSecurityLevelPermissionToProcessDto[],

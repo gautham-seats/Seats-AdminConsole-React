@@ -41,7 +41,7 @@ export type AuditQuery = {
   range: DateRange
 }
 
-export const startOfDay = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate())
+const startOfDay = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate())
 
 // seats-admin-audit.html:330-343 defaults, range today to today (:381-382).
 export function initialAuditQuery(today: Date): AuditQuery {
@@ -60,16 +60,10 @@ export function initialAuditQuery(today: Date): AuditQuery {
 
 const pad = (value: number) => String(value).padStart(2, '0')
 
-export const toIsoDate = (date: Date) =>
-  `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+const toIsoDate = (date: Date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
 
 // seats-admin-audit.html:324-328 shows the range in the UI-culture short-date pattern (D-111).
 export const formatDisplayDate = (date: Date) => formatShortDate(date)
-
-export const sameDay = (a: Date, b: Date) => toIsoDate(a) === toIsoDate(b)
-
-export const addDays = (date: Date, days: number) =>
-  new Date(date.getFullYear(), date.getMonth(), date.getDate() + days)
 
 // seats-admin-audit.html:555-568 posts the filters object with dates as YYYY-MM-DD.
 export function toAuditBody(query: AuditQuery): AuditParameters {
@@ -163,7 +157,7 @@ const trimHash = (path: unknown) => str(path).replace('#/', '')
 
 export type DetailText = { AdminSite: string; WebSite: string; DefaultPage: string }
 
-export function minutesBetween(start: unknown, end: unknown): number {
+function minutesBetween(start: unknown, end: unknown): number {
   const from = new Date(str(start)).getTime()
   const to = new Date(str(end)).getTime()
   return Math.round((to - from) / 60000)

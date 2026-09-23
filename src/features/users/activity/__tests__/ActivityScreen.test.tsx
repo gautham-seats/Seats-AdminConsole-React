@@ -225,8 +225,9 @@ describe('ActivityScreen', () => {
     await screen.findByText('SEAtS Pageview')
     fireEvent.click(screen.getByRole('button', { name: 'Start Date' }))
     const dialog = await screen.findByRole('dialog', { name: 'Date Range' })
-    // D-126: the preset rail is shown here like every other date range in the app.
-    // Both the rail and the narrow-screen chip row render the presets; jsdom has no media queries.
+    // Legacy hides the presets (seats-admin-audit.html:177); React keeps the shared rail (D-050),
+    // and D-129 gives this screen the same date picker as the rest of the console.
+    // Both the rail and the narrow-screen chip row render them; jsdom has no media queries.
     expect(within(dialog).getAllByRole('button', { name: /Last 7 Days/ }).length).toBeGreaterThan(0)
     fireEvent.click(within(dialog).getByRole('button', { name: 'Select Range' }))
     await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Date Range' })).not.toBeInTheDocument())

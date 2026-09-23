@@ -2,7 +2,7 @@
 
 import { Toast, useToastAutoClose, type ToastTone } from '@/shared/ui/Toast'
 
-export type NoticeTone = 'success' | 'error' | 'warning' | 'gray'
+type NoticeTone = 'success' | 'error' | 'warning' | 'gray'
 
 export type Notice = { id: number; tone: NoticeTone; message: string; duration?: number }
 

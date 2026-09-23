@@ -13,7 +13,7 @@ import { ApiError } from '@/shared/api'
 import { EMPTY_FILTERS, type DeviceFilters, type LocationOptions } from './device-filters'
 
 export const PAGE_SIZES = [10, 15, 20, 50, 100, 200] as const
-export const DEFAULT_PAGE_SIZE = 100
+const DEFAULT_PAGE_SIZE = 100
 export const PAGER_MIN_ROWS = 10
 
 // Seats.Trunk.Contracts ExportToEnum.

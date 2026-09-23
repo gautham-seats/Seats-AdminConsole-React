@@ -1,7 +1,7 @@
 import type { ImportErrorDto, ImportErrorSort, ImportTypeDto } from '@/types/imports'
 
 // seats-file-importer.html:306-309.
-export const IMPORT_MIME_TYPES = ['text/csv', 'application/vnd.ms-excel']
+const IMPORT_MIME_TYPES = ['text/csv', 'application/vnd.ms-excel']
 // seats-grid.html:205-211 sizes and :264-270 default 100.
 export const IMPORT_ERROR_PAGE_SIZES = [10, 20, 30, 50, 100, 200] as const
 export const IMPORT_ERROR_DEFAULT_PAGE_SIZE = 100

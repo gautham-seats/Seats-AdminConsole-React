@@ -1,9 +1,3 @@
-// ServerSidePagedListDto<T> from StudentDeleteApiController (camelCase over Web API).
-export type StudentPageDto<T> = {
-  items: T[] | null
-  totalRowCount: number
-}
-
 // ViewModels/StudentDelete/StudentDeleteModel.cs; id is the student GlobalId.
 export type StudentDeleteRowDto = {
   id: string

@@ -33,7 +33,7 @@ export function parseDeveloperKeysPage(raw: unknown): DeveloperKeysPageDto {
 }
 
 // DeveloperKeyApiController.cs:31 passes a 1-based page on; legacy sent the 0-based index, so pages 1 and 2 matched.
-export function developerKeysParams(query: ServerQuery<DeveloperKeysSortColumn>) {
+function developerKeysParams(query: ServerQuery<DeveloperKeysSortColumn>) {
   return { ...serverParams(query), currentPageIndex: query.pageIndex + 1 }
 }
 

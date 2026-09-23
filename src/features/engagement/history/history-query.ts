@@ -27,7 +27,7 @@ export const EXPORT_TO_PDF = 0
 export const EXPORT_TO_CSV = 1
 
 export type SortOption = (typeof SORT_OPTIONS)[number]
-export type StudentPick = { id: number; label: string }
+type StudentPick = { id: number; label: string }
 
 export type HistoryFilters = {
   isTrainingPeriod: '' | 'true' | 'false'

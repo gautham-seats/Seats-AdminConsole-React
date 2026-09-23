@@ -5,7 +5,7 @@ import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 
 import { cn } from '@/shared/ui/cn'
 import { addDays, datePattern, formatDate, monthGrid, parseDate, sameDay } from './date-input'
 
-export type DateFieldLabels = {
+type DateFieldLabels = {
   label: string
   chooseDate: string
   previousMonth: string

@@ -27,7 +27,7 @@ export type RowAction =
   | { kind: 'message'; message: string }
   | null
 
-export type ListTableText = {
+type ListTableText = {
   loading: string
   error: string
   retry: string
@@ -136,7 +136,7 @@ export function ListTable<T extends { id: number }, K extends string>({
   return (
     <div
       ref={scroller}
-      className={cn('@container min-h-0 flex-1', scrollable ? 'overflow-auto' : 'overflow-hidden')}
+      className={cn('@container isolate min-h-0 flex-1', scrollable ? 'overflow-auto' : 'overflow-hidden')}
       onScroll={event => {
         setScrolled(event.currentTarget.scrollTop > 0)
         win.onScroll()

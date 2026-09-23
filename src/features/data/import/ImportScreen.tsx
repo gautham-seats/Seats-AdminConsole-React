@@ -61,8 +61,8 @@ import { StatusBadge } from '@/shared/ui/StatusBadge'
 import { NAV_BAND_CELL } from '@/shared/ui/nav-band'
 import { EmptyState } from '@/shared/ui/EmptyState'
 
-export const IMPORT_ACCESS = { item: PermissionItem.Import, action: PermissionAction.Access }
-export const IMPORT_ADD = { item: PermissionItem.Import, action: PermissionAction.Add }
+const IMPORT_ACCESS = { item: PermissionItem.Import, action: PermissionAction.Access }
+const IMPORT_ADD = { item: PermissionItem.Import, action: PermissionAction.Add }
 
 const SECTION: MenuLink = {
   id: 'imports',

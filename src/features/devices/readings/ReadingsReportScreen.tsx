@@ -10,7 +10,7 @@ import {
   FilterPanel,
   Label,
   Pagination,
-  sameFilters,
+  sameDraft,
   SearchField,
   Select,
   SelectContent,
@@ -43,11 +43,12 @@ import {
   type ReadingsView,
 } from './readings-query'
 import { DateRangeField, TimeRangeError } from './DateRangeField'
-import { ALL_OPTION } from './ReportFilters'
 import { rangeChipValue, reportPanelLabels, reportViews } from './report-filter-panel'
 import { ReportTable, type ReportColumn } from './ReportTable'
 import { useReportList } from './use-report-list'
 import { CountUp } from '@/shared/ui/CountUp'
+
+const ALL_OPTION = 'all'
 
 export const READINGS_ACCESS = { item: PermissionItem.ReadingsReport, action: PermissionAction.Access }
 
@@ -188,7 +189,7 @@ function ReadingsWorkspace() {
         activeView={appliedView}
         onViewChange={view => list.setFilters(applyReadingsView(filters, view as ReadingsView, today))}
         chips={chips}
-        canReset={!sameFilters(filters, initialFilters)}
+        canReset={!sameDraft(filters, initialFilters)}
         onReset={() => list.setFilters(initialFilters)}
         gridClassName="@[40rem]:grid-cols-[minmax(12rem,20rem)_minmax(0,1fr)] @[72rem]:grid-cols-[minmax(11rem,15rem)_minmax(0,1fr)_auto]"
       >
