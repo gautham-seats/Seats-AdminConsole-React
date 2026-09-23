@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Bars — the mix</title>
+    <style>
+      :root {
+        --nav-start: #135d93;
+        --nav-mid: #1566a2;
+        --nav-end: #145f9c;
+        --brand: #1566a2;
+        --ink: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --page: #f1f5f9;
+        --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--page);
+        color: var(--ink);
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+      }
+      header.page {
+        padding: 32px 24px 8px;
+        max-width: 1180px;
+        margin: 0 auto;
+      }
+      header.page h1 {
+        margin: 0 0 6px;
+        font-size: 26px;
+        letter-spacing: -0.01em;
+      }
+      header.page p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+        max-width: 74ch;
+      }
+      main {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 8px 24px 64px;
+      }
+      section.variant {
+        margin-top: 40px;
+        border-top: 1px solid var(--border);
+        padding-top: 28px;
+      }
+      .vhead {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 6px;
+      }
+      .vhead h2 {
+        margin: 0;
+        font-size: 19px;
+        letter-spacing: -0.01em;
+      }
+      .vhead .tag {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #fff;
+        background: var(--brand);
+        border-radius: 999px;
+        padding: 3px 9px;
+      }
+      .vnote {
+        margin: 0 0 18px;
+        color: var(--muted);
+        font-size: 13.5px;
+        line-height: 1.6;
+        max-width: 80ch;
+      }
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+      }
+      .card .body {
+        padding: 16px 20px;
+        color: var(--muted);
+        font-size: 13.5px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      td {
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border);
+        color: #334155;
+      }
+      .dlg {
+        max-width: 540px;
+        border-radius: 14px;
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.2);
+        box-shadow: 0 30px 70px -24px rgba(15, 23, 42, 0.45);
+      }
+      .dlg .body {
+        padding: 20px;
+        font-size: 13.5px;
+        color: #334155;
+      }
+      .dlg .foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 14px 20px;
+        border-top: 1px solid var(--border);
+        background: #f8fafc;
+      }
+      .btn {
+        height: 36px;
+        padding: 0 16px;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        background: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        color: #334155;
+      }
+      .btn.primary {
+        border: 0;
+        color: #fff;
+        background: linear-gradient(180deg, #2d84c4, #1566a2 55%, #10568a);
+      }
+
+      /* ---------- the mix: aurora + cyan underline + slab shadow + round icon + bold text ---------- */
+      .bar {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .bar .icon {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        flex: none;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.28),
+          0 6px 14px -8px rgba(2, 32, 56, 0.95);
+      }
+      .bar .txt {
+        min-width: 0;
+      }
+      .bar .title {
+        font-weight: 700;
+        letter-spacing: -0.005em;
+      }
+      .bar .hint {
+        opacity: 0.88;
+        font-weight: 500;
+      }
+      .bar .slot {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .pill {
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-size: 11.5px;
+        font-weight: 700;
+      }
+      .glow {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      @keyframes aurora {
+        0% {
+          transform: translate3d(-4%, 0, 0);
+        }
+        100% {
+          transform: translate3d(4%, 0, 0);
+        }
+      }
+      @keyframes auroraB {
+        0% {
+          transform: translate3d(5%, 2%, 0) scale(1.05);
+        }
+        100% {
+          transform: translate3d(-5%, -2%, 0) scale(1.15);
+        }
+      }
+      @keyframes sheen {
+        0% {
+          background-position: 170% 0;
+        }
+        55% {
+          background-position: -70% 0;
+        }
+        100% {
+          background-position: -70% 0;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+        }
+      }
+
+      .aur1 {
+        position: absolute;
+        inset: -46px -12%;
+        filter: blur(9px);
+        animation: aurora 26s var(--ease) infinite alternate;
+        background:
+          radial-gradient(240px 76px at 16% 50%, rgba(86, 189, 234, 0.26), transparent 70%),
+          radial-gradient(280px 88px at 62% 38%, rgba(255, 255, 255, 0.12), transparent 70%),
+          radial-gradient(220px 66px at 94% 62%, rgba(86, 189, 234, 0.22), transparent 70%);
+      }
+      .aur2 {
+        position: absolute;
+        inset: -60px -18%;
+        filter: blur(22px);
+        opacity: 0.5;
+        animation: auroraB 34s var(--ease) infinite alternate;
+        background:
+          radial-gradient(320px 120px at 30% 60%, rgba(125, 211, 252, 0.28), transparent 72%),
+          radial-gradient(280px 110px at 78% 40%, rgba(56, 189, 248, 0.2), transparent 72%);
+      }
+      .swp {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          112deg,
+          transparent 36%,
+          rgba(255, 255, 255, 0.07) 45%,
+          rgba(255, 255, 255, 0.26) 50%,
+          rgba(255, 255, 255, 0.07) 55%,
+          transparent 64%
+        );
+        background-size: 240% 100%;
+        background-repeat: no-repeat;
+        animation: sheen 9s var(--ease) infinite;
+      }
+
+      /* A — balanced */
+      .mixA {
+        padding: 12px 18px;
+        background: linear-gradient(90deg, var(--nav-start) 0%, var(--nav-mid) 45%, var(--nav-end) 100%);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.26),
+          0 10px 22px -16px rgba(2, 32, 56, 0.85);
+      }
+      .mixA::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #38bdf8, #7dd3fc 38%, rgba(125, 211, 252, 0) 88%);
+      }
+      .mixA .title {
+        font-size: 16px;
+        line-height: 22px;
+      }
+      .mixA .hint {
+        font-size: 12.5px;
+        line-height: 17px;
+      }
+
+      /* B — deeper slab, stronger lift */
+      .mixB {
+        padding: 13px 18px;
+        background: linear-gradient(115deg, #0f4f7f 0%, #1566a2 44%, #1b76b6 100%);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.3),
+          0 14px 26px -18px rgba(2, 32, 56, 1);
+      }
+      .mixB::before {
+        content: '';
+        position: absolute;
+        inset: 0 0 52% 0;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0));
+      }
+      .mixB::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 2.5px;
+        background: linear-gradient(90deg, #7dd3fc, #38bdf8 45%, rgba(56, 189, 248, 0) 92%);
+      }
+      .mixB .title {
+        font-size: 16.5px;
+        line-height: 22px;
+      }
+      .mixB .hint {
+        font-size: 12.5px;
+        line-height: 17px;
+      }
+
+      /* C — full width underline, quietest motion */
+      .mixC {
+        padding: 13px 18px;
+        background: linear-gradient(90deg, #114f7d 0%, #1566a2 50%, #12578e 100%);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.24),
+          0 12px 24px -18px rgba(2, 32, 56, 0.9);
+      }
+      .mixC::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          rgba(125, 211, 252, 0),
+          #7dd3fc 20%,
+          #38bdf8 50%,
+          #7dd3fc 80%,
+          rgba(125, 211, 252, 0)
+        );
+      }
+      .mixC .title {
+        font-size: 16.5px;
+        line-height: 22px;
+      }
+      .mixC .hint {
+        font-size: 12.5px;
+        line-height: 17px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="page">
+      <h1>The mix — three versions</h1>
+      <p>
+        All three carry everything you asked for: <strong>aurora lights</strong> behind every bar, the
+        <strong>cyan line under the bar</strong> from Momentum, the <strong>shadow</strong> from Slab, a
+        <strong>round icon</strong>, and <strong>bold text</strong>. They differ only in how deep the blue
+        goes, how strong the lift is, and how the cyan line is drawn. Each is shown as a card header, a table
+        header and a dialog header, because the one you pick is used on all three, on every page.
+      </p>
+    </header>
+    <main>
+      <section class="variant">
+        <div class="vhead">
+          <h2>A · Balanced</h2>
+          <span class="tag">recommended</span>
+        </div>
+        <p class="vnote">
+          The nav bar's own left-to-right blue, two drifting aurora layers and a slow sweep. The cyan line
+          starts bright at the left and fades out at 88%. Shadow is present but gentle. Title 16px bold.
+        </p>
+        <div class="stack">
+          <div class="card">
+            <div class="bar mixA">
+              <span class="glow"
+                ><span class="aur1"></span><span class="aur2"></span><span class="swp"></span
+              ></span>
+              <span class="icon"
+                ><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></svg
+              ></span>
+              <span class="txt"
+                ><div class="title">User details</div>
+                <div class="hint">Sign-in name, contact details and the linked student record</div></span
+              >
+              <span class="slot"><span class="pill">Active</span></span>
+            </div>
+            <div class="body">Card body</div>
+          </div>
+          <div class="card">
+            <table>
+              <thead>
+                <tr class="bar mixA" style="display: table-row">
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px; font-weight: 700">
+                    Name ↑
+                  </th>
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px; font-weight: 700">
+                    Group Email Address ⇅
+                  </th>
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px; font-weight: 700">
+                    Function ⇅
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Registry</td>
+                  <td>registry@seats.ac.uk</td>
+                  <td>Attendance</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="dlg">
+            <div class="bar mixA" style="padding: 15px 20px">
+              <span class="glow"
+                ><span class="aur1"></span><span class="aur2"></span><span class="swp"></span
+              ></span>
+              <span class="icon"
+                ><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2">
+                  <path d="M12 3l7 4v5c0 4-3 7-7 9-4-2-7-5-7-9V7z" /></svg
+              ></span>
+              <span class="txt"
+                ><div class="title" style="font-size: 17.5px">Security Level Permissions</div></span
+              >
+            </div>
+            <div class="body">Dialog body</div>
+            <div class="foot">
+              <button class="btn">Cancel</button><button class="btn primary">Apply</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="variant">
+        <div class="vhead">
+          <h2>B · Deep lift</h2>
+          <span class="tag">strongest</span>
+        </div>
+        <p class="vnote">
+          Diagonal blue that brightens toward the right, a gloss across the top half, the heaviest shadow of
+          the three and a thicker 2.5px cyan line. The aurora reads most clearly here. Title 16.5px bold.
+        </p>
+        <div class="stack">
+          <div class="card">
+            <div class="bar mixB">
+              <span class="glow"
+                ><span class="aur1"></span><span class="aur2"></span><span class="swp"></span
+              ></span>
+              <span class="icon"
+                ><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></svg
+              ></span>
+              <span class="txt"
+                ><div class="title">User details</div>
+                <div class="hint">Sign-in name, contact details and the linked student record</div></span
+              >
+              <span class="slot"><span class="pill">Active</span></span>
+            </div>
+            <div class="body">Card body</div>
+          </div>
+          <div class="card">
+            <table>
+              <thead>
+                <tr class="bar mixB" style="display: table-row">
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px; font-weight: 700">
+                    Name ↑
+                  </th>
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px; font-weight: 700">
+                    Group Email Address ⇅
+                  </th>
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px; font-weight: 700">
+                    Function ⇅
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Registry</td>
+                  <td>registry@seats.ac.uk</td>
+                  <td>Attendance</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="dlg">
+            <div class="bar mixB" style="padding: 15px 20px">
+              <span class="glow"
+                ><span class="aur1"></span><span class="aur2"></span><span class="swp"></span
+              ></span>
+              <span class="icon"
+                ><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2">
+                  <path d="M12 3l7 4v5c0 4-3 7-7 9-4-2-7-5-7-9V7z" /></svg
+              ></span>
+              <span class="txt"
+                ><div class="title" style="font-size: 18px">Security Level Permissions</div></span
+              >
+            </div>
+            <div class="body">Dialog body</div>
+            <div class="foot">
+              <button class="btn">Cancel</button><button class="btn primary">Apply</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="variant">
+        <div class="vhead"><h2>C · Full underline</h2></div>
+        <p class="vnote">
+          Same aurora and shadow, but the cyan line runs the whole width, fading at both ends instead of only
+          the right. Symmetrical, so it suits wide tables where a line that stops halfway can look unfinished.
+        </p>
+        <div class="stack">
+          <div class="card">
+            <div class="bar mixC">
+              <span class="glow"
+                ><span class="aur1"></span><span class="aur2"></span><span class="swp"></span
+              ></span>
+              <span class="icon"
+                ><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></svg
+              ></span>
+              <span class="txt"
+                ><div class="title">User details</div>
+                <div class="hint">Sign-in name, contact details and the linked student record</div></span
+              >
+              <span class="slot"><span class="pill">Active</span></span>
+            </div>
+            <div class="body">Card body</div>
+          </div>
+          <div class="card">
+            <table>
+              <thead>
+                <tr class="bar mixC" style="display: table-row">
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px; font-weight: 700">
+                    Name ↑
+                  </th>
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px; font-weight: 700">
+                    Group Email Address ⇅
+                  </th>
+                  <th style="padding: 12px 14px; text-align: left; font-size: 13px; font-weight: 700">
+                    Function ⇅
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Registry</td>
+                  <td>registry@seats.ac.uk</td>
+                  <td>Attendance</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="dlg">
+            <div class="bar mixC" style="padding: 15px 20px">
+              <span class="glow"
+                ><span class="aur1"></span><span class="aur2"></span><span class="swp"></span
+              ></span>
+              <span class="icon"
+                ><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2">
+                  <path d="M12 3l7 4v5c0 4-3 7-7 9-4-2-7-5-7-9V7z" /></svg
+              ></span>
+              <span class="txt"
+                ><div class="title" style="font-size: 18px">Security Level Permissions</div></span
+              >
+            </div>
+            <div class="body">Dialog body</div>
+            <div class="foot">
+              <button class="btn">Cancel</button><button class="btn primary">Apply</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
