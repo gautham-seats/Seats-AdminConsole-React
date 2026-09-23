@@ -51,3 +51,37 @@ describe('writeCookie', () => {
     expect(written[0]).toMatch(/^_accset_hc=true; expires=.+ GMT; path=\/; SameSite=Lax$/)
   })
 })
+
+describe('SF-54 one help-URL request for two menus', () => {
+  it('shares the GET between the top bar and the sidebar menu mounting together', async () => {
+    const before = get.mock.calls.length
+    let resolve!: (value: unknown) => void
+    get.mockReturnValueOnce(new Promise(r => (resolve = r)))
+    const topBar = fetchOnlineHelpUrl(new AbortController().signal)
+    const sidebar = fetchOnlineHelpUrl(new AbortController().signal)
+    expect(get.mock.calls.length - before).toBe(1)
+    resolve({ key: 'ONLINE_HELP_URL', value: 'https://help.example.org/' })
+    await expect(topBar).resolves.toBe('https://help.example.org/')
+    await expect(sidebar).resolves.toBe('https://help.example.org/')
+    // The shared request is over; the next mount asks again, so a changed setting is picked up.
+    get.mockResolvedValueOnce({ key: 'ONLINE_HELP_URL', value: 'https://help.example.org/new' })
+    await expect(fetchOnlineHelpUrl(new AbortController().signal)).resolves.toBe(
+      'https://help.example.org/new',
+    )
+    expect(get.mock.calls.length - before).toBe(2)
+  })
+
+  it('lets one menu leave without cancelling the answer for the other', async () => {
+    const before = get.mock.calls.length
+    let resolve!: (value: unknown) => void
+    get.mockReturnValueOnce(new Promise(r => (resolve = r)))
+    const leaving = new AbortController()
+    const gone = fetchOnlineHelpUrl(leaving.signal)
+    const staying = fetchOnlineHelpUrl(new AbortController().signal)
+    leaving.abort()
+    resolve({ key: 'ONLINE_HELP_URL', value: 'https://help.example.org/' })
+    await expect(gone).rejects.toMatchObject({ name: 'AbortError' })
+    await expect(staying).resolves.toBe('https://help.example.org/')
+    expect(get.mock.calls.length - before).toBe(1)
+  })
+})
