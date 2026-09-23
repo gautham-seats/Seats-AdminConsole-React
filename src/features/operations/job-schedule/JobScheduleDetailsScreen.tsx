@@ -1,6 +1,16 @@
 'use client'
 
-import { CalendarClock, Check, MapPin, SlidersHorizontal, Timer, Workflow, X } from 'lucide-react'
+import {
+  CalendarClock,
+  Check,
+  MapPin,
+  Save,
+  SlidersHorizontal,
+  Timer,
+  Undo2,
+  Workflow,
+  X,
+} from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
@@ -8,17 +18,16 @@ import { api, toApiError, useApiRead } from '@/shared/api'
 import { JOB_SCHEDULE_ROUTE, PermissionAction, PermissionItem } from '@/shared/shell/admin-menu'
 import { useProfile } from '@/shared/shell/profile'
 import { useLeaveGuard } from '@/shared/shell/use-leave-guard'
-import { buttonVariants, Input } from '@/shared/ui'
+import { Button, Input } from '@/shared/ui'
+import { ADD_BUTTON_CLASS, CANCEL_BUTTON_CLASS } from '@/shared/ui/add-button'
 import { cn } from '@/shared/ui/cn'
 import type { JobDetailsDto, JobOptionDto } from '@/types/operations'
 import { setFlash } from '@/features/settings/shared/flash'
-import { NativeSelect } from '@/features/settings/shared/NativeSelect'
 import { SaveToast, type Notice } from '@/features/settings/shared/SaveToast'
 import { SettingsCard, SettingsField } from '@/features/settings/shared/SettingsCard'
 import {
   FormStatusPill,
   FRAME_EN,
-  SaveActions,
   SettingsBody,
   SettingsGate,
   SettingsLayout,
@@ -45,6 +54,7 @@ import {
   type JobError,
   type LookupField as LookupName,
 } from './job-schedule-form'
+import { FieldSelect } from './FieldSelect'
 import { LookupField } from './LookupField'
 import { ScheduleBuilder } from './ScheduleBuilder'
 import { Textarea } from '@/shared/ui/Textarea'
@@ -124,6 +134,15 @@ const EN = {
   scopeAllBracket: '[All]',
   none: '-',
   lookupDescriptionError: 'Unable to load this saved selection.',
+  notSet: 'Not set',
+  noRecipients: 'No recipients yet',
+  usingDefault: '(default)',
+  attendanceFilter: 'Attendance filter',
+  comparison: 'comparison',
+  lookBack: 'Look-back',
+  minutesUnit: 'min',
+  jobId: 'Job ID',
+  newJobId: 'Not saved yet',
   retry: 'Retry',
   retrying: 'Retrying…',
 } as const
@@ -139,6 +158,15 @@ const LOOKUP_LABEL: Record<LookupName, keyof typeof TEXT> = {
 
 const loadDetails = (id: number, signal: AbortSignal) =>
   api.get<JobDetailsDto>(`JobScheduleApi/${id > 0 ? id : 0}`, { signal })
+
+function SummaryRow({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="min-w-0">
+      <p className="text-[10px] font-semibold tracking-wide text-slate-500 uppercase">{label}</p>
+      <div className="mt-0.5 text-[13px] leading-[17px] text-slate-800">{children}</div>
+    </div>
+  )
+}
 
 function AnimatedCard({ visible, children }: { visible: boolean; children: ReactNode }) {
   return (
@@ -437,6 +465,19 @@ function JobScheduleDetailsWorkspace({ id }: { id: number }) {
     () => (cronExpression ? estimateNextCronRuns(cronExpression, 3) : []),
     [cronExpression],
   )
+  const dateRangeName =
+    details?.dateRangeAvailables?.find(option => option.id === job?.dateRangeId)?.description ?? null
+  const comparisonName =
+    details?.comparisonOperatorAvailables?.find(
+      option => String(option.id) === (job?.comparisonOperator ?? ''),
+    )?.description ?? null
+  const recipientList = (job?.recipients ?? '')
+    .split(',')
+    .map(entry => entry.trim())
+    .filter(Boolean)
+  const minutesValue = job?.minutes.trim() ? job.minutes.trim() : null
+  const minutesFallback = job?.minutesDefault === null ? null : String(job?.minutesDefault ?? '')
+
   const scopeChips = useMemo(() => {
     if (!job) return []
     const chips: { label: string; value: string }[] = []
@@ -465,36 +506,40 @@ function JobScheduleDetailsWorkspace({ id }: { id: number }) {
       area={area}
       meta={<FormStatusPill canEdit={canSave} dirty={dirty} />}
       actions={
-        canSave && job ? (
-          <SaveActions
-            dirty={dirty}
-            saving={saving}
-            saveLabel={t('Save')}
-            onSave={() => void save()}
-            onDiscard={discard}
-            extra={
-              <Link
-                href={JOB_SCHEDULE_ROUTE}
-                className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'text-muted-foreground')}
-              >
-                {t('Cancel')}
-              </Link>
-            }
-          />
-        ) : (
-          <Link
-            href={JOB_SCHEDULE_ROUTE}
-            className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'text-muted-foreground')}
-          >
+        <div className="flex flex-wrap items-center gap-2">
+          <Link href={JOB_SCHEDULE_ROUTE} className={CANCEL_BUTTON_CLASS}>
             {t('Cancel')}
           </Link>
-        )
+          {canSave && job && dirty ? (
+            <button
+              type="button"
+              onClick={discard}
+              disabled={saving}
+              className={cn(CANCEL_BUTTON_CLASS, 'animate-slide-in motion-reduce:animate-none')}
+            >
+              <Undo2 aria-hidden className="size-[18px]" />
+              {FRAME_EN.discard}
+            </button>
+          ) : null}
+          {canSave && job ? (
+            <Button
+              onClick={() => void save()}
+              loading={saving}
+              aria-keyshortcuts="Control+S"
+              title={FRAME_EN.shortcut}
+              className={ADD_BUTTON_CLASS}
+            >
+              <Save aria-hidden className="size-[18px]" />
+              {t('Save')}
+            </Button>
+          ) : null}
+        </div>
       }
     >
       <SaveToast notice={notice} onDismiss={dismissNotice} dismissLabel={FRAME_EN.dismiss} />
       <SettingsBody error={read.error} status={read.status} onRetry={read.reload}>
         {details && job ? (
-          <div className="mx-auto grid max-w-6xl gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,22rem)] xl:items-start xl:gap-5">
+          <div className="grid w-full gap-4 xl:grid-cols-[minmax(0,1fr)_24rem] xl:items-start xl:gap-4">
             <div className="flex min-w-0 flex-col gap-4">
               <SettingsCard icon={Workflow} title={EN.job} hint={EN.jobHint}>
                 {job.id !== 0 ? (
@@ -508,18 +553,16 @@ function JobScheduleDetailsWorkspace({ id }: { id: number }) {
                   </SettingsField>
                 ) : (
                   <SettingsField htmlFor="job-type" label={t('Type')}>
-                    <NativeSelect
+                    <FieldSelect
                       id="job-type"
-                      value={job.typeId}
+                      value={String(job.typeId)}
                       disabled={locked}
-                      onChange={event => update({ typeId: Number(event.target.value) })}
-                    >
-                      {(details.jobTypeAvailables ?? []).map(type => (
-                        <option key={type.id} value={type.id}>
-                          {type.name ?? type.code}
-                        </option>
-                      ))}
-                    </NativeSelect>
+                      onChange={next => update({ typeId: Number(next) })}
+                      options={(details.jobTypeAvailables ?? []).map(type => ({
+                        value: String(type.id),
+                        label: type.name ?? type.code ?? String(type.id),
+                      }))}
+                    />
                   </SettingsField>
                 )}
                 <ToggleRow
@@ -598,18 +641,16 @@ function JobScheduleDetailsWorkspace({ id }: { id: number }) {
                   delay={120}
                 >
                   <SettingsField htmlFor="job-date-range" label={t('DateRange')}>
-                    <NativeSelect
+                    <FieldSelect
                       id="job-date-range"
-                      value={job.dateRangeId}
+                      value={String(job.dateRangeId)}
                       disabled={locked}
-                      onChange={event => update({ dateRangeId: Number(event.target.value) })}
-                    >
-                      {(details.dateRangeAvailables ?? []).map(option => (
-                        <option key={option.id} value={option.id}>
-                          {option.description}
-                        </option>
-                      ))}
-                    </NativeSelect>
+                      onChange={next => update({ dateRangeId: Number(next) })}
+                      options={(details.dateRangeAvailables ?? []).map(option => ({
+                        value: String(option.id),
+                        label: option.description ?? String(option.id),
+                      }))}
+                    />
                   </SettingsField>
                   {showsAttendance(typeId) ? (
                     <SettingsField
@@ -618,20 +659,18 @@ function JobScheduleDetailsWorkspace({ id }: { id: number }) {
                       error={fieldError('percentageAttended')}
                     >
                       <div className="flex gap-2">
-                        <NativeSelect
+                        <FieldSelect
                           id="job-comparison"
-                          aria-label={t('PercentageAttended')}
+                          label={`${t('PercentageAttended')} ${EN.comparison}`}
                           value={job.comparisonOperator ?? ''}
                           disabled={locked}
-                          onChange={event => update({ comparisonOperator: event.target.value })}
+                          onChange={next => update({ comparisonOperator: next })}
                           className="w-40 shrink-0"
-                        >
-                          {(details.comparisonOperatorAvailables ?? []).map(option => (
-                            <option key={option.id} value={String(option.id)}>
-                              {option.description}
-                            </option>
-                          ))}
-                        </NativeSelect>
+                          options={(details.comparisonOperatorAvailables ?? []).map(option => ({
+                            value: String(option.id),
+                            label: option.description ?? String(option.id),
+                          }))}
+                        />
                         <div className="relative w-32">
                           <Input
                             id="job-percentageAttended"
@@ -709,35 +748,46 @@ function JobScheduleDetailsWorkspace({ id }: { id: number }) {
               </AnimatedCard>
             </div>
 
-            <aside className="xl:sticky xl:top-4">
-              <SettingsCard icon={CalendarClock} title={EN.summary} hint={EN.summaryHint} delay={80}>
-                <div className="flex flex-col gap-4 px-5 py-4">
-                  <div>
-                    <p className="text-[11px] font-semibold tracking-wide text-slate-500 uppercase">
-                      {t('Type')}
-                    </p>
-                    <p className="mt-1 text-sm font-semibold text-slate-800">{typeName}</p>
+            {/* Sticky so the preview stays beside the form, with its own scroll when the list grows. */}
+            <aside className="xl:sticky xl:top-4 xl:self-start">
+              <SettingsCard
+                icon={CalendarClock}
+                title={EN.summary}
+                hint={EN.summaryHint}
+                delay={80}
+                className="xl:flex xl:min-h-[calc(100vh-12rem)] xl:flex-col"
+                bodyClassName="divide-y-0 xl:min-h-0 xl:flex-1"
+              >
+                <div className="flex flex-1 flex-col justify-between gap-2.5 px-4 py-3.5">
+                  <SummaryRow label={t('Type')}>
+                    <span className="font-semibold">{typeName || EN.none}</span>
+                  </SummaryRow>
+
+                  <SummaryRow label={t('Description')}>
+                    {job.description?.trim() ? (
+                      <span className="break-words">{job.description}</span>
+                    ) : (
+                      <span className="text-slate-500">{EN.notSet}</span>
+                    )}
+                  </SummaryRow>
+
+                  <div aria-live="polite" className="min-w-0">
+                    <SummaryRow label={EN.schedule}>
+                      <p
+                        key={job.cronExpression}
+                        className="animate-fade-in font-semibold motion-reduce:animate-none"
+                      >
+                        {describeCron(job.cronExpression) || EN.none}
+                      </p>
+                      <code className="mt-1 block font-mono text-xs text-slate-500 tabular-nums">
+                        {job.cronExpression}
+                      </code>
+                    </SummaryRow>
                   </div>
-                  <div aria-live="polite">
-                    <p className="text-[11px] font-semibold tracking-wide text-slate-500 uppercase">
-                      {EN.schedule}
-                    </p>
-                    <p
-                      key={job.cronExpression}
-                      className="mt-1 animate-fade-in text-sm font-semibold text-slate-800 motion-reduce:animate-none"
-                    >
-                      {describeCron(job.cronExpression) || EN.none}
-                    </p>
-                    <code className="mt-1 block font-mono text-xs text-slate-500 tabular-nums">
-                      {job.cronExpression}
-                    </code>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-semibold tracking-wide text-slate-500 uppercase">
-                      {EN.nextRuns}
-                    </p>
+
+                  <SummaryRow label={EN.nextRuns}>
                     {nextRuns.length ? (
-                      <ul className="mt-1.5 space-y-1 text-sm text-slate-700">
+                      <ul className="flex flex-wrap gap-x-3 gap-y-1 text-slate-700">
                         {nextRuns.map(run => (
                           <li key={run.getTime()} className="tabular-nums">
                             {formatCronRun(run)}
@@ -745,32 +795,94 @@ function JobScheduleDetailsWorkspace({ id }: { id: number }) {
                         ))}
                       </ul>
                     ) : (
-                      <p className="mt-1 text-sm text-slate-500">{EN.none}</p>
+                      <span className="text-slate-500">{EN.none}</span>
                     )}
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-semibold tracking-wide text-slate-500 uppercase">
-                      {t('Enabled')}
-                    </p>
-                    <p className="mt-1 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-800">
+                  </SummaryRow>
+
+                  <SummaryRow label={t('Enabled')}>
+                    <span className="inline-flex items-center gap-1.5 font-semibold">
                       {job.enabled ? (
                         <Check aria-hidden className="size-4 text-emerald-600" />
                       ) : (
                         <X aria-hidden className="size-4 text-red-600" />
                       )}
                       {job.enabled ? EN.enabledYes : EN.enabledNo}
-                    </p>
-                  </div>
+                    </span>
+                  </SummaryRow>
+
+                  <SummaryRow label={EN.generateEmpty}>
+                    <span className="font-semibold">{job.emptyEmail ? EN.enabledYes : EN.enabledNo}</span>
+                  </SummaryRow>
+
+                  {showsAttendance(typeId) ? (
+                    <SummaryRow label={t('SendToTutor')}>
+                      <span className="font-semibold">
+                        {job.sendToTutor === true ? EN.enabledYes : EN.enabledNo}
+                      </span>
+                    </SummaryRow>
+                  ) : null}
+
+                  {showsDateRange(typeId) ? (
+                    <SummaryRow label={t('DateRange')}>
+                      {dateRangeName ? (
+                        <span>{dateRangeName}</span>
+                      ) : (
+                        <span className="text-slate-500">{EN.notSet}</span>
+                      )}
+                    </SummaryRow>
+                  ) : null}
+
+                  {showsAttendance(typeId) ? (
+                    <SummaryRow label={EN.attendanceFilter}>
+                      {comparisonName && job.percentageAttended.trim() ? (
+                        <span className="tabular-nums">
+                          {comparisonName} {job.percentageAttended.trim()}
+                          {EN.percent}
+                        </span>
+                      ) : (
+                        <span className="text-slate-500">{EN.notSet}</span>
+                      )}
+                    </SummaryRow>
+                  ) : null}
+
+                  {showsMonitor(typeId) ? (
+                    <>
+                      <SummaryRow label={EN.lookBack}>
+                        {minutesValue ? (
+                          <span className="tabular-nums">
+                            {minutesValue} {EN.minutesUnit}
+                          </span>
+                        ) : minutesFallback ? (
+                          <span className="tabular-nums text-slate-600">
+                            {minutesFallback} {EN.minutesUnit} {EN.usingDefault}
+                          </span>
+                        ) : (
+                          <span className="text-slate-500">{EN.notSet}</span>
+                        )}
+                      </SummaryRow>
+                      <SummaryRow label={t('Recipients')}>
+                        {recipientList.length ? (
+                          <ul className="space-y-0.5">
+                            {recipientList.map(address => (
+                              <li key={address} className="truncate" title={address}>
+                                {address}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <span className="text-slate-500">{EN.noRecipients}</span>
+                        )}
+                      </SummaryRow>
+                    </>
+                  ) : null}
+
                   {showsAcademic(typeId) || showsLocation(typeId) ? (
-                    <div>
-                      <p className="text-[11px] font-semibold tracking-wide text-slate-500 uppercase">
-                        {showsLocation(typeId) ? EN.location : EN.scope}
-                      </p>
+                    <SummaryRow label={showsLocation(typeId) ? EN.location : EN.scope}>
                       {scopeChips.length ? (
-                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                        <div className="flex flex-wrap gap-1.5">
                           {scopeChips.map(chip => (
                             <span
-                              key={`${chip.label}-${chip.value}`}
+                              key={chip.label + '-' + chip.value}
                               className="inline-flex max-w-full items-center gap-1 rounded-full border border-border bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700"
                             >
                               <span className="text-slate-500">{chip.label}</span>
@@ -781,10 +893,18 @@ function JobScheduleDetailsWorkspace({ id }: { id: number }) {
                           ))}
                         </div>
                       ) : (
-                        <p className="mt-1 text-sm text-slate-500">{EN.scopeAllBracket}</p>
+                        <span className="text-slate-500">{EN.scopeAllBracket}</span>
                       )}
-                    </div>
+                    </SummaryRow>
                   ) : null}
+
+                  <SummaryRow label={EN.jobId}>
+                    {job.id > 0 ? (
+                      <span className="tabular-nums">{job.id}</span>
+                    ) : (
+                      <span className="text-slate-500">{EN.newJobId}</span>
+                    )}
+                  </SummaryRow>
                 </div>
               </SettingsCard>
             </aside>
