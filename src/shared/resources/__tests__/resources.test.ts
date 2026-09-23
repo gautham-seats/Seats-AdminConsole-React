@@ -10,8 +10,8 @@ jest.mock('@/shared/api', () => ({
 }))
 
 const post = jest.mocked(api.post)
-// Keys leave as one POST after a one-frame window, so a test that counts POSTs waits past it first.
-const nextTick = () => new Promise<void>(resolve => setTimeout(resolve, 40))
+// Keys leave as one POST on a microtask, so a test that counts POSTs waits one microtask first.
+const nextTick = () => Promise.resolve()
 
 beforeEach(() => {
   clearResourceCache()
