@@ -9,7 +9,7 @@ import { useRowWindow } from '@/shared/ui/use-row-window'
 import type { ReportPageDto } from '@/types/devices'
 import type { SortDirection } from '@/types/users'
 import { DEVICES_FALLBACK_ONLY, type DevicesText } from '../index/devices-text'
-import { HEAD_FILL, HEAD_ROUND } from '@/shared/ui/HeadBackdrop'
+import { HEAD_CELL, HEAD_ROUND } from '@/shared/ui/HeadBackdrop'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { ScrollEdges } from '@/shared/ui/ScrollEdges'
 
@@ -32,7 +32,7 @@ type ReportTableProps<TItem, TSort extends string> = {
   t: DevicesText
 }
 
-const HEAD = `sticky top-0 z-20 h-10 ${HEAD_FILL} px-3 text-left align-middle text-xs font-medium tracking-[0.02em] whitespace-nowrap text-white`
+const HEAD = cn(HEAD_CELL, 'z-20')
 const CELL =
   'border-b border-border bg-white px-3 py-2 align-middle text-slate-700 transition-colors duration-150 group-hover:bg-slate-50'
 

@@ -12,7 +12,7 @@ import { BatteryGlyph } from './BatteryGlyph'
 import { batteryLevel, type BatteryLevel } from './device-query'
 import { DEVICES_FALLBACK_ONLY, type DevicesText, type DevicesTextKey } from './devices-text'
 import type { DevicesList } from './use-devices-list'
-import { HEAD_FILL, HEAD_ROUND } from '@/shared/ui/HeadBackdrop'
+import { HEAD_CELL, HEAD_ROUND } from '@/shared/ui/HeadBackdrop'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { ScrollEdges, useScrollEdges } from '@/shared/ui/ScrollEdges'
 
@@ -251,7 +251,7 @@ export function DevicesTable({
   )
 }
 
-const HEAD = `sticky top-0 z-20 h-10 ${HEAD_FILL} px-2 text-left align-middle text-xs font-medium tracking-[0.02em] whitespace-nowrap text-white transition-shadow duration-300`
+const HEAD = cn(HEAD_CELL, 'z-20')
 const HEAD_SHADOW = 'shadow-press'
 const CELL = 'border-b border-border bg-white px-2 py-1.5 align-middle transition-colors duration-150'
 const CHECK_STYLE = { width: CHECK_WIDTH, minWidth: CHECK_WIDTH }
