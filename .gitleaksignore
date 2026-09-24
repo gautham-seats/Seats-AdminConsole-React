@@ -1,2 +1,2 @@
 # Fingerprints of confirmed false positives, one per line: <commit>:<path>:<rule>:<line>
-931dc3a41f6ae2a8d280793e567b447e8d646356:src/shared/ui/__tests__/error-state-auth.test.ts:generic-api-key:19
+067b55ad3de20d7199da9edede8d13d4a9564971:src/shared/ui/__tests__/error-state-auth.test.ts:generic-api-key:19
